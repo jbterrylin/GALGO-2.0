@@ -25,7 +25,13 @@ public:
 template <typename T>
 std::vector<T> MyConstraint(const std::vector<T>& x)
 {
-   return {x[0]*x[1]+x[0]-x[1]+1.5,10-x[0]*x[1]};
+   return 
+   {
+       //x[0]*x[1]+x[0]-x[1]+1.5,
+       //10-x[0]*x[1]
+       x[0] - 2,    // x0 <= 2
+       x[1] - 2     // x1 <= 2
+   };
 }
 // NB: a penalty will be applied if one of the constraints is > 0 
 // using the default adaptation to constraint(s) method
@@ -34,13 +40,14 @@ int main()
 {
    // initializing parameters lower and upper bounds
    // an initial value can be added inside the initializer list after the upper bound
-   galgo::Parameter<double> par1({0.0,1.0});
-   galgo::Parameter<double> par2({0.0,13.0});
+   galgo::Parameter<double> par1({0.0,2.0});
+   galgo::Parameter<double> par2({0.0,2.0});
    // here both parameter will be encoded using 16 bits the default value inside the template declaration
    // this value can be modified but has to remain between 1 and 64
 
    // initiliazing genetic algorithm
-   galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective,100,50,true,par1,par2);
+   //template <int...N>   GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, const Parameter<T, N>&...args);
+   galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective,100,800,true,par1,par2);
 
    // setting constraints
    ga.Constraint = MyConstraint;

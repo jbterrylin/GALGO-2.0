@@ -367,6 +367,39 @@ void SPM(galgo::CHR<T>& chr)
 }
 
 /*-------------------------------------------------------------------------------------------------*/
+// Gaussian mutation: replacing a chromosome gene by near guassian value
+template <typename T>
+void GAM(galgo::CHR<T>& chr)
+{
+    T mutrate = chr->mutrate();
+    if (mutrate == 0.0) return;
+
+    const std::vector<T>& lowerBound = chr->lowerBound();
+    const std::vector<T>& upperBound = chr->upperBound();
+
+    std::default_random_engine generator;
+    double nogen = (double)chr->nogen();
+
+    // looping on number of genes
+    for (int i = 0; i < chr->nbgene(); ++i) 
+    {
+        // generating a random probability
+        if (galgo::proba(galgo::rng) <= mutrate) 
+        {
+            T value = chr->getParamAt(i);
+            T stddev = (upperBound[i] - lowerBound[i]) / (2 + 0.01 * (nogen+1.0));
+
+            std::normal_distribution<T> distribution(value, stddev);
+            double norm = distribution(generator);
+            double gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
+            chr->initGene(i, gaussian_value);
+
+            chr->nogen();
+
+        }
+    }
+}
+/*-------------------------------------------------------------------------------------------------*/
 
 // uniform mutation: replacing a chromosome gene by a new one
 template <typename T>

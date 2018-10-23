@@ -38,7 +38,8 @@ public:
    // cross-over method initialized to 1-point cross-over                                
    void (*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
    // mutation method initialized to single-point mutation 
-   void (*Mutation)(CHR<T>&) = SPM;  
+   //void (*Mutation)(CHR<T>&) = SPM;  
+   void (*Mutation)(CHR<T>&) = GAM;
    // adaptation to constraint(s) method                                        
    void (*Adaptation)(Population<T>&) = nullptr; 
    // constraint(s)                               
@@ -53,7 +54,7 @@ public:
    int matsize;       // mating pool size, set to popsize by default
    int tntsize = 10;  // tournament size
    int genstep = 10;  // generation step for outputting results
-   int precision = 5; // precision for outputting results
+   int precision = 10; // precision for outputting results
 
    // constructor
    template <int...N>

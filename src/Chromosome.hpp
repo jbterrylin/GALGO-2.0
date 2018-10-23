@@ -64,6 +64,8 @@ public:
    // return upper bound(s)
    const std::vector<T>& upperBound() const;
 
+   T getParamAt(int k) const;
+
 private:
    std::vector<T> param;                     // estimated parameter(s)
    std::vector<T> result;                    // chromosome objective function(s) result
@@ -392,6 +394,20 @@ template <typename T>
 inline const std::vector<T>& Chromosome<T>::upperBound() const
 {
    return ptr->upperBound;
+}
+
+
+template <typename T>
+T Chromosome<T>::getParamAt(int k) const
+{
+#ifndef NDEBUG
+    if (k < 0 || k >= ptr->nbparam) {
+        throw std::invalid_argument("Error: in galgo::Chromosome<T>::getParam(int), first argument cannot be outside interval [0,nbparam-1], please amend.");
+    }
+#endif
+
+    auto& x = ptr->param[k];
+    return x->decode(chr.substr(ptr->idx[k], x->size()));
 }
 
 //=================================================================================================
