@@ -26,14 +26,11 @@ template <typename T>
 class AckleyObjective
 {
 public:
-    // objective function example : Rosenbrock function
-    // minimizing f(x,y) = (1 - x)^2 + 100 * (y - x^2)^2
     static std::vector<T> Objective(const std::vector<T>& x)
     {
         T obj = -1 * Ackley(x[0], x[1]);
         return { obj };
     }
-    // NB: GALGO maximize by default so we will maximize -f(x,y)
 };
 
 // constraints example:
@@ -94,7 +91,6 @@ public:
         T obj = -1 * pso_rastrigin(x);
         return { obj };
     }
-    // NB: GALGO maximize by default so we will maximize -f(x,y)
 };
 
 /*
@@ -119,11 +115,35 @@ public:
         T obj = -1 * pso_rastrigin(x);
         return { obj };
     }
-    // NB: GALGO maximize by default so we will maximize -f(x,y)
 };
 
-// NB: a penalty will be applied if one of the constraints is > 0 
-// using the default adaptation to constraint(s) method
+/*
+Styblinski-Tang Function
+Requires <vector>, <math> and C++11
+Compilation: g++ fileName.cpp -std=c++11 -o progName
+Min = (-2.903534,...,--2.903534)
+*/
+template <typename T>
+T pso_styb_tang(std::vector< T > particle)
+{
+    T result(0.);
+    for (auto dim : particle) {
+        result += pow(dim, 4.0) - (16. * pow(dim, 2.)) + (5. * dim);
+    }
+    return (result / 2.);
+}
+
+template <typename T>
+class StyblinskiTangObjective
+{
+public:
+    static std::vector<T> Objective(const std::vector<T>& x)
+    {
+        T obj = -1 * pso_styb_tang(x);
+        return { obj };
+    }
+};
+
 
 int main()
 {
@@ -134,22 +154,22 @@ int main()
     // here both parameter will be encoded using 16 bits the default value inside the template declaration
     // this value can be modified but has to remain between 1 and 64
     // initiliazing genetic algorithm
-    //template <int...N>   GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, const Parameter<T, N>&...args);
+    //galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
+    //ga.Constraint = MyConstraint;
 
     
     {
-        std::cout << "Rosenbrock function";
+        std::cout << "\nRosenbrock function";
         galgo::Parameter<double> par1({ -2.0,2.0 });
         galgo::Parameter<double> par2({ -2.0,2.0 });
         galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
-        ga.Constraint = MyConstraint;
         ga.run();
     }
 
     {
-        std::cout << "Ackley function";
-        galgo::Parameter<double> par1({ -20.0,20.0 });
-        galgo::Parameter<double> par2({ -20.0,20.0 });
+        std::cout << "\nAckley function";
+        galgo::Parameter<double> par1({ -4.0,5.0 });
+        galgo::Parameter<double> par2({ -4.0,5.0 });
         galgo::GeneticAlgorithm<double> ga(AckleyObjective<double>::Objective, 100, 200, true, par1, par2);
         ga.run();
     }
@@ -166,6 +186,16 @@ int main()
 
     {
         std::cout << std::endl;
+        std::cout << "StyblinskiTang function Min = (-2.903534,...,--2.903534)";
+        galgo::Parameter<double> par1({ -4.0,4.0 });
+        galgo::Parameter<double> par2({ -4.0,4.0 });
+        galgo::Parameter<double> par3({ -4.0,4.0 });
+        galgo::GeneticAlgorithm<double> ga(StyblinskiTangObjective<double>::Objective, 100, 200, true, par1, par2, par3);
+        ga.run();
+    }
+
+    {
+        std::cout << std::endl;
         std::cout << "Griewank function";
         galgo::Parameter<double> par1({ -4.0,5.0 });
         galgo::Parameter<double> par2({ -4.0,5.0 });
@@ -173,7 +203,6 @@ int main()
         galgo::GeneticAlgorithm<double> ga(GriewankObjective<double>::Objective, 100, 200, true, par1, par2, par3);
         ga.run();
     }
-
 
     system("pause");
 }
