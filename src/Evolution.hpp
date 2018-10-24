@@ -369,7 +369,7 @@ void SPM(galgo::CHR<T>& chr)
 /*-------------------------------------------------------------------------------------------------*/
 // Gaussian mutation: replacing a chromosome gene by near guassian value
 template <typename T>
-void GAM(galgo::CHR<T>& chr)
+void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
 {
     T mutrate = chr->mutrate();
     if (mutrate == 0.0) return;
@@ -381,21 +381,22 @@ void GAM(galgo::CHR<T>& chr)
     std::normal_distribution<T> distribution01(0.0, 1.0);
 
     // looping on number of genes
-    for (int i = 0; i < chr->nbgene(); ++i) 
+    for (int i = 0; i < chr->nbgene(); ++i)
     {
         // generating a random probability
-        if (galgo::proba(galgo::rng) <= mutrate) // TODO - mutrate not necessary 
+        if (galgo::proba(galgo::rng) <= mutrate)
         {
-            T value = chr->getParamAt(i);
+            T value = chr->getParamValueAt(i);
 
-            T sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma
+            T sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma - Change as needed
             T norm01;
-            for (int z = 1; z < chr->nogen(); z++)
+
+            // sigma decreasing blindely with number generation produced
+            // Should change based on efficiency of the search...
+            for (int z = 1; z < chr->nogen() / 2; z++)
             {
-                // sigma adapting with iteration
-                // TODO - One sigma per parameter              
                 norm01 = distribution01(generator);
-                sigma = std::max(T(0), (T) (sigma * exp(norm01)));
+                sigma = std::max(T(0), (T)(sigma * exp(norm01)));
             }
 
             std::normal_distribution<T> distribution(value, sigma);
@@ -406,6 +407,49 @@ void GAM(galgo::CHR<T>& chr)
     }
 }
 /*-------------------------------------------------------------------------------------------------*/
+
+
+/*-------------------------------------------------------------------------------------------------*/
+// Gaussian mutation: replacing a chromosome gene by near gaussian value
+template <typename T>
+void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
+{
+    T mutrate = chr->mutrate();
+    if (mutrate == 0.0) return;
+
+    const std::vector<T>& lowerBound = chr->lowerBound();
+    const std::vector<T>& upperBound = chr->upperBound();
+
+    std::default_random_engine generator;
+    std::normal_distribution<T> distribution01(0.0, 1.0);
+
+    // looping on number of genes
+    for (int i = 0; i < chr->nbgene(); ++i)
+    {
+        // generating a random probability
+        if (galgo::proba(galgo::rng) <= mutrate)
+        {
+            T value = chr->getParamValueAt(i);
+            auto& p = chr->getParamAt(i);
+
+            T sigma = p.sigma();
+            int iter = p.sigma_iteration();
+            if (iter == 0)
+            {
+                sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma - Change as needed
+                p.sigma_update(sigma);
+            }
+
+            // Should change based on efficiency of the search...
+            std::normal_distribution<T> distribution(value, sigma);
+            T norm = distribution(generator);
+            T gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
+            chr->initGene(i, gaussian_value);
+        }
+    }
+}
+/*-------------------------------------------------------------------------------------------------*/
+
 
 // uniform mutation: replacing a chromosome gene by a new one
 template <typename T>

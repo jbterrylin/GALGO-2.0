@@ -35,6 +35,10 @@ public:
    virtual T decode(const std::string& y) const = 0;
    virtual int size() const = 0;
    virtual const std::vector<T>& getData() const = 0;
+
+   virtual T sigma() const = 0;
+   virtual int sigma_iteration() const = 0;
+   virtual void sigma_update(T new_sigma) = 0;
 };
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -46,13 +50,20 @@ class Parameter : public BaseParameter<T>
    friend class Chromosome;
 
 private:
-   std::vector<T> data; // contains lower bound, upper bound and initial value (optional)
+   std::vector<T>   data;               // contains lower bound, upper bound and initial value (optional)
+   T                _sigma;             // stddev per parameter
+   int              _sigma_iteration;   // number of time _sigma was updated
 
 public:
-   // nullary constructor
-   Parameter() {}
+   // default constructor
+   Parameter() : 
+       _sigma( { 1 }),
+       _sigma_iteration(0)
+   {
+   }
+
    // constructor
-   Parameter(const std::vector<T>& data) 
+   Parameter(const std::vector<T>& data) : _sigma( T(1)), _sigma_iteration(0)
    {
       if (data.size() < 2) {
          throw std::invalid_argument("Error: in class galgo::Parameter<T,N>, argument must contain at least 2 elements of type T, the lower bound and the upper bound, please adjust.");
@@ -70,6 +81,15 @@ public:
    const std::vector<T>& getData() const override {
       return data;
    }
+
+   T sigma() const override  { return _sigma; }
+   int sigma_iteration() const override { return _sigma_iteration; }
+   void sigma_update(T new_sigma) override
+   {
+        _sigma_iteration++;
+        _sigma = new_sigma;
+   }
+
 private:
    // encoding random unsigned integer
    std::string encode() const override {

@@ -177,11 +177,12 @@ int main()
     //galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
     //ga.Constraint = MyConstraint;
 
+    const int N = 300;
     {
-        std::cout << "\SumSameAsPrd function 2x2 = 2+2";
+        std::cout << "\nSumSameAsPrd function 2x2 = 2+2";
         galgo::Parameter<float, 64> par1({ 1, 10 });
         galgo::Parameter<float, 64> par2({ 1, 10 });
-        galgo::GeneticAlgorithm<float> ga(SumSameAsPrdObjective<float>::Objective, 100, 300, true, par1, par2);
+        galgo::GeneticAlgorithm<float> ga(SumSameAsPrdObjective<float>::Objective, 100, N, true, par1, par2);
         ga.run();
     }
     
@@ -189,7 +190,7 @@ int main()
         std::cout << "\nRosenbrock function";
         galgo::Parameter<double> par1({ -2.0,2.0 });
         galgo::Parameter<double> par2({ -2.0,2.0 });
-        galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
+        galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, N, true, par1, par2);
         ga.run();
     }
 
@@ -197,7 +198,7 @@ int main()
         std::cout << "\nAckley function";
         galgo::Parameter<double> par1({ -4.0,5.0 });
         galgo::Parameter<double> par2({ -4.0,5.0 });
-        galgo::GeneticAlgorithm<double> ga(AckleyObjective<double>::Objective, 100, 200, true, par1, par2);
+        galgo::GeneticAlgorithm<double> ga(AckleyObjective<double>::Objective, 100, N, true, par1, par2);
         ga.run();
     }
     
@@ -207,7 +208,7 @@ int main()
         galgo::Parameter<double> par1({ -4.0,5.0 });
         galgo::Parameter<double> par2({ -4.0,5.0 });
         galgo::Parameter<double> par3({ -4.0,5.0 });
-        galgo::GeneticAlgorithm<double> ga(rastriginObjective<double>::Objective, 100, 200, true, par1, par2, par3);
+        galgo::GeneticAlgorithm<double> ga(rastriginObjective<double>::Objective, 100, N, true, par1, par2, par3);
         ga.run();
     }
 
@@ -217,7 +218,7 @@ int main()
         galgo::Parameter<double> par1({ -4.0,4.0 });
         galgo::Parameter<double> par2({ -4.0,4.0 });
         galgo::Parameter<double> par3({ -4.0,4.0 });
-        galgo::GeneticAlgorithm<double> ga(StyblinskiTangObjective<double>::Objective, 100, 200, true, par1, par2, par3);
+        galgo::GeneticAlgorithm<double> ga(StyblinskiTangObjective<double>::Objective, 100, N, true, par1, par2, par3);
         ga.run();
     }
 
@@ -227,7 +228,7 @@ int main()
         galgo::Parameter<double> par1({ -4.0,5.0 });
         galgo::Parameter<double> par2({ -4.0,5.0 });
         galgo::Parameter<double> par3({ -4.0,5.0 });
-        galgo::GeneticAlgorithm<double> ga(GriewankObjective<double>::Objective, 100, 200, true, par1, par2, par3);
+        galgo::GeneticAlgorithm<double> ga(GriewankObjective<double>::Objective, 100, N, true, par1, par2, par3);
         ga.run();
     }
 

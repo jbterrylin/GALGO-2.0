@@ -37,9 +37,12 @@ public:
    void (*Selection)(Population<T>&) = RWS;  
    // cross-over method initialized to 1-point cross-over                                
    void (*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
+
    // mutation method initialized to single-point mutation 
    //void (*Mutation)(CHR<T>&) = SPM;  
-   void (*Mutation)(CHR<T>&) = GAM;
+   //void (*Mutation)(CHR<T>&) = GAM_sigma_adapting_per_generation;
+   void (*Mutation)(CHR<T>&) = GAM_sigma_adapting_per_mutation;
+
    // adaptation to constraint(s) method                                        
    void (*Adaptation)(Population<T>&) = nullptr; 
    // constraint(s)                               
@@ -47,6 +50,7 @@ public:
 
    T covrate = .50;   // cross-over rate
    T mutrate = .05;   // mutation rate   
+   //T mutrate = 1.00;   // mutation rate   
    T SP = 1.5;        // selective pressure for RSP selection method 
    T tolerance = 0.0; // terminal condition (inactive if equal to zero)
                  
