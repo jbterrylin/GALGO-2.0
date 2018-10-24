@@ -157,8 +157,8 @@ public:
         T prd = ix * iy;
         T diff = std::fabs(sum - prd);
 
-        T err = 10 * diff * diff;
-        err +=  (x[0] - (T)ix) * (x[0] - (T)ix)  + (x[1] - (T)iy) * (x[1] - (T)iy);
+        T err = 1000000*diff ;
+        err +=  1000 * std::fabs(x[0] - (T)ix)   + 1000 * std::fabs(x[1] - (T)iy);
 
         T obj = -1 * (diff + err);
         return { obj };
@@ -179,9 +179,9 @@ int main()
 
     {
         std::cout << "\SumSameAsPrd function 2x2 = 2+2";
-        galgo::Parameter<float, 32> par1({ 1,128 });
-        galgo::Parameter<float, 32> par2({ 1,128 });
-        galgo::GeneticAlgorithm<float> ga(SumSameAsPrdObjective<float>::Objective, 100, 200, true, par1, par2);
+        galgo::Parameter<float, 64> par1({ 1, 10 });
+        galgo::Parameter<float, 64> par2({ 1, 10 });
+        galgo::GeneticAlgorithm<float> ga(SumSameAsPrdObjective<float>::Objective, 100, 300, true, par1, par2);
         ga.run();
     }
     
