@@ -384,7 +384,7 @@ void GAM(galgo::CHR<T>& chr)
     for (int i = 0; i < chr->nbgene(); ++i) 
     {
         // generating a random probability
-        if (galgo::proba(galgo::rng) <= mutrate) 
+        if (galgo::proba(galgo::rng) <= mutrate) // TODO - mutrate not necessary 
         {
             T value = chr->getParamAt(i);
 
