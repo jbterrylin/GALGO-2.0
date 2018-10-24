@@ -389,18 +389,18 @@ void GAM(galgo::CHR<T>& chr)
             T value = chr->getParamAt(i);
 
             T sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma
-            double norm01;
+            T norm01;
             for (int z = 1; z < chr->nogen(); z++)
             {
                 // sigma adapting with iteration
                 // TODO - One sigma per parameter              
                 norm01 = distribution01(generator);
-                sigma = std::max(T(0), sigma * exp(norm01));
+                sigma = std::max(T(0), (T) (sigma * exp(norm01)));
             }
 
             std::normal_distribution<T> distribution(value, sigma);
-            double norm = distribution(generator);
-            double gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
+            T norm = distribution(generator);
+            T gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
             chr->initGene(i, gaussian_value);
         }
     }

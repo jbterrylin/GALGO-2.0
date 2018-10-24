@@ -145,6 +145,26 @@ public:
 };
 
 
+template <typename T>
+class SumSameAsPrdObjective
+{
+public:
+    static std::vector<T> Objective(const std::vector<T>& x)
+    {
+        int ix = (int)x[0];
+        int iy = (int)x[1];
+        T sum = ix + iy;
+        T prd = ix * iy;
+        T diff = std::fabs(sum - prd);
+
+        T err = 10 * diff * diff;
+        err +=  (x[0] - (T)ix) * (x[0] - (T)ix)  + (x[1] - (T)iy) * (x[1] - (T)iy);
+
+        T obj = -1 * (diff + err);
+        return { obj };
+    }
+};
+
 int main()
 {
     // initializing parameters lower and upper bounds
@@ -157,6 +177,13 @@ int main()
     //galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
     //ga.Constraint = MyConstraint;
 
+    {
+        std::cout << "\SumSameAsPrd function 2x2 = 2+2";
+        galgo::Parameter<float, 32> par1({ 1,128 });
+        galgo::Parameter<float, 32> par2({ 1,128 });
+        galgo::GeneticAlgorithm<float> ga(SumSameAsPrdObjective<float>::Objective, 100, 200, true, par1, par2);
+        ga.run();
+    }
     
     {
         std::cout << "\nRosenbrock function";
