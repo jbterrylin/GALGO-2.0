@@ -47,7 +47,7 @@ int main()
 
    // initiliazing genetic algorithm
    //template <int...N>   GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, const Parameter<T, N>&...args);
-   galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective,100,800,true,par1,par2);
+   galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective,100,2000,true,par1,par2);
 
    // setting constraints
    ga.Constraint = MyConstraint;

@@ -378,7 +378,7 @@ void GAM(galgo::CHR<T>& chr)
     const std::vector<T>& upperBound = chr->upperBound();
 
     std::default_random_engine generator;
-    double nogen = (double)chr->nogen();
+    std::normal_distribution<T> distribution01(0.0, 1.0);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i) 
@@ -387,15 +387,21 @@ void GAM(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate) 
         {
             T value = chr->getParamAt(i);
-            T stddev = (upperBound[i] - lowerBound[i]) / (2 + 0.01 * (nogen+1.0));
 
-            std::normal_distribution<T> distribution(value, stddev);
+            T sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma
+            double norm01;
+            for (int z = 1; z < chr->nogen(); z++)
+            {
+                // sigma adapting with iteration
+                // TODO - One sigma per parameter              
+                norm01 = distribution01(generator);
+                sigma = std::max(T(0), sigma * exp(norm01));
+            }
+
+            std::normal_distribution<T> distribution(value, sigma);
             double norm = distribution(generator);
             double gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
             chr->initGene(i, gaussian_value);
-
-            chr->nogen();
-
         }
     }
 }
