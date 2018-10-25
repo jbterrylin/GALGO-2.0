@@ -261,6 +261,11 @@ void P1XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr
    chr2->setPortion(*x[idx2], 0, pos);
    chr1->setPortion(*x[idx2], pos + 1);
    chr2->setPortion(*x[idx1], pos + 1);
+
+   // TODO - Transmit sigma...
+   //int z = pos / (chr1->size() / chr1->nbgene());
+   //chr1->sigma_update(z, (*x[idx1]).get_sigma(z));
+   //chr2->sigma_update(z, (*x[idx1]).get_sigma(z));
 }
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -317,6 +322,7 @@ void UXO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2
 
 /*-------------------------------------------------------------------------------------------------*/
 
+
 // boundary mutation: replacing a chromosome gene by its lower or upper bound
 template <typename T>
 void BDM(galgo::CHR<T>& chr)
@@ -347,7 +353,6 @@ void BDM(galgo::CHR<T>& chr)
 }
 
 /*-------------------------------------------------------------------------------------------------*/
-
 // single point mutation: flipping a chromosome bit
 template <typename T>
 void SPM(galgo::CHR<T>& chr)
@@ -364,6 +369,130 @@ void SPM(galgo::CHR<T>& chr)
          chr->flipBit(i);  
       }     
    }
+}
+
+
+template <typename T>
+void GAM_UncorrelatedOneStepSizeFixed(galgo::CHR<T>& chr)
+{
+    T mutrate = chr->mutrate();
+    if (mutrate == 0.0) return;
+
+    const std::vector<T>& lowerBound = chr->lowerBound();
+    const std::vector<T>& upperBound = chr->upperBound();
+
+    T sigma = chr->mutinfo()._sigma;
+
+    std::default_random_engine generator;
+    std::normal_distribution<T> distribution01(0.0, 1.0);
+
+    // looping on number of genes
+    for (int i = 0; i < chr->nbgene(); ++i)
+    {
+        // generating a random probability
+        if (galgo::proba(galgo::rng) <= mutrate)
+        {
+            T value = chr->get_value(i);
+
+            std::normal_distribution<T> distribution(value, sigma);
+            T newsigma = distribution(generator);
+            if (newsigma < chr->mutinfo()._sigma_lowest)
+                newsigma = chr->mutinfo()._sigma_lowest;
+
+            T norm01 = distribution01(generator);
+            T step = newsigma * norm01;
+
+            T newvalue = std::min(std::max(value + step, lowerBound[i]), upperBound[i]);
+            chr->initGene(i, newvalue);
+        }
+    }
+}
+
+template <typename T>
+void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
+{
+    T mutrate = chr->mutrate();
+    if (mutrate == 0.0) return;
+
+    const std::vector<T>& lowerBound = chr->lowerBound();
+    const std::vector<T>& upperBound = chr->upperBound();
+
+    std::default_random_engine generator;
+    std::normal_distribution<T> distribution01(0.0, 1.0);
+
+    // looping on number of genes
+    for (int i = 0; i < chr->nbgene(); ++i)
+    {
+        // generating a random probability
+        if (galgo::proba(galgo::rng) <= mutrate)
+        {
+            T sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary;
+            T value = chr->get_value(i);
+
+            std::normal_distribution<T> distribution(value, sigma);
+            T newsigma = distribution(generator);
+            if (newsigma < chr->mutinfo()._sigma_lowest)
+                newsigma = chr->mutinfo()._sigma_lowest;
+
+            T norm01 = distribution01(generator);
+            T step = newsigma * norm01;
+
+            T newvalue = std::min(std::max(value + step, lowerBound[i]), upperBound[i]);
+            chr->initGene(i, newvalue);
+        }
+    }
+}
+
+template <typename T>
+void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
+{
+    T mutrate = chr->mutrate();
+    if (mutrate == 0.0) return;
+
+    const std::vector<T>& lowerBound = chr->lowerBound();
+    const std::vector<T>& upperBound = chr->upperBound();
+
+    std::default_random_engine generator;
+    std::normal_distribution<T> distribution01(0.0, 1.0);
+
+    T n = (T)chr->nbgene();
+    T teta1 = 1.0 / pow(2.0*n, 0.50);
+    T teta2 = 1.0 / pow(2.0*pow(n,0.50), 0.50);
+
+    // looping on number of genes
+    for (int i = 0; i < chr->nbgene(); ++i)
+    {
+        // generating a random probability
+        if (galgo::proba(galgo::rng) <= mutrate)
+        {
+            T value = chr->get_value(i);
+            T sigma = chr->get_sigma(i);
+
+            if (sigma < 0.00000000001) // never copied from parent
+            {
+                sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary; // initial sigma - Change as needed
+                if (sigma < chr->mutinfo()._sigma_lowest)
+                    sigma = chr->mutinfo()._sigma_lowest;
+                chr->sigma_update(i, sigma);
+            }
+            else
+            {
+                T factor1 = teta1 * distribution01(generator);
+                T factor2 = teta2 * distribution01(generator);
+
+                T newsigma = sigma * factor1 * factor2;
+                if (newsigma < chr->mutinfo()._sigma_lowest)
+                    newsigma = chr->mutinfo()._sigma_lowest;
+
+                chr->sigma_update(i, newsigma);
+                sigma = newsigma;
+            }
+
+            T norm01 = distribution01(generator);
+            T newvalue = std::min(std::max(value + sigma * norm01, lowerBound[i]), upperBound[i]);
+            chr->initGene(i, newvalue);
+        }
+    }
 }
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -386,13 +515,14 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
         // generating a random probability
         if (galgo::proba(galgo::rng) <= mutrate)
         {
-            T value = chr->getParamValueAt(i);
+            T value = chr->get_value(i);
+            T sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma 
+            if (sigma < chr->mutinfo()._sigma_lowest)
+                sigma = chr->mutinfo()._sigma_lowest;
 
-            T sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma - Change as needed
             T norm01;
 
-            // sigma decreasing blindely with number generation produced
-            // Should change based on efficiency of the search...
+            // sigma decreasing blindly with number generation produced
             for (int z = 1; z < chr->nogen() / 2; z++)
             {
                 norm01 = distribution01(generator);
@@ -429,22 +559,22 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
         // generating a random probability
         if (galgo::proba(galgo::rng) <= mutrate)
         {
-            T value = chr->getParamValueAt(i);
-            auto& p = chr->getParamAt(i);
+            T value = chr->get_value(i);
+            T sigma = chr->get_sigma(i);
+            //int iter = chr->get_sigma_iteration(i);
 
-            T sigma = p.sigma();
-            int iter = p.sigma_iteration();
-            if (iter == 0)
+            if (sigma < 0.00000000001) // never copied from parent
             {
-                sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma - Change as needed
-                p.sigma_update(sigma);
+                sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma
+                if (sigma < chr->mutinfo()._sigma_lowest)
+                    sigma = chr->mutinfo()._sigma_lowest;
+                chr->sigma_update(i, sigma);
             }
 
-            // Should change based on efficiency of the search...
             std::normal_distribution<T> distribution(value, sigma);
             T norm = distribution(generator);
-            T gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
-            chr->initGene(i, gaussian_value);
+            T new_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
+            chr->initGene(i, new_value);
         }
     }
 }

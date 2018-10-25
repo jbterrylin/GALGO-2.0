@@ -7,7 +7,36 @@
 
 namespace galgo {
 
-//=================================================================================================
+    //=================================================================================================
+
+enum class MutationType {
+    MutationSPM,
+    MutationBDM,
+    MutationUNM,
+    MutationGAM_UncorrelatedOneStepSizeFixed,
+    MutationGAM_UncorrelatedOneStepSizeBoundary,
+    MutationGAM_UncorrelatedNStepSize,
+    MutationGAM_sigma_adapting_per_generation,
+    MutationGAM_sigma_adapting_per_mutation,
+};
+
+template <typename T>
+struct MutationInfo
+{
+    MutationInfo<T>() :
+        _type(MutationType::MutationSPM),
+        _sigma(1.0),
+        _ratio_boundary(1.0 / 6.0),
+        _sigma_lowest(0.01)
+    {
+    }
+
+    MutationType _type;
+    T _sigma;
+    T _ratio_boundary;
+    T _sigma_lowest;
+};
+
 
 template <typename T>
 class GeneticAlgorithm
@@ -33,24 +62,26 @@ private:
 public: 
    // objective function pointer
    Func<T> Objective; 
+
    // selection method initialized to roulette wheel selection                                   
    void (*Selection)(Population<T>&) = RWS;  
+
    // cross-over method initialized to 1-point cross-over                                
    void (*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
 
    // mutation method initialized to single-point mutation 
-   //void (*Mutation)(CHR<T>&) = SPM;  
-   //void (*Mutation)(CHR<T>&) = GAM_sigma_adapting_per_generation;
-   void (*Mutation)(CHR<T>&) = GAM_sigma_adapting_per_mutation;
+   void (*Mutation)(CHR<T>&) = SPM;
 
    // adaptation to constraint(s) method                                        
    void (*Adaptation)(Population<T>&) = nullptr; 
+
    // constraint(s)                               
    std::vector<T> (*Constraint)(const std::vector<T>&) = nullptr; 
 
+   MutationInfo<T> mutinfo;
+
    T covrate = .50;   // cross-over rate
    T mutrate = .05;   // mutation rate   
-   //T mutrate = 1.00;   // mutation rate   
    T SP = 1.5;        // selective pressure for RSP selection method 
    T tolerance = 0.0; // terminal condition (inactive if equal to zero)
                  
@@ -62,11 +93,28 @@ public:
 
    // constructor
    template <int...N>
-   GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, const Parameter<T,N>&...args);
+   GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
+
    // run genetic algorithm
    void run();
+
    // return best chromosome 
    const CHR<T>& result() const;
+
+   void setMutation(MutationInfo<T> mt)
+   {
+       mutinfo = mt;
+       if (mt._type == MutationType::MutationSPM) { Mutation = SPM; }
+       else if (mt._type == MutationType::MutationBDM) { Mutation = BDM; }
+       else if (mt._type == MutationType::MutationUNM) { Mutation = UNM; }
+       else if (mt._type == MutationType::MutationGAM_UncorrelatedOneStepSizeFixed) { Mutation = GAM_UncorrelatedOneStepSizeFixed; }
+       else if (mt._type == MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary) { Mutation = GAM_UncorrelatedOneStepSizeBoundary; }
+       else if (mt._type == MutationType::MutationGAM_UncorrelatedNStepSize) { Mutation = GAM_UncorrelatedNStepSize; }
+       else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_generation) { Mutation = GAM_sigma_adapting_per_generation; }
+       else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_mutation) { Mutation = GAM_sigma_adapting_per_mutation; }
+       else Mutation = SPM;
+   }
+
 
 private:
    int nbbit;     // total number of bits per chromosome
@@ -93,8 +141,10 @@ private:
    
 // constructor
 template <typename T> template <int...N>
-GeneticAlgorithm<T>::GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, const Parameter<T,N>&...args)
+GeneticAlgorithm<T>::GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
 {
+    this->setMutation(mutinfo);
+
    this->Objective = objective;
    // getting total number of bits per chromosome
    this->nbbit = sum(N...);

@@ -128,16 +128,22 @@ void Population<T>::evolution()
 {   
    // initializing mating population index
    matidx = 0;
+
    // selecting mating population
    ptr->Selection(*this);
+
    // applying elitism if required
    this->elitism(); 
+
    // crossing-over mating population
    this->recombination();
+
    // completing new population
    this->completion();
+
    // moving new population into current population for next generation
    curpop = std::move(newpop);
+
    // updating population
    this->updating(); 
 }
