@@ -535,9 +535,9 @@ void GAM_UncorrelatedOneStepSizeFixed(galgo::CHR<T>& chr)
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    T sigma = chr->mutinfo()._sigma;
-
-    std::default_random_engine generator;
+    T n = (T)chr->nbgene();
+    T tau = 1.0 / pow(n, 0.50);
+    
     std::normal_distribution<T> distribution01(0.0, 1.0);
 
     // looping on number of genes
@@ -547,13 +547,22 @@ void GAM_UncorrelatedOneStepSizeFixed(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
+            T sigma = chr->get_sigma(i);
 
-            std::normal_distribution<T> distribution(value, sigma);
-            T newsigma = distribution(generator);
+            if (sigma < 0.00000000001) // first time
+            {
+                sigma = chr->mutinfo()._sigma;
+                if (sigma < chr->mutinfo()._sigma_lowest)
+                    sigma = chr->mutinfo()._sigma_lowest;
+                chr->sigma_update(i, sigma);
+            }
+
+            T newsigma = sigma * std::exp(tau * distribution01(galgo::rng));
             if (newsigma < chr->mutinfo()._sigma_lowest)
                 newsigma = chr->mutinfo()._sigma_lowest;
+            chr->sigma_update(i, newsigma);
 
-            T norm01 = distribution01(generator);
+            T norm01 = distribution01(galgo::rng);
             T step = newsigma * norm01;
 
             T newvalue = std::min(std::max(value + step, lowerBound[i]), upperBound[i]);
@@ -571,7 +580,9 @@ void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::default_random_engine generator;
+    T n = (T)chr->nbgene();
+    T tau = 1.0 / pow(n, 0.50);
+
     std::normal_distribution<T> distribution01(0.0, 1.0);
 
     // looping on number of genes
@@ -580,15 +591,24 @@ void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
         // generating a random probability
         if (galgo::proba(galgo::rng) <= mutrate)
         {
-            T sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary;
             T value = chr->get_value(i);
+            T sigma = chr->get_sigma(i);
 
-            std::normal_distribution<T> distribution(value, sigma);
-            T newsigma = distribution(generator);
+            if (sigma < 0.00000000001) // first time
+            {
+                //sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary;
+                sigma = chr->mutinfo()._sigma;
+                if (sigma < chr->mutinfo()._sigma_lowest)
+                    sigma = chr->mutinfo()._sigma_lowest;
+                chr->sigma_update(i, sigma);
+            }
+
+            T newsigma = sigma * std::exp(tau * distribution01(galgo::rng));
             if (newsigma < chr->mutinfo()._sigma_lowest)
                 newsigma = chr->mutinfo()._sigma_lowest;
+            chr->sigma_update(i, newsigma);
 
-            T norm01 = distribution01(generator);
+            T norm01 = distribution01(galgo::rng);
             T step = newsigma * norm01;
 
             T newvalue = std::min(std::max(value + step, lowerBound[i]), upperBound[i]);
@@ -606,12 +626,11 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::default_random_engine generator;
     std::normal_distribution<T> distribution01(0.0, 1.0);
 
     T n = (T)chr->nbgene();
-    T teta1 = 1.0 / pow(2.0*n, 0.50);
-    T teta2 = 1.0 / pow(2.0*pow(n,0.50), 0.50);
+    T tau1 = 1.0 / pow(2.0*n, 0.50);
+    T tau2 = 1.0 / pow(2.0*pow(n,0.50), 0.50);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i)
@@ -631,8 +650,8 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
             }
             else
             {
-                T factor1 = teta1 * distribution01(generator);
-                T factor2 = teta2 * distribution01(generator);
+                T factor1 = std::exp(tau1 * distribution01(galgo::rng));
+                T factor2 = std::exp(tau2 * distribution01(galgo::rng));
 
                 T newsigma = sigma * factor1 * factor2;
                 if (newsigma < chr->mutinfo()._sigma_lowest)
@@ -642,7 +661,7 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
                 sigma = newsigma;
             }
 
-            T norm01 = distribution01(generator);
+            T norm01 = distribution01(galgo::rng);
             T newvalue = std::min(std::max(value + sigma * norm01, lowerBound[i]), upperBound[i]);
             chr->initGene(i, newvalue);
         }
