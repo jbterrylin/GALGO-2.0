@@ -300,7 +300,7 @@ void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, galg
     int idx2 = galgo::uniform<int>(0, x.matsize());
 
     // choosing randomly a position for cross-over
-    int pos = galgo::uniform<int>(0, chr1->size());
+    int pos = galgo::uniform<int>(0, chr1->nbgene());
 
     T r = chr1->recombination_ratio();
     const galgo::Chromosome<T>& chrmat1 = *x[idx1];
