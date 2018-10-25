@@ -58,6 +58,8 @@ namespace galgo {
         T mutrate() const;
         const MutationInfo<T>& mutinfo() const;
 
+        T recombination_ratio() const;
+
         // return number of genes in chromosome
         int nbgene() const;
         // return numero of generation this chromosome belongs to
@@ -399,6 +401,12 @@ namespace galgo {
     inline T Chromosome<T>::mutrate() const
     {
         return ptr->mutrate;
+    }
+
+    template <typename T>
+    inline T Chromosome<T>::recombination_ratio() const
+    {
+        return ptr->recombination_ratio;
     }
 
     template <typename T>

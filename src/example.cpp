@@ -180,16 +180,16 @@ int main()
     using _TYPE = float;
     galgo::MutationInfo<_TYPE> mutinfo;
 
-    //mutinfo._type = galgo::MutationType::MutationSPM;
+    mutinfo._type = galgo::MutationType::MutationSPM;
     //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeFixed;
     //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
-    mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSize;
+    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSize;
     //mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_generation;
     //mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_mutation;
 
     const int POPUL     = 100;
     const int N         = 800;
-    const _TYPE MUTRATE = 0.95;
+    const _TYPE MUTRATE = 0.05;
     const int NBIT      = 64;
 
     {

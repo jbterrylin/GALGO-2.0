@@ -246,6 +246,128 @@ void TRS(galgo::Population<T>& x)
 // CROSS-OVER METHODS
 
 /*-------------------------------------------------------------------------------------------------*/
+template <typename T>
+void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+{
+    // choosing randomly 2 chromosomes from mating population
+    int idx1 = galgo::uniform<int>(0, x.matsize());
+    int idx2 = galgo::uniform<int>(0, x.matsize());
+
+    // choosing randomly a position for cross-over
+    int pos = galgo::uniform<int>(0, chr1->nbgene());
+
+    T r = chr1->recombination_ratio();
+    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+
+    for (int i = 0; i < pos; i++)
+    {
+        chr1->initGene(i, chrmat1.get_value(i));
+    }
+    for (int i = pos; i < chr1->nbgene(); i++)
+    {
+        chr1->initGene(i, r * chrmat2.get_value(i) + (1.0 - r) * chrmat1.get_value(i));
+    }
+
+    for (int i = 0; i < pos; i++)
+    {
+        chr2->initGene(i, chrmat2.get_value(i));
+    }
+    for (int i = pos; i < chr1->nbgene(); i++)
+    {
+        chr2->initGene(i, r * chrmat1.get_value(i) + (1.0 - r) * chrmat2.get_value(i));
+    }
+
+    // Transmit sigma
+    // *x[idx1] is operator[](int pos) is access element in mating population at position pos
+    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+    for (int i = 0; i < chr1->nbgene(); i++)
+    {
+        chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+    }
+    for (int i = 0; i < chr2->nbgene(); i++)
+    {
+        chr2->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+    }
+}
+
+template <typename T>
+void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+{
+    // choosing randomly 2 chromosomes from mating population
+    int idx1 = galgo::uniform<int>(0, x.matsize());
+    int idx2 = galgo::uniform<int>(0, x.matsize());
+
+    // choosing randomly a position for cross-over
+    int pos = galgo::uniform<int>(0, chr1->size());
+
+    T r = chr1->recombination_ratio();
+    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+
+    for (int i = 0; i < chr1->nbgene(); i++)
+    {
+        chr1->initGene(i, chrmat1.get_value(i));
+    }
+    int i = pos;
+    {
+        chr1->initGene(i, r * chrmat2.get_value(i) + (1.0 - r) * chrmat1.get_value(i));
+    }
+
+    for (int i = 0; i < chr2->nbgene(); i++)
+    {
+        chr2->initGene(i, chrmat2.get_value(i));
+    }
+    int i = pos;
+    {
+        chr2->initGene(i, r * chrmat1.get_value(i) + (1.0 - r) * chrmat2.get_value(i));
+    }
+
+    // Transmit sigma
+    // *x[idx1] is operator[](int pos) is access element in mating population at position pos
+    for (int i = 0; i < chr1->nbgene(); i++)
+    {
+        chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+    }
+    for (int i = 0; i < chr2->nbgene(); i++)
+    {
+        chr2->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+    }
+}
+
+template <typename T>
+void RealValuedWholeArithmeticRecombination(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+{
+    // choosing randomly 2 chromosomes from mating population
+    int idx1 = galgo::uniform<int>(0, x.matsize());
+    int idx2 = galgo::uniform<int>(0, x.matsize());
+
+    T r = chr1->recombination_ratio();
+    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+
+    for (int i = 0; i < chr1->nbgene(); i++)
+    {
+        chr1->initGene(i, r * chrmat2.get_value(i) + (1.0 - r) * chrmat1.get_value(i));
+    }
+    for (int i = 0; i < chr2->nbgene(); i++)
+    {
+        chr2->initGene(i, r * chrmat1.get_value(i) + (1.0 - r) * chrmat2.get_value(i));
+    }
+
+    // Transmit sigma
+    // *x[idx1] is operator[](int pos) is access element in mating population at position pos
+    for (int i = 0; i < chr1->nbgene(); i++)
+    {
+        chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+    }
+    for (int i = 0; i < chr2->nbgene(); i++)
+    {
+        chr2->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+    }
+}
+
 
 // one-point random cross-over of 2 chromosomes
 template <typename T>
@@ -264,8 +386,6 @@ void P1XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr
 
    // Transmit sigma
    // *x[idx1] is operator[](int pos) is access element in mating population at position pos
-   const galgo::Chromosome<T>& chrmat1 = *x[idx1];
-   const galgo::Chromosome<T>& chrmat2 = *x[idx2];
    for (int i = 0; i < chr1->nbgene(); i++)
    {
        chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i)+chrmat2.get_sigma(i) ));

@@ -67,7 +67,8 @@ public:
    void (*Selection)(Population<T>&) = RWS;  
 
    // cross-over method initialized to 1-point cross-over                                
-   void (*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
+   //void (*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
+   void(*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = RealValuedWholeArithmeticRecombination;
 
    // mutation method initialized to single-point mutation 
    void (*Mutation)(CHR<T>&) = SPM;
@@ -84,6 +85,7 @@ public:
    T mutrate = .05;   // mutation rate   
    T SP = 1.5;        // selective pressure for RSP selection method 
    T tolerance = 0.0; // terminal condition (inactive if equal to zero)
+   T recombination_ratio = 0.55; // Real Valued crossover
                  
    int elitpop = 1;   // elit population size
    int matsize;       // mating pool size, set to popsize by default
