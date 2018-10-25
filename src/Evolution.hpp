@@ -678,7 +678,6 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::default_random_engine generator;
     std::normal_distribution<T> distribution01(0.0, 1.0);
 
     // looping on number of genes
@@ -697,12 +696,12 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
             // sigma decreasing blindly with number generation produced
             for (int z = 1; z < chr->nogen() / 2; z++)
             {
-                norm01 = distribution01(generator);
+                norm01 = distribution01(galgo::rng);
                 sigma = std::max(T(0), (T)(sigma * exp(norm01)));
             }
 
             std::normal_distribution<T> distribution(value, sigma);
-            T norm = distribution(generator);
+            T norm = distribution(galgo::rng);
             T gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
             chr->initGene(i, gaussian_value);
         }
@@ -722,7 +721,6 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::default_random_engine generator;
     std::normal_distribution<T> distribution01(0.0, 1.0);
 
     // looping on number of genes
@@ -744,7 +742,7 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
             }
 
             std::normal_distribution<T> distribution(value, sigma);
-            T norm = distribution(generator);
+            T norm = distribution(galgo::rng);
             T new_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
             chr->initGene(i, new_value);
         }
