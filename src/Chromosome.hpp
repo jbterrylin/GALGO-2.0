@@ -330,9 +330,6 @@ namespace galgo {
 #endif
 
         chr.replace(start, end - start + 1, x.chr, start, end - start + 1);
-
-        // TODO - Transmit sigma... transmit_sigma(T copysigma)
-        //sigma_update(0, x._sigma[0]);
     }
 
     /*-------------------------------------------------------------------------------------------------*/

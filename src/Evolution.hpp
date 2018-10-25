@@ -262,10 +262,18 @@ void P1XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr
    chr1->setPortion(*x[idx2], pos + 1);
    chr2->setPortion(*x[idx1], pos + 1);
 
-   // TODO - Transmit sigma...
-   //int z = pos / (chr1->size() / chr1->nbgene());
-   //chr1->sigma_update(z, (*x[idx1]).get_sigma(z));
-   //chr2->sigma_update(z, (*x[idx1]).get_sigma(z));
+   // Transmit sigma
+   // *x[idx1] is operator[](int pos) is access element in mating population at position pos
+   const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+   const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+   for (int i = 0; i < chr1->nbgene(); i++)
+   {
+       chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i)+chrmat2.get_sigma(i) ));
+   }
+   for (int i = 0; i < chr2->nbgene(); i++)
+   {
+       chr2->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i) ));
+   }
 }
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -290,6 +298,19 @@ void P2XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr
    chr2->setPortion(*x[idx1], m + 1, M);
    chr1->setPortion(*x[idx1], M + 1);
    chr2->setPortion(*x[idx2], M + 1);
+
+   // Transmit sigma
+   // *x[idx1] is operator[](int pos) is access element in mating population at position pos
+   const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+   const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+   for (int i = 0; i < chr1->nbgene(); i++)
+   {
+       chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+   }
+   for (int i = 0; i < chr2->nbgene(); i++)
+   {
+       chr2->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+   }
 }
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -313,6 +334,19 @@ void UXO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2
          chr1->addBit(x[idx2]->getBit(j));
          chr2->addBit(x[idx1]->getBit(j));
       }
+   }
+
+   // Transmit sigma
+   // *x[idx1] is operator[](int pos) is access element in mating population at position pos
+   const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+   const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+   for (int i = 0; i < chr1->nbgene(); i++)
+   {
+       chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+   }
+   for (int i = 0; i < chr2->nbgene(); i++)
+   {
+       chr2->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
    }
 }
 

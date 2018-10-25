@@ -27,7 +27,7 @@ struct MutationInfo
         _type(MutationType::MutationSPM),
         _sigma(1.0),
         _ratio_boundary(1.0 / 6.0),
-        _sigma_lowest(0.01)
+        _sigma_lowest(0.0001)
     {
     }
 
