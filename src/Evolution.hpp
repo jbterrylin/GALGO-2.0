@@ -596,8 +596,7 @@ void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
 
             if (sigma < 0.00000000001) // first time
             {
-                //sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary;
-                sigma = chr->mutinfo()._sigma;
+                sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary;
                 if (sigma < chr->mutinfo()._sigma_lowest)
                     sigma = chr->mutinfo()._sigma_lowest;
                 chr->sigma_update(i, sigma);
@@ -643,7 +642,7 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
 
             if (sigma < 0.00000000001) // never copied from parent
             {
-                sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary; // initial sigma - Change as needed
+                sigma = chr->mutinfo()._sigma;
                 if (sigma < chr->mutinfo()._sigma_lowest)
                     sigma = chr->mutinfo()._sigma_lowest;
                 chr->sigma_update(i, sigma);
