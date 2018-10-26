@@ -177,82 +177,86 @@ int main()
     //galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
     //ga.Constraint = MyConstraint;
 
-    using _TYPE = float;
+    using _TYPE = double;
     galgo::MutationInfo<_TYPE> mutinfo;
 
     //mutinfo._type = galgo::MutationType::MutationSPM;
     //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeFixed;
-    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
-    mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSize;
+    mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
+    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSize;
+    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
     //mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_generation;
     //mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_mutation;
 
     const int POPUL     = 100;
-    const int N         = 1800;
-    const _TYPE MUTRATE = 0.85;
-    const int NBIT      = 64;
+    const int N         = 3000;
+    const _TYPE MUTRATE = 0.05;
+    const int NBIT      = 63;
 
+    //while (true)
     {
-        std::cout << std::endl;
-        std::cout << "SumSameAsPrd function 2x2 = 2+2";
-        galgo::Parameter<_TYPE, NBIT> par1({ 1, 10 });
-        galgo::Parameter<_TYPE, NBIT> par2({ 1, 10 });
-        galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
-        ga.mutrate = MUTRATE;
-        ga.run();
-    }
-    
-    {
-        std::cout << std::endl;
-        std::cout << "Rosenbrock function";
-        galgo::Parameter<_TYPE, NBIT > par1({ -2.0,2.0 });
-        galgo::Parameter<_TYPE, NBIT > par2({ -2.0,2.0 });
-        galgo::GeneticAlgorithm<_TYPE> ga(MyObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
-        ga.mutrate = MUTRATE;
-        ga.run();
-    }
+        {
+            std::cout << std::endl;
+            std::cout << "SumSameAsPrd function 2x2 = 2+2";
+            galgo::Parameter<_TYPE, NBIT> par1({ 1, 10 });
+            galgo::Parameter<_TYPE, NBIT> par2({ 1, 10 });
+            galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+            ga.mutrate = MUTRATE;
+            ga.run();
+        }
 
-    {
-        std::cout << std::endl;
-        std::cout << "Ackley function";
-        galgo::Parameter<_TYPE, NBIT > par1({ -4.0,5.0 });
-        galgo::Parameter<_TYPE, NBIT > par2({ -4.0,5.0 });
-        galgo::GeneticAlgorithm<_TYPE> ga(AckleyObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
-        ga.mutrate = MUTRATE;
-        ga.run();
-    }
-    
-    {
-        std::cout << std::endl;
-        std::cout << "Rastrigin function";
-        galgo::Parameter<_TYPE, NBIT > par1({ -4.0,5.0 });
-        galgo::Parameter<_TYPE, NBIT > par2({ -4.0,5.0 });
-        galgo::Parameter<_TYPE, NBIT > par3({ -4.0,5.0 });
-        galgo::GeneticAlgorithm<_TYPE> ga(rastriginObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
-        ga.mutrate = MUTRATE;
-        ga.run();
-    }
+        {
+            std::cout << std::endl;
+            std::cout << "Rosenbrock function";
+            galgo::Parameter<_TYPE, NBIT > par1({ -2.0,2.0 });
+            galgo::Parameter<_TYPE, NBIT > par2({ -2.0,2.0 });
+            galgo::GeneticAlgorithm<_TYPE> ga(MyObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+            ga.mutrate = MUTRATE;
+            ga.run();
+        }
 
-    {
-        std::cout << std::endl;
-        std::cout << "StyblinskiTang function Min = (-2.903534,...,--2.903534)";
-        galgo::Parameter<_TYPE, NBIT > par1({ -4.0,4.0 });
-        galgo::Parameter<_TYPE, NBIT > par2({ -4.0,4.0 });
-        galgo::Parameter<_TYPE, NBIT > par3({ -4.0,4.0 });
-        galgo::GeneticAlgorithm<_TYPE> ga(StyblinskiTangObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
-        ga.mutrate = MUTRATE;
-        ga.run();
-    }
+        {
+            std::cout << std::endl;
+            std::cout << "Ackley function";
+            galgo::Parameter<_TYPE, NBIT > par1({ -4.0,5.0 });
+            galgo::Parameter<_TYPE, NBIT > par2({ -4.0,5.0 });
+            galgo::GeneticAlgorithm<_TYPE> ga(AckleyObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+            ga.mutrate = MUTRATE;
+            ga.run();
+        }
 
-    {
-        std::cout << std::endl;
-        std::cout << "Griewank function";
-        galgo::Parameter<_TYPE, NBIT > par1({ -4.0,5.0 });
-        galgo::Parameter<_TYPE, NBIT > par2({ -4.0,5.0 });
-        galgo::Parameter<_TYPE, NBIT > par3({ -4.0,5.0 });
-        galgo::GeneticAlgorithm<_TYPE> ga(GriewankObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
-        ga.mutrate = MUTRATE;
-        ga.run();
+        {
+            std::cout << std::endl;
+            std::cout << "Rastrigin function";
+            galgo::Parameter<_TYPE, NBIT > par1({ -4.0,5.0 });
+            galgo::Parameter<_TYPE, NBIT > par2({ -4.0,5.0 });
+            galgo::Parameter<_TYPE, NBIT > par3({ -4.0,5.0 });
+            galgo::GeneticAlgorithm<_TYPE> ga(rastriginObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
+            ga.mutrate = MUTRATE;
+            ga.run();
+        }
+
+        {
+            std::cout << std::endl;
+            std::cout << "StyblinskiTang function Min = (-2.903534,...,--2.903534)";
+            galgo::Parameter<_TYPE, NBIT > par1({ -4.0,4.0 });
+            galgo::Parameter<_TYPE, NBIT > par2({ -4.0,4.0 });
+            galgo::Parameter<_TYPE, NBIT > par3({ -4.0,4.0 });
+            galgo::GeneticAlgorithm<_TYPE> ga(StyblinskiTangObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
+            ga.mutrate = MUTRATE;
+            ga.run();
+        }
+
+        {
+            std::cout << std::endl;
+            std::cout << "Griewank function";
+            galgo::Parameter<_TYPE, NBIT > par1({ -4.0,5.0 });
+            galgo::Parameter<_TYPE, NBIT > par2({ -4.0,5.0 });
+            galgo::Parameter<_TYPE, NBIT > par3({ -4.0,5.0 });
+            galgo::GeneticAlgorithm<_TYPE> ga(GriewankObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
+            ga.mutrate = MUTRATE;
+            ga.run();
+        }
     }
 
     system("pause");

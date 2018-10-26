@@ -44,7 +44,7 @@ inline T uniform(T min, T max)
     }
     #endif
  
-    return min + proba(rng) * (max - min);
+    return (T) ( min + proba(rng) * (max - min));
 }
 
 /*-------------------------------------------------------------------------------------------------*/

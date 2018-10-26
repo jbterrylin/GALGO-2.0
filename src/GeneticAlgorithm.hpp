@@ -16,6 +16,7 @@ enum class MutationType {
     MutationGAM_UncorrelatedOneStepSizeFixed,
     MutationGAM_UncorrelatedOneStepSizeBoundary,
     MutationGAM_UncorrelatedNStepSize,
+    MutationGAM_UncorrelatedNStepSizeBoundary,
     MutationGAM_sigma_adapting_per_generation,
     MutationGAM_sigma_adapting_per_mutation,
 };
@@ -85,7 +86,7 @@ public:
    T mutrate = .05;   // mutation rate   
    T SP = 1.5;        // selective pressure for RSP selection method 
    T tolerance = 0.0; // terminal condition (inactive if equal to zero)
-   T recombination_ratio = 0.55; // Real Valued crossover
+   T recombination_ratio = 0.55; // Real Valued crossover ratio
                  
    int elitpop = 1;   // elit population size
    int matsize;       // mating pool size, set to popsize by default
@@ -106,14 +107,15 @@ public:
    void setMutation(MutationInfo<T> mt)
    {
        mutinfo = mt;
-       if (mt._type == MutationType::MutationSPM) { Mutation = SPM; }
-       else if (mt._type == MutationType::MutationBDM) { Mutation = BDM; }
-       else if (mt._type == MutationType::MutationUNM) { Mutation = UNM; }
-       else if (mt._type == MutationType::MutationGAM_UncorrelatedOneStepSizeFixed) { Mutation = GAM_UncorrelatedOneStepSizeFixed; }
-       else if (mt._type == MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary) { Mutation = GAM_UncorrelatedOneStepSizeBoundary; }
-       else if (mt._type == MutationType::MutationGAM_UncorrelatedNStepSize) { Mutation = GAM_UncorrelatedNStepSize; }
-       else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_generation) { Mutation = GAM_sigma_adapting_per_generation; }
-       else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_mutation) { Mutation = GAM_sigma_adapting_per_mutation; }
+       if (mt._type == MutationType::MutationSPM)       { Mutation = SPM; }
+       else if (mt._type == MutationType::MutationBDM)  { Mutation = BDM; }
+       else if (mt._type == MutationType::MutationUNM)  { Mutation = UNM; }
+       else if (mt._type == MutationType::MutationGAM_UncorrelatedOneStepSizeFixed)     { Mutation = GAM_UncorrelatedOneStepSizeFixed; }
+       else if (mt._type == MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary)  { Mutation = GAM_UncorrelatedOneStepSizeBoundary; }
+       else if (mt._type == MutationType::MutationGAM_UncorrelatedNStepSize)            { Mutation = GAM_UncorrelatedNStepSize; }
+       else if (mt._type == MutationType::MutationGAM_UncorrelatedNStepSizeBoundary)    { Mutation = GAM_UncorrelatedNStepSizeBoundary; }
+       else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_generation)    { Mutation = GAM_sigma_adapting_per_generation; }
+       else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_mutation)      { Mutation = GAM_sigma_adapting_per_mutation; }
        else Mutation = SPM;
    }
 
@@ -257,16 +259,22 @@ void GeneticAlgorithm<T>::run()
    if (output) print();
     
    // starting population evolution
-   for (nogen = 1; nogen <= nbgen; ++nogen) {
+   for (nogen = 1; nogen <= nbgen; ++nogen)
+   {
       // evolving population
       pop.evolution();
+
       // getting best current result
       bestResult = pop(0)->getTotal();
+
       // outputting results
       if (output) print();
+
       // checking convergence
-      if (tolerance != 0.0) {
-         if (fabs(bestResult - prevBestResult) < fabs(tolerance)) {
+      if (tolerance != 0.0) 
+      {
+         if (fabs(bestResult - prevBestResult) < fabs(tolerance)) 
+         {
             break;
          }
          prevBestResult = bestResult;

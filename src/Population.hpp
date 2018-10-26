@@ -83,7 +83,7 @@ template <typename T>
 Population<T>::Population(const GeneticAlgorithm<T>& ga)
 {
    ptr = &ga;   
-   nbrcrov = floor(ga.covrate * (ga.popsize - ga.elitpop));
+   nbrcrov = (int)floor(ga.covrate * (ga.popsize - ga.elitpop));
    // adjusting nbrcrov (must be an even number)
    if (nbrcrov % 2 != 0) nbrcrov -= 1;
    // for convenience, we add elitpop to nbrcrov

@@ -87,7 +87,7 @@ private:
    }
    // encoding known unsigned integer
    std::string encode(T z) const override {
-      uint64_t value = Randomize<N>::MAXVAL * (z - data[0]) / (data[1] - data[0]);
+      uint64_t value = (uint64_t ) ( Randomize<N>::MAXVAL * (z - data[0]) / (data[1] - data[0]) );
       std::string str = GetBinary(value);
       return str.substr(str.size() - N, N);
    }

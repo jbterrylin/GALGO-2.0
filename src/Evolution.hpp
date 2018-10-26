@@ -667,6 +667,57 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
     }
 }
 
+template <typename T>
+void GAM_UncorrelatedNStepSizeBoundary(galgo::CHR<T>& chr)
+{
+    T mutrate = chr->mutrate();
+    if (mutrate == 0.0) return;
+
+    const std::vector<T>& lowerBound = chr->lowerBound();
+    const std::vector<T>& upperBound = chr->upperBound();
+
+    std::normal_distribution<T> distribution01(0.0, 1.0);
+
+    T n = (T)chr->nbgene();
+    T tau1 = 1.0 / pow(2.0*n, 0.50);
+    T tau2 = 1.0 / pow(2.0*pow(n, 0.50), 0.50);
+
+    // looping on number of genes
+    for (int i = 0; i < chr->nbgene(); ++i)
+    {
+        // generating a random probability
+        if (galgo::proba(galgo::rng) <= mutrate)
+        {
+            T value = chr->get_value(i);
+            T sigma = chr->get_sigma(i);
+
+            if (sigma < 0.00000000001) // never copied from parent
+            {
+                sigma = (upperBound[i] - lowerBound[i]) * chr->mutinfo()._ratio_boundary;
+                if (sigma < chr->mutinfo()._sigma_lowest)
+                    sigma = chr->mutinfo()._sigma_lowest;
+                chr->sigma_update(i, sigma);
+            }
+            else
+            {
+                T factor1 = std::exp(tau1 * distribution01(galgo::rng));
+                T factor2 = std::exp(tau2 * distribution01(galgo::rng));
+
+                T newsigma = sigma * factor1 * factor2;
+                if (newsigma < chr->mutinfo()._sigma_lowest)
+                    newsigma = chr->mutinfo()._sigma_lowest;
+
+                chr->sigma_update(i, newsigma);
+                sigma = newsigma;
+            }
+
+            T norm01 = distribution01(galgo::rng);
+            T newvalue = std::min(std::max(value + sigma * norm01, lowerBound[i]), upperBound[i]);
+            chr->initGene(i, newvalue);
+        }
+    }
+}
+
 /*-------------------------------------------------------------------------------------------------*/
 // Gaussian mutation: replacing a chromosome gene by near guassian value
 template <typename T>
