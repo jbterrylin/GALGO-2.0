@@ -280,8 +280,6 @@ void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, galg
 
     // Transmit sigma
     // *x[idx1] is operator[](int pos) is access element in mating population at position pos
-    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
-    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
     for (int i = 0; i < chr1->nbgene(); i++)
     {
         chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
@@ -310,19 +308,13 @@ void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, galg
     {
         chr1->initGene(i, chrmat1.get_value(i));
     }
-    int i = pos;
-    {
-        chr1->initGene(i, r * chrmat2.get_value(i) + (1.0 - r) * chrmat1.get_value(i));
-    }
+    chr1->initGene(pos, r * chrmat2.get_value(pos) + (1.0 - r) * chrmat1.get_value(pos));
 
     for (int i = 0; i < chr2->nbgene(); i++)
     {
         chr2->initGene(i, chrmat2.get_value(i));
     }
-    int i = pos;
-    {
-        chr2->initGene(i, r * chrmat1.get_value(i) + (1.0 - r) * chrmat2.get_value(i));
-    }
+    chr2->initGene(pos, r * chrmat1.get_value(pos) + (1.0 - r) * chrmat2.get_value(pos));
 
     // Transmit sigma
     // *x[idx1] is operator[](int pos) is access element in mating population at position pos
