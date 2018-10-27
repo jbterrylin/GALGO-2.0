@@ -176,7 +176,7 @@ int main()
     // galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
     // ga.Constraint = MyConstraint;
 
-    using _TYPE = double;        // Suppport float, double, char, int, long, ... for parameters
+    using _TYPE = float;        // Suppport float, double, char, int, long, ... for parameters
     galgo::MutationInfo<_TYPE> mutinfo;
 
     //mutinfo._type = galgo::MutationType::MutationSPM;
