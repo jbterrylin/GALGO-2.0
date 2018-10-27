@@ -16,27 +16,27 @@ template <typename T>
 double Ackley(T x, T y);
 
 // Rosenbrock objective class example
-template <typename K, typename T>
+template <typename T>
 class RosenbrockObjective
 {
 public:
    // objective function example : Rosenbrock function
    // minimizing f(x,y) = (1 - x)^2 + 100 * (y - x^2)^2
-   static std::vector<K> Objective(const std::vector<T>& x)
+   static std::vector<double> Objective(const std::vector<T>& x)
    {
-        K obj =  -(pow(1-x[0],2)+100*pow(x[1]-x[0]*x[0],2));
+        double obj =  -(pow(1-x[0],2)+100*pow(x[1]-x[0]*x[0],2));
         return {obj};
    }
    // NB: GALGO maximize by default so we will maximize -f(x,y)
 };
 
-template <typename K, typename T>
+template <typename T>
 class AckleyObjective
 {
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
-        K obj = -Ackley<T>(x[0], x[1]);
+        double obj = -Ackley<T>(x[0], x[1]);
         return { obj };
     }
 };
@@ -87,13 +87,13 @@ double pso_rastrigin(std::vector< T > particle)
     return (result);
 }
 
-template <typename K, typename T>
+template <typename T>
 class rastriginObjective
 {
 public:
-    static std::vector<K> Objective(const std::vector<T>& x)
+    static std::vector<double> Objective(const std::vector<T>& x)
     {
-        K obj = -pso_rastrigin(x);
+        double obj = -pso_rastrigin(x);
         return { obj };
     }
 };
@@ -112,13 +112,13 @@ double pso_griewank(std::vector< T > particle) {
     return (1. + (sum / 4000.) - product);
 }
 
-template <typename K, typename T>
+template <typename T>
 class GriewankObjective
 {
 public:
-    static std::vector<K> Objective(const std::vector<T>& x)
+    static std::vector<double> Objective(const std::vector<T>& x)
     {
-        K obj = -pso_griewank(x);
+        double obj = -pso_griewank(x);
         return { obj };
     }
 };
@@ -139,22 +139,22 @@ double pso_styb_tang(std::vector< T > particle)
     return (result / 2.);
 }
 
-template <typename K, typename T>
+template <typename T>
 class StyblinskiTangObjective
 {
 public:
-    static std::vector<K> Objective(const std::vector<T>& x)
+    static std::vector<double> Objective(const std::vector<T>& x)
     {
-        K obj = -pso_styb_tang(x);
+        double obj = -pso_styb_tang(x);
         return { obj };
     }
 };
 
-template <typename K, typename T>
+template <typename T>
 class SumSameAsPrdObjective
 {
 public:
-    static std::vector<K> Objective(const std::vector<T>& x)
+    static std::vector<double> Objective(const std::vector<T>& x)
     {
         int ix = (int)x[0];
         int iy = (int)x[1];
@@ -165,7 +165,7 @@ public:
         double err = 1000 * diff * diff;;
         err += (100 * std::fabs(x[0] - ix)* std::fabs(x[0] - ix) + 100 * std::fabs(x[1] - iy)* std::fabs(x[1] - iy));
 
-        K obj = -(diff + err);
+        double obj = -(diff + err);
         return { obj };
     }
 };
@@ -194,7 +194,7 @@ int main()
     // TEST templates compiling
     // Generate all templates to see if compiling/running ok 
     //---------------------------------------------------
-    if (false) // set to true to test templates
+    if (true) // set to true to test templates
     {
         std::vector<galgo::MutationType> mutcases = {
             galgo::MutationType::MutationSPM,
@@ -242,7 +242,7 @@ int main()
                     std::cout << "SumSameAsPrd function 2x2 = 2+2";
                     galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 99 });
                     galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 99 });
-                    galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<double, _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+                    galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
                     ga.mutrate = MUTRATE;
                     ga.Selection = selectcases[s];
                     ga.CrossOver = crosscases[c];
@@ -263,7 +263,7 @@ int main()
             std::cout << "SumSameAsPrd function 2x2 = 2+2";
             galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 99 });
             galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 99 });
-            galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<double,_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+            galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;  
             ga.run();
         }
@@ -273,7 +273,7 @@ int main()
             std::cout << "Rosenbrock function";
             galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-2.0,(_TYPE)2.0 });
             galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-2.0,(_TYPE)2.0 });
-            galgo::GeneticAlgorithm<_TYPE> ga(RosenbrockObjective<double, _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+            galgo::GeneticAlgorithm<_TYPE> ga(RosenbrockObjective< _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;
             ga.run();
         }
@@ -283,7 +283,7 @@ int main()
             std::cout << "Ackley function";
             galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
-            galgo::GeneticAlgorithm<_TYPE> ga(AckleyObjective<double, _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+            galgo::GeneticAlgorithm<_TYPE> ga(AckleyObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;
             ga.run();
         }
@@ -294,7 +294,7 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
-            galgo::GeneticAlgorithm<_TYPE> ga(rastriginObjective<double, _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
+            galgo::GeneticAlgorithm<_TYPE> ga(rastriginObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
             ga.run();
         }
@@ -305,7 +305,7 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)4.0 });
             galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)4.0 });
             galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)4.0 });
-            galgo::GeneticAlgorithm<_TYPE> ga(StyblinskiTangObjective<double, _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
+            galgo::GeneticAlgorithm<_TYPE> ga(StyblinskiTangObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
             ga.run();
         }
@@ -316,7 +316,7 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
-            galgo::GeneticAlgorithm<_TYPE> ga(GriewankObjective<double, _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
+            galgo::GeneticAlgorithm<_TYPE> ga(GriewankObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
             ga.run();
         }

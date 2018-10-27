@@ -52,7 +52,7 @@ class GeneticAlgorithm
    friend class Chromosome;
 
    template <typename K>  using Func = std::vector<K> (*)(const std::vector<K>&);
-   template <typename K, typename T>  using FuncKT = std::vector<K>(*)(const std::vector<T>&);
+   template <typename T>  using FuncKT = std::vector<double>(*)(const std::vector<T>&);
 
 private:
    Population<T> pop;             // population of chromosomes
@@ -64,7 +64,7 @@ private:
 
 public: 
    // objective function pointer
-   FuncKT<double,T> Objective; 
+   FuncKT<T> Objective; 
 
    // selection method initialized to roulette wheel selection                                   
    void (*Selection)(Population<T>&) = RWS;  
@@ -98,7 +98,7 @@ public:
 
    // constructor
    template <int...N>
-   GeneticAlgorithm(FuncKT<double, T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
+   GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
 
    // run genetic algorithm
    void run();
@@ -147,7 +147,7 @@ private:
    
 // constructor
 template <typename T> template <int...N>
-GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<double, T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
+GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
 {
     this->setMutation(mutinfo);
 
