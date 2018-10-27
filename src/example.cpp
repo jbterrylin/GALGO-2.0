@@ -170,20 +170,9 @@ public:
     }
 };
 
-
-int main()
+template <typename _TYPE>
+void TEST_TYPE()
 {
-    // initializing parameters lower and upper bounds
-    // an initial value can be added inside the initializer list after the upper bound
-    // galgo::Parameter<double> par1({ -2.0,2.0 });
-    // galgo::Parameter<double> par2({ -2.0,2.0 });
-    // here both parameter will be encoded using 16 bits the default value inside the template declaration
-    // this value can be modified but has to remain between 1 and 64
-    // initiliazing genetic algorithm
-    // galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
-    // ga.Constraint = MyConstraint;
-
-    using _TYPE = float;                    // Suppport float, double, char, int, long, ... for parameters
     galgo::MutationInfo<_TYPE> mutinfo;     // Changes mutation info as desired
     mutinfo._sigma = 1.0;
     mutinfo._sigma_lowest = 0.01;
@@ -194,7 +183,7 @@ int main()
     // TEST templates compiling
     // Generate all templates to see if compiling/running ok 
     //---------------------------------------------------
-    if (true) // set to true to test templates
+    if (true) 
     {
         std::vector<galgo::MutationType> mutcases = {
             galgo::MutationType::MutationSPM,
@@ -226,8 +215,8 @@ int main()
             TRS<_TYPE>
         };
 
-        const int POPUL = 10;
-        const int N = 20;
+        const int POPUL = 5;
+        const int N = 5;
         const double MUTRATE = 0.05;
         const int NBIT = 32;
 
@@ -250,6 +239,41 @@ int main()
                 }
             }
         }
+    }
+}
+
+int main()
+{
+    // initializing parameters lower and upper bounds
+    // an initial value can be added inside the initializer list after the upper bound
+    // galgo::Parameter<double> par1({ -2.0,2.0 });
+    // galgo::Parameter<double> par2({ -2.0,2.0 });
+    // here both parameter will be encoded using 16 bits the default value inside the template declaration
+    // this value can be modified but has to remain between 1 and 64
+    // initiliazing genetic algorithm
+    // galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
+    // ga.Constraint = MyConstraint;
+
+    using _TYPE = double;                   // Suppport float, double, char, int, long, ... for parameters
+    galgo::MutationInfo<_TYPE> mutinfo;     // Changes mutation info as desired
+    mutinfo._sigma = 1.0;
+    mutinfo._sigma_lowest = 0.01;
+    mutinfo._ratio_boundary = 0.10;
+    mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
+
+    //---------------------------------------------------
+    // Generate all templates to see if compiling/running ok 
+    // set to if(true) to test templates
+    //---------------------------------------------------
+    if (false) 
+    {
+        TEST_TYPE<double>();
+        TEST_TYPE<float>();
+        TEST_TYPE<char>();
+        TEST_TYPE<int>();
+        TEST_TYPE<unsigned int>();
+        TEST_TYPE<long>();
+        TEST_TYPE<long long>();
     }
 
     const int POPUL = 100;

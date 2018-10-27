@@ -607,7 +607,7 @@ void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    double n = (T)chr->nbgene();
+    double n = (double)chr->nbgene();
     double tau = 1.0 / pow(n, 0.50);
 
     std::normal_distribution<double> distribution01(0.0, 1.0);
@@ -654,7 +654,7 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
 
     std::normal_distribution<double> distribution01(0.0, 1.0);
 
-    double n = (T)chr->nbgene();
+    double n = (double)chr->nbgene();
     double tau1 = 1.0 / pow(2.0*n, 0.50);
     double tau2 = 1.0 / pow(2.0*pow(n,0.50), 0.50);
 
@@ -705,7 +705,7 @@ void GAM_UncorrelatedNStepSizeBoundary(galgo::CHR<T>& chr)
 
     std::normal_distribution<double> distribution01(0.0, 1.0);
 
-    double n = (T)chr->nbgene();
+    double n = (double)chr->nbgene();
     double tau1 = 1.0 / pow(2.0*n, 0.50);
     double tau2 = 1.0 / pow(2.0*pow(n, 0.50), 0.50);
 
@@ -765,7 +765,7 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            double sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma 
+            double sigma = (double)((upperBound[i] - lowerBound[i]) / 6.0); // initial sigma 
             if (sigma < chr->mutinfo()._sigma_lowest)
                 sigma = chr->mutinfo()._sigma_lowest;
 
@@ -775,13 +775,13 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
             for (int z = 1; z < chr->nogen() / 2; z++)
             {
                 norm01 = distribution01(galgo::rng);
-                sigma = std::max(T(0), (T)(sigma * exp(norm01)));
+                sigma = std::max(double(0), sigma * exp(norm01));
             }
 
-            std::normal_distribution<double> distribution(value, sigma);
+            std::normal_distribution<double> distribution((double)value, sigma);
             double norm = distribution(galgo::rng);
-            T gaussian_value = (T)(std::min(std::max((T)norm, lowerBound[i]), upperBound[i]));
-            chr->initGene(i, gaussian_value);
+            T newvalue = (T)(std::min(std::max((T)norm, lowerBound[i]), upperBound[i]));
+            chr->initGene(i, newvalue);
         }
     }
 }
@@ -812,13 +812,13 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
 
             if (sigma < 0.00000000001) // never copied from parent
             {
-                sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma
+                sigma = (upperBound[i] - lowerBound[i]) / 6.0; // initial sigma
                 if (sigma < chr->mutinfo()._sigma_lowest)
                     sigma = chr->mutinfo()._sigma_lowest;
                 chr->sigma_update(i, sigma);
             }
 
-            std::normal_distribution<double> distribution(value, sigma);
+            std::normal_distribution<double> distribution((double)value, sigma);
             double norm = distribution(galgo::rng);
             T new_value = (T)(std::min(std::max((T)norm, lowerBound[i]), upperBound[i]));
             chr->initGene(i, new_value);
