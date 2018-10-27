@@ -42,15 +42,13 @@ public:
 };
 
 // constraints example:
-// 1) x * y + x - y + 1.5 <= 0
-// 2) 10 - x * y <= 0
 template <typename T>
 std::vector<double> MyConstraint(const std::vector<T>& x)
 {
    return 
    {
-       //x[0]*x[1]+x[0]-x[1]+1.5,
-       //10-x[0]*x[1]
+       //x[0]*x[1]+x[0]-x[1]+1.5,   // 1) x * y + x - y + 1.5 <= 0
+       //10-x[0]*x[1]               // 2) 10 - x * y <= 0
        x[0] - 2,    // x0 <= 2
        x[1] - 2     // x1 <= 2
    };
@@ -74,8 +72,6 @@ double Ackley(T x, T y)
 
 /*
 Rastrigin Function
-Requires <vector>, <math.h> and C++11
-Compilation: g++ fileName.cpp -std=c++11 -o progName
 */
 template <typename T>
 double pso_rastrigin(std::vector< T > particle)
@@ -100,7 +96,6 @@ public:
 
 /*
 Griewank Function
-Requires <vector>, <math.h> and C++11
 */
 template <typename T>
 double pso_griewank(std::vector< T > particle) {
@@ -125,8 +120,6 @@ public:
 
 /*
 Styblinski-Tang Function
-Requires <vector>, <math> and C++11
-Compilation: g++ fileName.cpp -std=c++11 -o progName
 Min = (-2.903534,...,--2.903534)
 */
 template <typename T>
@@ -170,6 +163,10 @@ public:
     }
 };
 
+//---------------------------------------------------
+// TEST templates compiling
+// Generate all templates (for a parameter type) to see if compiling/running ok 
+//---------------------------------------------------
 template <typename _TYPE>
 void TEST_TYPE()
 {
@@ -179,11 +176,6 @@ void TEST_TYPE()
     mutinfo._ratio_boundary = 0.10;
     mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
 
-    //---------------------------------------------------
-    // TEST templates compiling
-    // Generate all templates to see if compiling/running ok 
-    //---------------------------------------------------
-    if (true) 
     {
         std::vector<galgo::MutationType> mutcases = {
             galgo::MutationType::MutationSPM,
@@ -244,16 +236,6 @@ void TEST_TYPE()
 
 int main()
 {
-    // initializing parameters lower and upper bounds
-    // an initial value can be added inside the initializer list after the upper bound
-    // galgo::Parameter<double> par1({ -2.0,2.0 });
-    // galgo::Parameter<double> par2({ -2.0,2.0 });
-    // here both parameter will be encoded using 16 bits the default value inside the template declaration
-    // this value can be modified but has to remain between 1 and 64
-    // initiliazing genetic algorithm
-    // galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
-    // ga.Constraint = MyConstraint;
-
     using _TYPE = double;                   // Suppport float, double, char, int, long, ... for parameters
     galgo::MutationInfo<_TYPE> mutinfo;     // Changes mutation info as desired
     mutinfo._sigma = 1.0;
@@ -270,22 +252,27 @@ int main()
         TEST_TYPE<double>();
         TEST_TYPE<float>();
         TEST_TYPE<char>();
+        TEST_TYPE<short>();
         TEST_TYPE<int>();
+        TEST_TYPE<unsigned char>();
+        TEST_TYPE<unsigned short>();
         TEST_TYPE<unsigned int>();
         TEST_TYPE<long>();
         TEST_TYPE<long long>();
+        TEST_TYPE<unsigned long>();
+        TEST_TYPE<unsigned long long>();
     }
 
-    const int POPUL = 100;
-    const int N = 200;
-    const double MUTRATE = 0.05;
-    const int NBIT = 32;
+    const int       POPUL   = 100;
+    const int       N       = 400;  // Number of generation to produce
+    const double    MUTRATE = 0.05;
+    const int       NBIT    = 32;   // has to remain between 1 and 64
 
     {
         {
             std::cout << std::endl;
             std::cout << "SumSameAsPrd function 2x2 = 2+2";
-            galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 99 });
+            galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 99 }); // an initial value can be added inside the initializer list after the upper bound
             galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 99 });
             galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;  

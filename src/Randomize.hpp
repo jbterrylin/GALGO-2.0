@@ -40,8 +40,8 @@ inline T uniform(T min, T max)
 {   
     #ifndef NDEBUG
     if (min >= max) {
-      //throw std::invalid_argument("Error: in galgo::uniform(T, T), first argument must be < to second argument.");
-        std::cout << "Error: in galgo::uniform(T, T), first argument must be < to second argument." << std::endl;
+      throw std::invalid_argument("Error: in galgo::uniform(T, T), first argument must be < to second argument.");
+      //  std::cout << "Error: in galgo::uniform(T, T), first argument must be < to second argument." << std::endl;
     }
     #endif
  

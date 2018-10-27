@@ -14,8 +14,6 @@ namespace galgo {
     template <typename T>
     class Chromosome
     {
-        //static_assert(std::is_same<float, T>::value || std::is_same<double, T>::value, "variable type can only be float or double, please amend.");
-
     public:
         // constructor
         Chromosome(const GeneticAlgorithm<T>& ga);
@@ -69,11 +67,13 @@ namespace galgo {
 
         // return number of genes in chromosome
         int nbgene() const;
+
         // return numero of generation this chromosome belongs to
         int nogen() const;
 
         // return lower bound(s)
         const std::vector<T>& lowerBound() const;
+
         // return upper bound(s)
         const std::vector<T>& upperBound() const;
 
@@ -134,6 +134,7 @@ namespace galgo {
         result = rhs.result;
         chr = rhs.chr;
         ptr = rhs.ptr;
+
         // re-initializing fitness to its original value
         fitness = rhs.total;
         total = rhs.total;

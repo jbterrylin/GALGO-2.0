@@ -12,10 +12,6 @@ namespace galgo {
 template <typename T>
 class Population
 {
-   //static_assert(   std::is_same<float,T>::value || 
-   //                 std::is_same<double,T>::value, 
-   //                 "variable type can only be float or double, please amend.");
-
 public: 
    // nullary constructor
    Population() {}
@@ -90,10 +86,13 @@ Population<T>::Population(const GeneticAlgorithm<T>& ga)
 {
    ptr = &ga;   
    nbrcrov = (int)floor(ga.covrate * (ga.popsize - ga.elitpop));
+
    // adjusting nbrcrov (must be an even number)
    if (nbrcrov % 2 != 0) nbrcrov -= 1;
+
    // for convenience, we add elitpop to nbrcrov
    nbrcrov += ga.elitpop;
+
    // allocating memory
    curpop.resize(ga.popsize);
    matpop.resize(ga.matsize);
@@ -179,15 +178,19 @@ void Population<T>::recombination()
    #ifdef _OPENMP 
    #pragma omp parallel for num_threads(MAX_THREADS)
    #endif
-   for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) {      
+   for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) 
+   {      
       // initializing 2 new chromosome
       newpop[i] = std::make_shared<Chromosome<T>>(*ptr);
       newpop[i+1] = std::make_shared<Chromosome<T>>(*ptr);
+
       // crossing-over mating population to create 2 new chromosomes
       ptr->CrossOver(*this, newpop[i], newpop[i+1]);
+
       // mutating new chromosomes
       ptr->Mutation(newpop[i]);   
       ptr->Mutation(newpop[i+1]);   
+
       // evaluating new chromosomes
       newpop[i]->evaluate();
       newpop[i+1]->evaluate();
@@ -203,11 +206,14 @@ void Population<T>::completion()
    #ifdef _OPENMP 
    #pragma omp parallel for num_threads(MAX_THREADS)
    #endif
-   for (int i = nbrcrov; i < ptr->popsize; ++i) {
+   for (int i = nbrcrov; i < ptr->popsize; ++i)
+   {
       // selecting chromosome randomly from mating population
       newpop[i] = std::make_shared<Chromosome<T>>(*matpop[uniform<int>(0, ptr->matsize)]);
+
       // mutating chromosome
       ptr->Mutation(newpop[i]);
+
       // evaluating chromosome
       newpop[i]->evaluate();
    }

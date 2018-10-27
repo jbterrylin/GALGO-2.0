@@ -42,14 +42,8 @@ struct MutationInfo
 template <typename T>
 class GeneticAlgorithm
 {
-   //static_assert(   std::is_same<float,T>::value ||
-   //                 std::is_same<double,T>::value, 
-   //                "variable type can only be float or double, please amend.");
-
-   template <typename K>
-   friend class Population;
-   template <typename K>
-   friend class Chromosome;
+   template <typename K> friend class Population;
+   template <typename K> friend class Chromosome;
 
    template <typename K>  using Func = std::vector<K> (*)(const std::vector<K>&);
    template <typename T>  using FuncKT = std::vector<double>(*)(const std::vector<T>&);
@@ -70,8 +64,7 @@ public:
    void (*Selection)(Population<T>&) = RWS;  
 
    // cross-over method initialized to 1-point cross-over                                
-   //void (*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
-   void(*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P2XO;
+   void(*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
 
    // mutation method initialized to single-point mutation 
    void (*Mutation)(CHR<T>&) = SPM;
@@ -133,12 +126,14 @@ private:
    // end of recursion for initializing parameter(s) data
    template <int I = 0, int...N>
    typename std::enable_if<I == sizeof...(N), void>::type init(const TUP<T,N...>&); 
+
    // recursion for initializing parameter(s) data
    template <int I = 0, int...N>
    typename std::enable_if<I < sizeof...(N), void>::type init(const TUP<T,N...>&);
 
    // check inputs validity
    void check() const ;
+
    // print results for each new generation
    void print() const;
 };
@@ -149,19 +144,23 @@ private:
 template <typename T> template <int...N>
 GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
 {
-    this->setMutation(mutinfo);
-
+   this->setMutation(mutinfo);
    this->Objective = objective;
+
    // getting total number of bits per chromosome
    this->nbbit = sum(N...);
    this->nbgen = nbgen;
+
    // getting number of parameters in the pack
    this->nbparam = sizeof...(N);
+
    this->popsize = popsize;
    this->matsize = popsize;
    this->output = output;
+
    // unpacking parameter pack in tuple
    TUP<T,N...> tp(args...);
+
    // initializing parameter(s) data
    this->init(tp);
 }
@@ -180,12 +179,16 @@ GeneticAlgorithm<T>::init(const TUP<T,N...>& tp)
 {
    // getting Ith parameter in tuple
    auto par = std::get<I>(tp);
+
    // getting Ith parameter initial data
    const std::vector<T>& data = par.getData();
+
    // copying parameter data
    param.emplace_back(new decltype(par)(par));
+
    lowerBound.push_back(data[0]);
    upperBound.push_back(data[1]);
+
    // if parameter has initial value
    if (data.size() > 2) {
       initialSet.push_back(data[2]);
@@ -286,7 +289,8 @@ void GeneticAlgorithm<T>::run()
    } 
 
    // outputting contraint value
-   if (Constraint != nullptr) {
+   if (Constraint != nullptr) 
+   {
       // getting best parameter(s) constraint value(s)
       std::vector<double> cst = pop(0)->getConstraint();
       if (output) {
@@ -294,6 +298,7 @@ void GeneticAlgorithm<T>::run()
          std::cout << " -------------\n";
          for (unsigned i = 0; i < cst.size(); ++i) {
             std::cout << " C"; 
+
             if (nbparam > 1) {
                std::cout << std::to_string(i + 1);
             }
@@ -325,14 +330,16 @@ void GeneticAlgorithm<T>::print() const
 
    if (nogen % genstep == 0) {
       std::cout << " Generation = " << std::setw(std::to_string(nbgen).size()) << nogen << " |";
-      for (int i = 0; i < nbparam; ++i) {
+      for (int i = 0; i < nbparam; ++i) 
+      {
 	      std::cout << " X";
          if (nbparam > 1) {
             std::cout << std::to_string(i + 1);
          }
          std::cout << " = "  << std::setw(9) << std::fixed << std::setprecision(precision) << bestParam[i] << " |";
-	   }
-      for (unsigned i = 0; i < bestResult.size(); ++i) {
+	  }
+      for (unsigned i = 0; i < bestResult.size(); ++i) 
+      {
 	      std::cout << " F";
          if (bestResult.size() > 1) {
             std::cout << std::to_string(i + 1);
