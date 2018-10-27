@@ -1,13 +1,13 @@
 //=================================================================================================
-//                    Copyright (C) 2017 Olivier Mallet - All Rights Reserved                      
+//                  Copyright (C) 2018 Alain Lanthier - All Rights Reserved  
+//                  License: MIT License    See LICENSE.md for the full license.
+//                  Original code 2017 Olivier Mallet (MIT License)              
 //=================================================================================================
 
 #ifndef GENETICALGORITHM_HPP
 #define GENETICALGORITHM_HPP
 
 namespace galgo {
-
-    //=================================================================================================
 
 enum class MutationType {
     MutationSPM,
@@ -33,24 +33,26 @@ struct MutationInfo
     }
 
     MutationType _type;
-    T _sigma;
-    T _ratio_boundary;
-    T _sigma_lowest;
+    double _sigma;
+    double _ratio_boundary;
+    double _sigma_lowest;
 };
 
 
 template <typename T>
 class GeneticAlgorithm
 {
-   static_assert(std::is_same<float,T>::value || std::is_same<double,T>::value, "variable type can only be float or double, please amend.");
+   //static_assert(   std::is_same<float,T>::value ||
+   //                 std::is_same<double,T>::value, 
+   //                "variable type can only be float or double, please amend.");
 
    template <typename K>
    friend class Population;
    template <typename K>
    friend class Chromosome;
 
-   template <typename K>
-   using Func = std::vector<K> (*)(const std::vector<K>&);
+   template <typename K>  using Func = std::vector<K> (*)(const std::vector<K>&);
+   template <typename K, typename T>  using FuncKT = std::vector<K>(*)(const std::vector<T>&);
 
 private:
    Population<T> pop;             // population of chromosomes
@@ -62,7 +64,7 @@ private:
 
 public: 
    // objective function pointer
-   Func<T> Objective; 
+   FuncKT<double,T> Objective; 
 
    // selection method initialized to roulette wheel selection                                   
    void (*Selection)(Population<T>&) = RWS;  
@@ -78,15 +80,15 @@ public:
    void (*Adaptation)(Population<T>&) = nullptr; 
 
    // constraint(s)                               
-   std::vector<T> (*Constraint)(const std::vector<T>&) = nullptr; 
+   std::vector<double> (*Constraint)(const std::vector<T>&) = nullptr;
 
    MutationInfo<T> mutinfo;
 
-   T covrate = .50;   // cross-over rate
-   T mutrate = .05;   // mutation rate   
-   T SP = 1.5;        // selective pressure for RSP selection method 
-   T tolerance = 0.0; // terminal condition (inactive if equal to zero)
-   T recombination_ratio = 0.55; // Real Valued crossover ratio
+   double covrate = .50;   // cross-over rate
+   double mutrate = .05;   // mutation rate   
+   double SP = 1.5;        // selective pressure for RSP selection method 
+   double tolerance = 0.0; // terminal condition (inactive if equal to zero)
+   double recombination_ratio = 0.55; // Real Valued crossover ratio
                  
    int elitpop = 1;   // elit population size
    int matsize;       // mating pool size, set to popsize by default
@@ -96,7 +98,7 @@ public:
 
    // constructor
    template <int...N>
-   GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
+   GeneticAlgorithm(FuncKT<double, T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
 
    // run genetic algorithm
    void run();
@@ -145,7 +147,7 @@ private:
    
 // constructor
 template <typename T> template <int...N>
-GeneticAlgorithm<T>::GeneticAlgorithm(Func<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
+GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<double, T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
 {
     this->setMutation(mutinfo);
 
@@ -252,9 +254,11 @@ void GeneticAlgorithm<T>::run()
 
    // creating population
    pop.creation();
+
    // initializing best result and previous best result
-   T bestResult = pop(0)->getTotal();
-   T prevBestResult = bestResult;
+   double bestResult = pop(0)->getTotal();
+   double prevBestResult = bestResult;
+
    // outputting results 
    if (output) print();
     
@@ -284,7 +288,7 @@ void GeneticAlgorithm<T>::run()
    // outputting contraint value
    if (Constraint != nullptr) {
       // getting best parameter(s) constraint value(s)
-      std::vector<T> cst = pop(0)->getConstraint(); 
+      std::vector<double> cst = pop(0)->getConstraint();
       if (output) {
          std::cout << "\n Constraint(s)\n";
          std::cout << " -------------\n";
@@ -317,7 +321,7 @@ void GeneticAlgorithm<T>::print() const
 {
    // getting best parameter(s) from best chromosome
    std::vector<T> bestParam = pop(0)->getParam();
-   std::vector<T> bestResult = pop(0)->getResult();
+   std::vector<double> bestResult = pop(0)->getResult();
 
    if (nogen % genstep == 0) {
       std::cout << " Generation = " << std::setw(std::to_string(nbgen).size()) << nogen << " |";

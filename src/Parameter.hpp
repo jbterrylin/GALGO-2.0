@@ -1,13 +1,13 @@
 //=================================================================================================
-//                    Copyright (C) 2017 Olivier Mallet - All Rights Reserved                      
+//                  Copyright (C) 2018 Alain Lanthier - All Rights Reserved  
+//                  License: MIT License    See LICENSE.md for the full license.
+//                  Original code 2017 Olivier Mallet (MIT License)              
 //=================================================================================================
 
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
 namespace galgo {
-
-//=================================================================================================
 
 // end of recursion for computing the sum of a parameter pack of integral numbers
 int sum(int first) 
@@ -35,10 +35,6 @@ public:
    virtual T decode(const std::string& y) const = 0;
    virtual int size() const = 0;
    virtual const std::vector<T>& getData() const = 0;
-
-   //virtual T sigma() const = 0;
-   //virtual int sigma_iteration() const = 0;
-   //virtual void sigma_update(T new_sigma) = 0;
 };
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -85,15 +81,19 @@ private:
       std::string str = GetBinary(galgo::Randomize<N>::generate());
       return str.substr(str.size() - N, N);
    }
+
    // encoding known unsigned integer
-   std::string encode(T z) const override {
+   std::string encode(T z) const override 
+   {
       uint64_t value = (uint64_t ) ( Randomize<N>::MAXVAL * (z - data[0]) / (data[1] - data[0]) );
       std::string str = GetBinary(value);
       return str.substr(str.size() - N, N);
    }
+
    // decoding string to real value
-   T decode(const std::string& str) const override {
-      return data[0] + (GetValue(str) / static_cast<double>(Randomize<N>::MAXVAL)) * (data[1] - data[0]);
+   T decode(const std::string& str) const override 
+   {
+      return (T)(data[0] + (GetValue(str) / static_cast<double>(Randomize<N>::MAXVAL)) * (data[1] - data[0]));
    }
 };
 

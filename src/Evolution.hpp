@@ -1,5 +1,7 @@
 //=================================================================================================
-//                    Copyright (C) 2017 Olivier Mallet - All Rights Reserved                      
+//                  Copyright (C) 2018 Alain Lanthier - All Rights Reserved  
+//                  License: MIT License    See LICENSE.md for the full license.
+//                  Original code 2017 Olivier Mallet (MIT License)              
 //=================================================================================================
 
 #ifndef EVOLUTION_HPP
@@ -20,24 +22,35 @@ void RWS(galgo::Population<T>& x)
 {
    // adjusting all fitness to positive values
    x.adjustFitness();
+
    // computing fitness sum
-   T fitsum = x.getSumFitness();
+   double fitsum = x.getSumFitness();
 
    // selecting mating population
-   for (int i = 0, end = x.matsize(); i < end; ++i) {
-      // generating a random fitness sum in [0,fitsum)
-      T fsum = galgo::uniform<T>(0.0, fitsum);
+   for (int i = 0, end = x.matsize(); i < end; ++i)
+   {
+       int j = 0;
+       if (fitsum > 0.0)
+       {
+            // generating a random fitness sum in [0,fitsum)
+            double fsum = galgo::uniform<double>(0.0, fitsum);
 
-      int j = 0;
-      while (fsum >= 0.0) {
-         #ifndef NDEBUG
-         if (j == x.popsize()) {
-            throw std::invalid_argument("Error: in RWS(galgo::Population<T>&) index j cannot be equal to population size.");
-         }
-         #endif
-         fsum -= x(j)->fitness;
-         j++;
+            while (fsum >= 0.0)
+            {
+                 #ifndef NDEBUG
+                 if (j == x.popsize()) {
+                    throw std::invalid_argument("Error: in RWS(galgo::Population<T>&) index j cannot be equal to population size.");
+                 }
+                 #endif
+                 fsum -= x(j)->fitness;
+                 j++;
+            }
       }
+      else
+      {
+          j = 1;
+      }
+
       // selecting element
       x.select(j - 1);
    }
@@ -51,20 +64,23 @@ void SUS(galgo::Population<T>& x)
 {
    // adjusting all fitness to positive values
    x.adjustFitness();
+
    // computing fitness sum
-   T fitsum = x.getSumFitness();
+   double fitsum = x.getSumFitness();
 
    int matsize = x.matsize();
+
    // computing interval size
-   T dist = fitsum / matsize;
+   double dist = fitsum / matsize;
+
    // initializing pointer
-   T ptr = galgo::uniform<T>(0.0, dist);
+   double ptr = galgo::uniform<double>(0.0, dist);
    
    // selecting mating population
    for (int i = 0; i < matsize; ++i) {
    
       int j = 0;
-      T fsum = 0;
+      double fsum = 0;
       
       while (fsum <= ptr) {
          #ifndef NDEBUG
@@ -75,6 +91,7 @@ void SUS(galgo::Population<T>& x)
          fsum += x(j)->fitness;
          j++;
       }
+
       // selecting element
       x.select(j - 1);
 
@@ -144,9 +161,10 @@ void RSP(galgo::Population<T>& x)
    }
 
    // selecting mating population
-   for (int i = 0, end = x.matsize(); i < end; ++i) {
+   for (int i = 0, end = x.matsize(); i < end; ++i)
+   {
       // generating a random rank sum in [0,ranksum)
-      T rsum = galgo::uniform<T>(0.0, ranksum);
+      T rsum = galgo::uniform<double>(0.0, ranksum);
 
       int j = 0;
       while (rsum >= 0.0) {
@@ -173,22 +191,24 @@ void TNT(galgo::Population<T>& x)
    int tntsize = x.tntsize();
 
    // selecting mating population
-   for (int i = 0, end = x.matsize(); i < end; ++i) {
+   for (int i = 0, end = x.matsize(); i < end; ++i) 
+   {
       // selecting randomly a first element
       int bestIdx = galgo::uniform<int>(0, popsize);
-      T bestFit = x(bestIdx)->fitness;
+      double bestFit = x(bestIdx)->fitness;
    
       // starting tournament
       for (int j = 1; j < tntsize; ++j) {
    
          int idx = galgo::uniform<int>(0, popsize);
-         T fit = x(idx)->fitness;
+         double fit = x(idx)->fitness;
       
          if (fit > bestFit) {
             bestFit = fit;
             bestIdx = idx;
          }
       }
+
       // selecting element
       x.select(bestIdx);
    }
@@ -219,12 +239,13 @@ void TRS(galgo::Population<T>& x)
    c = c + 0.1; // arithmetic transition
    //c = c * 1.1; // geometric transition
    // computing fitness sum
-   int fitsum = x.getSumFitness();
+   double fitsum = x.getSumFitness();
 
    // selecting mating population
-   for (int i = 0, end = x.matsize(); i < end; ++i) {
+   for (int i = 0, end = x.matsize(); i < end; ++i)
+   {
       // generating a random fitness sum in [0,fitsum)
-      T fsum = galgo::uniform<int>(0, fitsum);
+      double fsum = galgo::uniform<double>(0, fitsum);
  
       int j = 0;
       while (fsum >= 0) {
@@ -300,7 +321,7 @@ void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, galg
     // choosing randomly a position for cross-over
     int pos = galgo::uniform<int>(0, chr1->nbgene());
 
-    T r = chr1->recombination_ratio();
+    double r = chr1->recombination_ratio();
     const galgo::Chromosome<T>& chrmat1 = *x[idx1];
     const galgo::Chromosome<T>& chrmat2 = *x[idx2];
 
@@ -308,23 +329,23 @@ void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, galg
     {
         chr1->initGene(i, chrmat1.get_value(i));
     }
-    chr1->initGene(pos, r * chrmat2.get_value(pos) + (1.0 - r) * chrmat1.get_value(pos));
+    chr1->initGene(pos, (T)(r * chrmat2.get_value(pos) + (1.0 - r) * chrmat1.get_value(pos)));
 
     for (int i = 0; i < chr2->nbgene(); i++)
     {
         chr2->initGene(i, chrmat2.get_value(i));
     }
-    chr2->initGene(pos, r * chrmat1.get_value(pos) + (1.0 - r) * chrmat2.get_value(pos));
+    chr2->initGene(pos, (T)(r * chrmat1.get_value(pos) + (1.0 - r) * chrmat2.get_value(pos)));
 
     // Transmit sigma
     // *x[idx1] is operator[](int pos) is access element in mating population at position pos
     for (int i = 0; i < chr1->nbgene(); i++)
     {
-        chr1->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+        chr1->sigma_update(i, (T)(0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i))));
     }
     for (int i = 0; i < chr2->nbgene(); i++)
     {
-        chr2->sigma_update(i, 0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i)));
+        chr2->sigma_update(i, (T)(0.5*(chrmat1.get_sigma(i) + chrmat2.get_sigma(i))));
     }
 }
 
@@ -473,8 +494,7 @@ void UXO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2
 template <typename T>
 void BDM(galgo::CHR<T>& chr)
 { 
-   T mutrate = chr->mutrate();
-
+   double mutrate = chr->mutrate();
    if (mutrate == 0.0) return;
 
    // getting chromosome lower bound(s)
@@ -503,14 +523,15 @@ void BDM(galgo::CHR<T>& chr)
 template <typename T>
 void SPM(galgo::CHR<T>& chr)
 { 
-   T mutrate = chr->mutrate();
-
+   double mutrate = chr->mutrate();
    if (mutrate == 0.0) return;
 
    // looping on chromosome bits
-   for (int i = 0; i < chr->size(); ++i) {
+   for (int i = 0; i < chr->size(); ++i) 
+   {
       // generating a random probability
-      if (galgo::proba(galgo::rng) <= mutrate) {
+      if (galgo::proba(galgo::rng) <= mutrate)
+      {
          // flipping ith bit
          chr->flipBit(i);  
       }     
@@ -521,16 +542,16 @@ void SPM(galgo::CHR<T>& chr)
 template <typename T>
 void GAM_UncorrelatedOneStepSizeFixed(galgo::CHR<T>& chr)
 {
-    T mutrate = chr->mutrate();
+    double mutrate = chr->mutrate();
     if (mutrate == 0.0) return;
 
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    T n = (T)chr->nbgene();
-    T tau = 1.0 / pow(n, 0.50);
+    double n = chr->nbgene();
+    double tau = 1.0 / pow(n, 0.50);
     
-    std::normal_distribution<T> distribution01(0.0, 1.0);
+    std::normal_distribution < double > distribution01(0.0, 1.0);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i)
@@ -539,7 +560,7 @@ void GAM_UncorrelatedOneStepSizeFixed(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            T sigma = chr->get_sigma(i);
+            double sigma = chr->get_sigma(i);
 
             if (sigma < 0.00000000001) // first time
             {
@@ -549,15 +570,15 @@ void GAM_UncorrelatedOneStepSizeFixed(galgo::CHR<T>& chr)
                 chr->sigma_update(i, sigma);
             }
 
-            T newsigma = sigma * std::exp(tau * distribution01(galgo::rng));
+            double newsigma = sigma * std::exp(tau * distribution01(galgo::rng));
             if (newsigma < chr->mutinfo()._sigma_lowest)
                 newsigma = chr->mutinfo()._sigma_lowest;
             chr->sigma_update(i, newsigma);
 
-            T norm01 = distribution01(galgo::rng);
-            T step = newsigma * norm01;
+            double norm01 = distribution01(galgo::rng);
+            T step = (T)(newsigma * norm01);
 
-            T newvalue = std::min(std::max(value + step, lowerBound[i]), upperBound[i]);
+            T newvalue = (T)(std::min<T>(std::max<T>(value + step, lowerBound[i]), upperBound[i]));
             chr->initGene(i, newvalue);
         }
     }
@@ -566,16 +587,16 @@ void GAM_UncorrelatedOneStepSizeFixed(galgo::CHR<T>& chr)
 template <typename T>
 void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
 {
-    T mutrate = chr->mutrate();
+    double mutrate = chr->mutrate();
     if (mutrate == 0.0) return;
 
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    T n = (T)chr->nbgene();
-    T tau = 1.0 / pow(n, 0.50);
+    double n = (T)chr->nbgene();
+    double tau = 1.0 / pow(n, 0.50);
 
-    std::normal_distribution<T> distribution01(0.0, 1.0);
+    std::normal_distribution<double> distribution01(0.0, 1.0);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i)
@@ -584,7 +605,7 @@ void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            T sigma = chr->get_sigma(i);
+            double sigma = chr->get_sigma(i);
 
             if (sigma < 0.00000000001) // first time
             {
@@ -594,15 +615,15 @@ void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
                 chr->sigma_update(i, sigma);
             }
 
-            T newsigma = sigma * std::exp(tau * distribution01(galgo::rng));
+            double newsigma = sigma * std::exp(tau * distribution01(galgo::rng));
             if (newsigma < chr->mutinfo()._sigma_lowest)
                 newsigma = chr->mutinfo()._sigma_lowest;
             chr->sigma_update(i, newsigma);
 
-            T norm01 = distribution01(galgo::rng);
-            T step = newsigma * norm01;
+            double norm01 = distribution01(galgo::rng);
+            T step = (T)(newsigma * norm01);
 
-            T newvalue = std::min(std::max(value + step, lowerBound[i]), upperBound[i]);
+            T newvalue = (T)(std::min<T>(std::max<T>(value + step, lowerBound[i]), upperBound[i]));
             chr->initGene(i, newvalue);
         }
     }
@@ -611,17 +632,17 @@ void GAM_UncorrelatedOneStepSizeBoundary(galgo::CHR<T>& chr)
 template <typename T>
 void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
 {
-    T mutrate = chr->mutrate();
+    double mutrate = chr->mutrate();
     if (mutrate == 0.0) return;
 
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::normal_distribution<T> distribution01(0.0, 1.0);
+    std::normal_distribution<double> distribution01(0.0, 1.0);
 
-    T n = (T)chr->nbgene();
-    T tau1 = 1.0 / pow(2.0*n, 0.50);
-    T tau2 = 1.0 / pow(2.0*pow(n,0.50), 0.50);
+    double n = (T)chr->nbgene();
+    double tau1 = 1.0 / pow(2.0*n, 0.50);
+    double tau2 = 1.0 / pow(2.0*pow(n,0.50), 0.50);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i)
@@ -630,7 +651,7 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            T sigma = chr->get_sigma(i);
+            double sigma = chr->get_sigma(i);
 
             if (sigma < 0.00000000001) // never copied from parent
             {
@@ -641,10 +662,10 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
             }
             else
             {
-                T factor1 = std::exp(tau1 * distribution01(galgo::rng));
-                T factor2 = std::exp(tau2 * distribution01(galgo::rng));
+                double factor1 = std::exp(tau1 * distribution01(galgo::rng));
+                double factor2 = std::exp(tau2 * distribution01(galgo::rng));
 
-                T newsigma = sigma * factor1 * factor2;
+                double newsigma = sigma * factor1 * factor2;
                 if (newsigma < chr->mutinfo()._sigma_lowest)
                     newsigma = chr->mutinfo()._sigma_lowest;
 
@@ -652,8 +673,8 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
                 sigma = newsigma;
             }
 
-            T norm01 = distribution01(galgo::rng);
-            T newvalue = std::min(std::max(value + sigma * norm01, lowerBound[i]), upperBound[i]);
+            double norm01 = distribution01(galgo::rng);
+            T newvalue = (T)(std::min<T>(std::max<T>(value + (T)(sigma * norm01), lowerBound[i]), upperBound[i]));
             chr->initGene(i, newvalue);
         }
     }
@@ -662,17 +683,17 @@ void GAM_UncorrelatedNStepSize(galgo::CHR<T>& chr)
 template <typename T>
 void GAM_UncorrelatedNStepSizeBoundary(galgo::CHR<T>& chr)
 {
-    T mutrate = chr->mutrate();
+    double mutrate = chr->mutrate();
     if (mutrate == 0.0) return;
 
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::normal_distribution<T> distribution01(0.0, 1.0);
+    std::normal_distribution<double> distribution01(0.0, 1.0);
 
-    T n = (T)chr->nbgene();
-    T tau1 = 1.0 / pow(2.0*n, 0.50);
-    T tau2 = 1.0 / pow(2.0*pow(n, 0.50), 0.50);
+    double n = (T)chr->nbgene();
+    double tau1 = 1.0 / pow(2.0*n, 0.50);
+    double tau2 = 1.0 / pow(2.0*pow(n, 0.50), 0.50);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i)
@@ -681,7 +702,7 @@ void GAM_UncorrelatedNStepSizeBoundary(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            T sigma = chr->get_sigma(i);
+            double sigma = chr->get_sigma(i);
 
             if (sigma < 0.00000000001) // never copied from parent
             {
@@ -692,10 +713,10 @@ void GAM_UncorrelatedNStepSizeBoundary(galgo::CHR<T>& chr)
             }
             else
             {
-                T factor1 = std::exp(tau1 * distribution01(galgo::rng));
-                T factor2 = std::exp(tau2 * distribution01(galgo::rng));
+                double factor1 = std::exp(tau1 * distribution01(galgo::rng));
+                double factor2 = std::exp(tau2 * distribution01(galgo::rng));
 
-                T newsigma = sigma * factor1 * factor2;
+                double newsigma = sigma * factor1 * factor2;
                 if (newsigma < chr->mutinfo()._sigma_lowest)
                     newsigma = chr->mutinfo()._sigma_lowest;
 
@@ -703,8 +724,8 @@ void GAM_UncorrelatedNStepSizeBoundary(galgo::CHR<T>& chr)
                 sigma = newsigma;
             }
 
-            T norm01 = distribution01(galgo::rng);
-            T newvalue = std::min(std::max(value + sigma * norm01, lowerBound[i]), upperBound[i]);
+            double norm01 = distribution01(galgo::rng);
+            T newvalue = (T)(std::min<T>(std::max<T>(value + (T)(sigma * norm01), lowerBound[i]), upperBound[i]));
             chr->initGene(i, newvalue);
         }
     }
@@ -715,13 +736,13 @@ void GAM_UncorrelatedNStepSizeBoundary(galgo::CHR<T>& chr)
 template <typename T>
 void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
 {
-    T mutrate = chr->mutrate();
+    double mutrate = chr->mutrate();
     if (mutrate == 0.0) return;
 
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::normal_distribution<T> distribution01(0.0, 1.0);
+    std::normal_distribution<double> distribution01(0.0, 1.0);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i)
@@ -730,11 +751,11 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            T sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma 
+            double sigma = (upperBound[i] - lowerBound[i]) / 6; // initial sigma 
             if (sigma < chr->mutinfo()._sigma_lowest)
                 sigma = chr->mutinfo()._sigma_lowest;
 
-            T norm01;
+            double norm01;
 
             // sigma decreasing blindly with number generation produced
             for (int z = 1; z < chr->nogen() / 2; z++)
@@ -743,9 +764,9 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
                 sigma = std::max(T(0), (T)(sigma * exp(norm01)));
             }
 
-            std::normal_distribution<T> distribution(value, sigma);
-            T norm = distribution(galgo::rng);
-            T gaussian_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
+            std::normal_distribution<double> distribution(value, sigma);
+            double norm = distribution(galgo::rng);
+            T gaussian_value = (T)(std::min(std::max((T)norm, lowerBound[i]), upperBound[i]));
             chr->initGene(i, gaussian_value);
         }
     }
@@ -758,13 +779,13 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
 template <typename T>
 void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
 {
-    T mutrate = chr->mutrate();
+    double mutrate = chr->mutrate();
     if (mutrate == 0.0) return;
 
     const std::vector<T>& lowerBound = chr->lowerBound();
     const std::vector<T>& upperBound = chr->upperBound();
 
-    std::normal_distribution<T> distribution01(0.0, 1.0);
+    std::normal_distribution<double> distribution01(0.0, 1.0);
 
     // looping on number of genes
     for (int i = 0; i < chr->nbgene(); ++i)
@@ -773,8 +794,7 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            T sigma = chr->get_sigma(i);
-            //int iter = chr->get_sigma_iteration(i);
+            double sigma = chr->get_sigma(i);
 
             if (sigma < 0.00000000001) // never copied from parent
             {
@@ -784,9 +804,9 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
                 chr->sigma_update(i, sigma);
             }
 
-            std::normal_distribution<T> distribution(value, sigma);
-            T norm = distribution(galgo::rng);
-            T new_value = std::min(std::max(norm, lowerBound[i]), upperBound[i]);
+            std::normal_distribution<double> distribution(value, sigma);
+            double norm = distribution(galgo::rng);
+            T new_value = (T)(std::min(std::max((T)norm, lowerBound[i]), upperBound[i]));
             chr->initGene(i, new_value);
         }
     }
@@ -798,8 +818,7 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
 template <typename T>
 void UNM(galgo::CHR<T>& chr)
 { 
-   T mutrate = chr->mutrate();
-
+   double mutrate = chr->mutrate();
    if (mutrate == 0.0) return;
 
    // looping on number of genes
@@ -823,13 +842,16 @@ template <typename T>
 void DAC(galgo::Population<T>& x)
 {
    // getting worst population objective function total result
-   T worstTotal = x.getWorstTotal();
+   double worstTotal = x.getWorstTotal();
 
-   for (auto it = x.begin(), end = x.end(); it != end; ++it) {
+   for (auto it = x.begin(), end = x.end(); it != end; ++it) 
+   {
       // computing element constraint value(s) 
-      const std::vector<T>& cst = (*it)->getConstraint();
+      const std::vector<double>& cst = (*it)->getConstraint();
+
       // adapting fitness if any constraint violated
-      if (std::any_of(cst.cbegin(), cst.cend(), [](T x)->bool{return x >= 0.0;})) {
+      if (std::any_of(cst.cbegin(), cst.cend(), [](double x)->bool{return x >= 0.0;}))
+      {
          (*it)->fitness = worstTotal - std::accumulate(cst.cbegin(), cst.cend(), 0.0);
       }
    }

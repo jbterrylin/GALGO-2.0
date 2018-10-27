@@ -1,13 +1,13 @@
 //=================================================================================================
-//                    Copyright (C) 2017 Olivier Mallet - All Rights Reserved                      
+//                  Copyright (C) 2018 Alain Lanthier - All Rights Reserved  
+//                  License: MIT License    See LICENSE.md for the full license.
+//                  Original code 2017 Olivier Mallet (MIT License)              
 //=================================================================================================
 
 #ifndef RANDOMIZE_H
 #define RANDOMIZE_H
 
 namespace galgo {
-
-//=================================================================================================
 
 // template metaprogramming for getting maximum unsigned integral value from N bits
 template <unsigned int N>
@@ -40,7 +40,8 @@ inline T uniform(T min, T max)
 {   
     #ifndef NDEBUG
     if (min >= max) {
-      throw std::invalid_argument("Error: in galgo::uniform(T, T), first argument must be < to second argument.");
+      //throw std::invalid_argument("Error: in galgo::uniform(T, T), first argument must be < to second argument.");
+        std::cout << "Error: in galgo::uniform(T, T), first argument must be < to second argument." << std::endl;
     }
     #endif
  

@@ -1,5 +1,7 @@
 //=================================================================================================
-//                    Copyright (C) 2017 Olivier Mallet - All Rights Reserved                      
+//                  Copyright (C) 2018 Alain Lanthier - All Rights Reserved  
+//                  License: MIT License    See LICENSE.md for the full license.
+//                  Original code 2017 Olivier Mallet (MIT License)              
 //=================================================================================================
 
 #ifndef CONVERTER_HPP

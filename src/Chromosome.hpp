@@ -1,5 +1,7 @@
 //=================================================================================================
-//                    Copyright (C) 2017 Olivier Mallet - All Rights Reserved                      
+//                  Copyright (C) 2018 Alain Lanthier - All Rights Reserved  
+//                  License: MIT License    See LICENSE.md for the full license.
+//                  Original code 2017 Olivier Mallet (MIT License)              
 //=================================================================================================
 
 #ifndef CHROMOSOME_HPP
@@ -12,7 +14,7 @@ namespace galgo {
     template <typename T>
     class Chromosome
     {
-        static_assert(std::is_same<float, T>::value || std::is_same<double, T>::value, "variable type can only be float or double, please amend.");
+        //static_assert(std::is_same<float, T>::value || std::is_same<double, T>::value, "variable type can only be float or double, please amend.");
 
     public:
         // constructor
@@ -43,27 +45,33 @@ namespace galgo {
         void setPortion(const Chromosome<T>& x, int start, int end);
         // initialize or replace a portion of bits with a portion of another chromosome
         void setPortion(const Chromosome<T>& x, int start);
+
         // get parameter value(s) from chromosome
         const std::vector<T>& getParam() const;
+
         // get objective function result
-        const std::vector<T>& getResult() const;
+        const std::vector<double>& getResult() const;
+
         // get the total sum of all objective function(s) result
-        T getTotal() const;
+        double getTotal() const;
+
         // get constraint value(s)
-        const std::vector<T> getConstraint() const;
+        const std::vector<double> getConstraint() const;
+
         // return chromosome size in number of bits
         int size() const;
 
         // return number of chromosome bits to mutate
-        T mutrate() const;
+        double mutrate() const;
         const MutationInfo<T>& mutinfo() const;
 
-        T recombination_ratio() const;
+        double recombination_ratio() const;
 
         // return number of genes in chromosome
         int nbgene() const;
         // return numero of generation this chromosome belongs to
         int nogen() const;
+
         // return lower bound(s)
         const std::vector<T>& lowerBound() const;
         // return upper bound(s)
@@ -71,10 +79,10 @@ namespace galgo {
 
         T get_value(int k) const;
 
-        T get_sigma(int k) const;
-        T get_sigma_iteration(int k) const;
+        double get_sigma(int k) const;
+        long get_sigma_iteration(int k) const;
 
-        void sigma_update(int k, T new_sigma) 
+        void sigma_update(int k, double new_sigma)
         {
             _sigma_iteration[k]++;
             _sigma[k] = new_sigma;
@@ -82,20 +90,20 @@ namespace galgo {
 
     private:
         std::vector<T> param;                     // estimated parameter(s)
-        std::vector<T> result;                    // chromosome objective function(s) result
+        std::vector<double> result;               // chromosome objective function(s) result
         std::string chr;                          // string of bits representing chromosome
         const GeneticAlgorithm<T>* ptr = nullptr; // pointer to genetic algorithm
 
-        std::vector<T> _sigma;                    // stddev per parameter
-        std::vector<int> _sigma_iteration;        // number of time _sigma was updated
+        std::vector<double> _sigma;             // stddev per parameter
+        std::vector<long>   _sigma_iteration;   // number of time _sigma was updated
 
     public:
-        T fitness;                                // chromosome fitness, objective function(s) result that can be modified (adapted to constraint(s), set to positive values, etc...)
+        double fitness;                         // chromosome fitness, objective function(s) result that can be modified (adapted to constraint(s), set to positive values, etc...)
 
     private:
-        T total;                                  // total sum of objective function(s) result
-        int chrsize;                              // chromosome size (in number of bits)
-        int numgen;                               // numero of generation
+        double total;                           // total sum of objective function(s) result
+        int chrsize;                            // chromosome size (in number of bits)
+        int numgen;                             // numero of generation
     };
 
     /*-------------------------------------------------------------------------------------------------*/
@@ -362,7 +370,7 @@ namespace galgo {
 
     // get objective function result
     template <typename T>
-    inline const std::vector<T>& Chromosome<T>::getResult() const
+    inline const std::vector<double>& Chromosome<T>::getResult() const
     {
         return result;
     }
@@ -371,7 +379,7 @@ namespace galgo {
 
     // get the total sum of all objective function(s) result
     template <typename T>
-    inline T Chromosome<T>::getTotal() const
+    inline double Chromosome<T>::getTotal() const
     {
         return total;
     }
@@ -380,7 +388,7 @@ namespace galgo {
 
     // get constraint value(s) for this chromosome
     template <typename T>
-    inline const std::vector<T> Chromosome<T>::getConstraint() const
+    inline const std::vector<double> Chromosome<T>::getConstraint() const
     {
         return ptr->Constraint(param);
     }
@@ -398,13 +406,13 @@ namespace galgo {
 
     // return mutation rate 
     template <typename T>
-    inline T Chromosome<T>::mutrate() const
+    inline double Chromosome<T>::mutrate() const
     {
         return ptr->mutrate;
     }
 
     template <typename T>
-    inline T Chromosome<T>::recombination_ratio() const
+    inline double Chromosome<T>::recombination_ratio() const
     {
         return ptr->recombination_ratio;
     }
@@ -468,13 +476,13 @@ namespace galgo {
 
 
     template <typename T>
-    T Chromosome<T>::get_sigma(int k) const
+    double Chromosome<T>::get_sigma(int k) const
     {
         return _sigma[k];
     }
 
     template <typename T>
-    T Chromosome<T>::get_sigma_iteration(int k) const
+    long Chromosome<T>::get_sigma_iteration(int k) const
     {
         return _sigma_iteration[k];
     }

@@ -1,5 +1,7 @@
 //=================================================================================================
-//                    Copyright (C) 2017 Olivier Mallet - All Rights Reserved                      
+//                  Copyright (C) 2018 Alain Lanthier - All Rights Reserved  
+//                  License: MIT License    See LICENSE.md for the full license.
+//                  Original code 2017 Olivier Mallet (MIT License)              
 //=================================================================================================
 
 #ifndef POPULATION_HPP
@@ -7,12 +9,12 @@
 
 namespace galgo {
 
-//=================================================================================================
-
 template <typename T>
 class Population
 {
-   static_assert(std::is_same<float,T>::value || std::is_same<double,T>::value, "variable type can only be float or double, please amend.");
+   //static_assert(   std::is_same<float,T>::value || 
+   //                 std::is_same<double,T>::value, 
+   //                 "variable type can only be float or double, please amend.");
 
 public: 
    // nullary constructor
@@ -40,10 +42,13 @@ public:
    void select(int pos);
    // set all fitness to positive values 
    void adjustFitness();
+
    // compute fitness sum of current population
-   T getSumFitness() const;
+   double getSumFitness() const;
+
    // get worst objective function total result from current population
-   T getWorstTotal() const;
+   double getWorstTotal() const;
+
    // return population size
    int popsize() const;
    // return mating population size
@@ -54,8 +59,9 @@ public:
    int nogen() const;
    // return number of generations
    int nbgen() const;
+
    // return selection pressure
-   T SP() const; 
+   double SP() const;
 
 private:
    std::vector<CHR<T>> curpop;               // current population
@@ -313,11 +319,11 @@ template <typename T>
 void Population<T>::adjustFitness()
 {
    // getting worst population fitness
-   T worstFitness = curpop.back()->fitness;
+   double worstFitness = curpop.back()->fitness;
 
    if (worstFitness < 0) {
       // getting best fitness
-      T bestFitness = curpop.front()->fitness;
+      double bestFitness = curpop.front()->fitness;
       // case where all fitness are equal and negative
       if (worstFitness == bestFitness) {
          std::for_each(curpop.begin(), curpop.end(), [](CHR<T>& chr)->void{chr->fitness *= -1;});
@@ -331,19 +337,18 @@ void Population<T>::adjustFitness()
 
 // compute population fitness sum (used in TRS, RWS and SUS selection methods)
 template <typename T>
-inline T Population<T>::getSumFitness() const
+inline double Population<T>::getSumFitness() const
 {
-   return std::accumulate(curpop.cbegin(), curpop.cend(), 0.0, [](T sum, const CHR<T>& chr)->T{return sum + T(chr->fitness);});
+   return std::accumulate(curpop.cbegin(), curpop.cend(), 0.0, [](double sum, const CHR<T>& chr)->double {return sum + chr->fitness;});
 }
 
 /*-------------------------------------------------------------------------------------------------*/
 
 // get worst objective function total result from current population (used in constraint(s) adaptation)
 template <typename T>
-inline T Population<T>::getWorstTotal() const
+inline double Population<T>::getWorstTotal() const
 {
    auto it = std::min_element(curpop.begin(), curpop.end(), [](const CHR<T>& chr1, const CHR<T>& chr2)->bool{return chr1->getTotal() < chr2->getTotal();});
-
    return (*it)->getTotal();
 }
 
@@ -396,7 +401,7 @@ inline int Population<T>::nbgen() const
 
 // return selection pressure
 template <typename T>
-inline T Population<T>::SP() const
+inline double Population<T>::SP() const
 {
    return ptr->SP;
 }
