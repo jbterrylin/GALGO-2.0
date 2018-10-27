@@ -71,7 +71,7 @@ public:
 
    // cross-over method initialized to 1-point cross-over                                
    //void (*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
-   void(*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = RealValuedSimpleArithmeticRecombination;
+   void(*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P2XO;
 
    // mutation method initialized to single-point mutation 
    void (*Mutation)(CHR<T>&) = SPM;

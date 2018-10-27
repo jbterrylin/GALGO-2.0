@@ -179,9 +179,9 @@ int main()
     using _TYPE = float;        // Suppport float, double, char, int, long, ... for parameters
     galgo::MutationInfo<_TYPE> mutinfo;
 
-    //mutinfo._type = galgo::MutationType::MutationSPM;
+    mutinfo._type = galgo::MutationType::MutationSPM;
     //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeFixed;
-    mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
+    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
     //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSize;
     //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
     //mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_generation;

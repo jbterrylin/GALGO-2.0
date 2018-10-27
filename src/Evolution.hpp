@@ -397,6 +397,9 @@ void P1XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr
    chr1->setPortion(*x[idx2], pos + 1);
    chr2->setPortion(*x[idx1], pos + 1);
 
+   const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+   const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+
    // Transmit sigma
    // *x[idx1] is operator[](int pos) is access element in mating population at position pos
    for (int i = 0; i < chr1->nbgene(); i++)
