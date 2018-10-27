@@ -116,7 +116,7 @@ void RNK(galgo::Population<T>& x)
       // generating ranks from highest to lowest
       std::generate_n(rank.begin(), popsize, [&n]()->int{return --n;});
       // computing sum of ranks
-      ranksum = .5 * popsize * (popsize + 1);
+      ranksum = int (.5 * popsize * (popsize + 1));
    }
 
    // selecting mating population
@@ -146,8 +146,8 @@ template <typename T>
 void RSP(galgo::Population<T>& x)
 {
    int popsize = x.popsize();
-   static std::vector<T> rank(popsize);
-   static T ranksum;
+   static std::vector<double> rank(popsize);
+   static double ranksum;
 
    // this will only be run at the first generation
    if (x.nogen() == 1) {
@@ -155,7 +155,7 @@ void RSP(galgo::Population<T>& x)
       ranksum = 0.0;
       // generating ranks from highest to lowest
       for (int i = 0; i < popsize; ++i) {
-         rank[i] = 2 - x.SP() + 2 * (x.SP() - 1) * (popsize - i) / popsize;
+         rank[i] =  2 - x.SP() + 2 * (x.SP() - 1) * (popsize - i) / popsize;
          ranksum += rank[i];
       }      
    }
@@ -164,7 +164,7 @@ void RSP(galgo::Population<T>& x)
    for (int i = 0, end = x.matsize(); i < end; ++i)
    {
       // generating a random rank sum in [0,ranksum)
-      T rsum = galgo::uniform<double>(0.0, ranksum);
+      double rsum = galgo::uniform<double>(0.0, ranksum);
 
       int j = 0;
       while (rsum >= 0.0) {
@@ -220,20 +220,22 @@ void TNT(galgo::Population<T>& x)
 template <typename T>
 void TRS(galgo::Population<T>& x)
 {
-   static T c;
+   static double c;
    // (re)initializing when running new GA
    if (x.nogen() == 1) {  
-      c = 0.2;
+      c =  0.2;
    }
    int popsize = x.popsize();
+
    // generating a random set of popsize values on [0,1)
-   std::vector<T> r(popsize);
-   std::for_each(r.begin(),r.end(),[](T& z)->T{z = galgo::proba(galgo::rng);});
+   std::vector<double> r(popsize);
+   std::for_each(r.begin(),r.end(),[](double& z)->double{return galgo::proba(galgo::rng);});
+
    // sorting them from highest to lowest
-   std::sort(r.begin(),r.end(),[](T z1, T z2)->bool{return z1 > z2;});
+   std::sort(r.begin(),r.end(),[](double z1, double z2)->bool{return z1 > z2;});
    // transforming population fitness
    auto it = x.begin();
-   std::for_each(r.begin(),r.end(),[&it,popsize](T z)->void{(*it)->fitness = ceil((popsize - popsize*exp(-c*z))/(1 - exp(-c))); it++;});
+   std::for_each(r.begin(),r.end(),[&it,popsize](double z)->void{(*it)->fitness = ceil((popsize - popsize*exp(-c*z))/(1 - exp(-c))); it++;});
 
    // updating c for next generation
    c = c + 0.1; // arithmetic transition
@@ -244,19 +246,28 @@ void TRS(galgo::Population<T>& x)
    // selecting mating population
    for (int i = 0, end = x.matsize(); i < end; ++i)
    {
-      // generating a random fitness sum in [0,fitsum)
-      double fsum = galgo::uniform<double>(0, fitsum);
- 
       int j = 0;
-      while (fsum >= 0) {
-         #ifndef NDEBUG
-         if (j == popsize) {
-            throw std::invalid_argument("Error: in TRS(galgo::Population<T>&) index j cannot be equal to population size.");
-         }
-         #endif
-         fsum -= x(j)->fitness;
-         j++;
+      if (fitsum > 0.0)
+      {
+          // generating a random fitness sum in [0,fitsum)
+          double fsum = galgo::uniform<double>(0, fitsum);
+          while (fsum >= 0) 
+          {
+             #ifndef NDEBUG
+             if (j == popsize) 
+             {
+                throw std::invalid_argument("Error: in TRS(galgo::Population<T>&) index j cannot be equal to population size.");
+             }
+             #endif
+             fsum -= x(j)->fitness;
+             j++;
+          }
       }
+      else
+      {
+          j = 1;
+      }
+
       // selecting element
       x.select(j - 1);
    }

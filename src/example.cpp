@@ -7,6 +7,12 @@
 #include "Galgo.hpp"
 
 template <typename T>
+using CROSS = void (*)(const galgo::Population<T>&, galgo::CHR<T>&, galgo::CHR<T>&);
+
+template <typename T>
+using SELECT = void(*)(galgo::Population<T>&);
+
+template <typename T>
 double Ackley(T x, T y);
 
 // Rosenbrock objective class example
@@ -164,6 +170,7 @@ public:
     }
 };
 
+
 int main()
 {
     // initializing parameters lower and upper bounds
@@ -176,23 +183,80 @@ int main()
     // galgo::GeneticAlgorithm<double> ga(MyObjective<double>::Objective, 100, 200, true, par1, par2);
     // ga.Constraint = MyConstraint;
 
-    using _TYPE = float;        // Suppport float, double, char, int, long, ... for parameters
-    galgo::MutationInfo<_TYPE> mutinfo;
+    using _TYPE = float;                    // Suppport float, double, char, int, long, ... for parameters
+    galgo::MutationInfo<_TYPE> mutinfo;     // Changes mutation info as desired
+    mutinfo._sigma = 1.0;
+    mutinfo._sigma_lowest = 0.01;
+    mutinfo._ratio_boundary = 0.10;
+    mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
 
-    mutinfo._type = galgo::MutationType::MutationSPM;
-    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeFixed;
-    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
-    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSize;
-    //mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
-    //mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_generation;
-    //mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_mutation;
+    //---------------------------------------------------
+    // TEST templates compiling
+    // Generate all templates to see if compiling/running ok 
+    //---------------------------------------------------
+    if (false) // set to true to test templates
+    {
+        std::vector<galgo::MutationType> mutcases = {
+            galgo::MutationType::MutationSPM,
+            galgo::MutationType::MutationBDM,
+            galgo::MutationType::MutationUNM,
+            galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeFixed,
+            galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary,
+            galgo::MutationType::MutationGAM_UncorrelatedNStepSize,
+            galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary,
+            galgo::MutationType::MutationGAM_sigma_adapting_per_generation,
+            galgo::MutationType::MutationGAM_sigma_adapting_per_mutation
+        };
 
-    const int POPUL     = 100;
-    const int N         = 600;
+        std::vector<CROSS<_TYPE>> crosscases = {
+            P1XO<_TYPE>,
+            P2XO<_TYPE>,
+            UXO<_TYPE>,
+            RealValuedSimpleArithmeticRecombination<_TYPE>,
+            RealValuedSingleArithmeticRecombination<_TYPE>,
+            RealValuedWholeArithmeticRecombination<_TYPE>
+        };
+
+        std::vector<SELECT<_TYPE>> selectcases = {
+            RWS<_TYPE>,
+            SUS<_TYPE>,
+            RNK<_TYPE>,
+            RSP<_TYPE>,
+            TNT<_TYPE>,
+            TRS<_TYPE>
+        };
+
+        const int POPUL = 10;
+        const int N = 20;
+        const double MUTRATE = 0.05;
+        const int NBIT = 32;
+
+        for (size_t s = 0; s < selectcases.size(); s++)
+        {
+            for (size_t m = 0; m < mutcases.size(); m++)
+            {
+                mutinfo._type = mutcases[m];
+                for (size_t c = 0; c < crosscases.size(); c++)
+                {
+                    std::cout << std::endl;
+                    std::cout << "SumSameAsPrd function 2x2 = 2+2";
+                    galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 99 });
+                    galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 99 });
+                    galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<double, _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
+                    ga.mutrate = MUTRATE;
+                    ga.Selection = selectcases[s];
+                    ga.CrossOver = crosscases[c];
+                    ga.run();
+                }
+            }
+        }
+    }
+
+    const int POPUL = 100;
+    const int N = 200;
     const double MUTRATE = 0.05;
-    const int NBIT      = 32;
+    const int NBIT = 32;
 
-    //while (true)
     {
         {
             std::cout << std::endl;
@@ -200,7 +264,7 @@ int main()
             galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 99 });
             galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 99 });
             galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<double,_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
-            ga.mutrate = MUTRATE;
+            ga.mutrate = MUTRATE;  
             ga.run();
         }
 
