@@ -236,13 +236,6 @@ void TEST_TYPE()
 
 int main()
 {
-    using _TYPE = double;                   // Suppport float, double, char, int, long, ... for parameters
-    galgo::MutationInfo<_TYPE> mutinfo;     // Changes mutation info as desired
-    mutinfo._sigma = 1.0;
-    mutinfo._sigma_lowest = 0.01;
-    mutinfo._ratio_boundary = 0.10;
-    mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
-
     //---------------------------------------------------
     // Generate all templates to see if compiling/running ok 
     // set to if(true) to test templates
@@ -263,10 +256,19 @@ int main()
         TEST_TYPE<unsigned long long>();
     }
 
+    using _TYPE = float;                   // Suppport float, double, char, int, long, ... for parameters
+    galgo::MutationInfo<_TYPE> mutinfo;     // Changes mutation info as desired
+    mutinfo._sigma          = 1.0;
+    mutinfo._sigma_lowest   = 0.01;
+    mutinfo._ratio_boundary = 0.10;
+    mutinfo._type           = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
+
     const int       POPUL   = 100;
-    const int       N       = 400;  // Number of generation to produce
+    const int       N       = 200;  // Number of generation to produce
     const double    MUTRATE = 0.05;
-    const int       NBIT    = 32;   // has to remain between 1 and 64
+    const int       NBIT    = 63;   // has to remain between 1 and 64
+    CROSS<_TYPE>    CROSSType = RealValuedSimpleArithmeticRecombination;
+    SELECT<_TYPE>   SELECTType  = RWS;
 
     {
         {
@@ -276,6 +278,8 @@ int main()
             galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 99 });
             galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;  
+            ga.Selection = SELECTType;
+            ga.CrossOver = CROSSType;
             ga.run();
         }
 
@@ -286,6 +290,8 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-2.0,(_TYPE)2.0 });
             galgo::GeneticAlgorithm<_TYPE> ga(RosenbrockObjective< _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;
+            ga.Selection = SELECTType;
+            ga.CrossOver = CROSSType;
             ga.run();
         }
 
@@ -296,6 +302,8 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::GeneticAlgorithm<_TYPE> ga(AckleyObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;
+            ga.Selection = SELECTType;
+            ga.CrossOver = CROSSType;
             ga.run();
         }
 
@@ -307,6 +315,8 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::GeneticAlgorithm<_TYPE> ga(rastriginObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
+            ga.Selection = SELECTType;
+            ga.CrossOver = CROSSType;
             ga.run();
         }
 
@@ -318,6 +328,8 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)4.0 });
             galgo::GeneticAlgorithm<_TYPE> ga(StyblinskiTangObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
+            ga.Selection = SELECTType;
+            ga.CrossOver = CROSSType;
             ga.run();
         }
 
@@ -329,6 +341,8 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
             galgo::GeneticAlgorithm<_TYPE> ga(GriewankObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
+            ga.Selection = SELECTType;
+            ga.CrossOver = CROSSType;
             ga.run();
         }
     }

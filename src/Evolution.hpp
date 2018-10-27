@@ -762,7 +762,7 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
         if (galgo::proba(galgo::rng) <= mutrate)
         {
             T value = chr->get_value(i);
-            double sigma = (double)((upperBound[i] - lowerBound[i]) / 6.0); // initial sigma 
+            double sigma = ((double)(upperBound[i] - lowerBound[i])) * chr->mutinfo()._ratio_boundary;
             if (sigma < chr->mutinfo()._sigma_lowest)
                 sigma = chr->mutinfo()._sigma_lowest;
 
@@ -809,7 +809,7 @@ void GAM_sigma_adapting_per_mutation(galgo::CHR<T>& chr)
 
             if (sigma < 0.00000000001) // never copied from parent
             {
-                sigma = (upperBound[i] - lowerBound[i]) / 6.0; // initial sigma
+                sigma = ((double)(upperBound[i] - lowerBound[i])) * chr->mutinfo()._ratio_boundary;
                 if (sigma < chr->mutinfo()._sigma_lowest)
                     sigma = chr->mutinfo()._sigma_lowest;
                 chr->sigma_update(i, sigma);
