@@ -21,6 +21,7 @@ using BINAIRO_TEST_TYPE = int;
 static std::vector<BINAIRO_TEST_TYPE> binairo_initial;
 void make_binairo()
 {
+    // hard.txt
     std::string s =
         std::string("*1*1*0**1*") +
         std::string("0*0*******") +
@@ -32,6 +33,29 @@ void make_binairo()
         std::string("**0***0***") +
         std::string("******0*1*") +
         std::string("****0**0**");
+
+        //*1*1*0**1*
+        //0*0*******
+        //******11**
+        //**1**0****
+        //0*********
+        //*******00*
+        //1******1*1
+        //**0***0***
+        //******0*1*
+        //****0**0**
+
+        //0   1   0   1   1   0   0   1   1   0   358
+        //0   1   0   1   0   1   0   0   1   1   339
+        //1   0   1   0   1   0   1   1   0   0   684
+        //1   0   1   1   0   0   1   0   0   1   713
+        //0   1   0   0   1   1   0   1   1   0   310
+        //0   1   1   0   0   1   1   0   0   1   409
+        //1   0   0   1   0   0   1   1   0   1   589
+        //1   0   0   1   1   0   0   1   1   0   614
+        //0   1   1   0   1   1   0   0   1   0   434
+        //1   0   1   0   0   1   1   0   0   1   665
+        //205 818 211 844 678 307 217 684 806 345
 
     binairo_initial = std::vector<BINAIRO_TEST_TYPE>(100);
     for (size_t i = 0; i < 10; i++)
@@ -89,7 +113,7 @@ void FixedParameterBinairo(galgo::Population<T>& x, int k)
             // SOLVED
         }
 
-        if (is_valid == true)
+        //if (is_valid == true)
         {
             for (int i = 0; i < n; i++)
             {
