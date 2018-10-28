@@ -57,16 +57,53 @@ void make_binairo()
         //1   0   1   0   0   1   1   0   0   1   665
         //205 818 211 844 678 307 217 684 806 345
 
-    binairo_initial = std::vector<BINAIRO_TEST_TYPE>(100);
-    for (size_t i = 0; i < 10; i++)
+    MatriceUtil<int> mat(10, 10);
+    for (int i = 0; i < 10; i++)
     {
-        for (size_t j = 0; j < 10; j++)
+        for (int j = 0; j < 10; j++)
         {
-            if (s.at(10 * i + j) == '*') binairo_initial[10 * i + j] = -1;
-            else if (s.at(10 * i + j) == '0') binairo_initial[10 * i + j] = 0;
-            else if (s.at(10 * i + j) == '1') binairo_initial[10 * i + j] = 1;
+            if (s.at(10 * i + j) == '*') mat.set(i, j, -1);
+            else if (s.at(10 * i + j) == '0') mat.set(i, j, 0);
+            else if (s.at(10 * i + j) == '1') mat.set(i, j, 1);
         }
     }
+
+    // Forced values
+    bool is_valid;
+    if (try_resolve_binairio(mat, is_valid) == true)
+    {
+        // SOLVED
+    }
+
+    binairo_initial = std::vector<BINAIRO_TEST_TYPE>(100);
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            binairo_initial[10 * i + j] = mat[i][j];
+        }
+    }
+    //--------------------------------------------
+    // 0 | 0 | 1 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 |
+    //--------------------------------------------
+    // 1 | 0 | 1 | 0 | * | * | 1 | 0 | 0 | 1 | 1 |
+    //--------------------------------------------
+    // 2 | 1 | 0 | 1 | * | * | 0 | 1 | 1 | 0 | 0 |
+    //--------------------------------------------
+    // 3 | * | * | 1 | * | * | 0 | 1 | 0 | 0 | 1 |
+    //--------------------------------------------
+    // 4 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 1 | 1 | 0 |
+    //--------------------------------------------
+    // 5 | * | * | 1 | * | 0 | 1 | 1 | 0 | 0 | 1 |
+    //--------------------------------------------
+    // 6 | 1 | 0 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 1 |
+    //--------------------------------------------
+    // 7 | * | * | 0 | * | 1 | * | 0 | * | 1 | 0 |
+    //--------------------------------------------
+    // 8 | * | * | 1 | * | * | * | 0 | * | 1 | 0 |
+    //--------------------------------------------
+    // 9 | * | * | 1 | * | 0 | * | 1 | 0 | 0 | 1 |
+    //--------------------------------------------
 }
 
 template <typename T>
@@ -102,6 +139,7 @@ void FixedParameterBinairo(galgo::Population<T>& x, int k)
                 {
                     // Put fixed parameter back into matrice
                     mat.set(i, j, binairo_initial[n*i + j]);
+                    np[k]->initGene((int)n*i + j, binairo_initial[n*i + j]);
                 }
             }
         }
@@ -113,7 +151,7 @@ void FixedParameterBinairo(galgo::Population<T>& x, int k)
             // SOLVED
         }
 
-        //if (is_valid == true)
+        if (is_valid == true)
         {
             for (int i = 0; i < n; i++)
             {
@@ -132,7 +170,7 @@ template <typename T> class BinairoObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
-        size_t n = (int)pow((double)x.size(), 0.50);
+        int n = (int)pow((double)x.size(), 0.50);
         MatriceUtil<T> mat(n, n);
 
         bool mismatch = false;
@@ -145,8 +183,8 @@ public:
                 if ((x[n*i + j] != binairo_initial[n*i + j]) && ((binairo_initial[n*i + j] == 0) || (binairo_initial[n*i + j] == 1)))
                 {
                     // Put fixed parameter back into matrice
-                    mat.set(i, j, binairo_initial[n*i + j]);
-                    //mismatch = true;
+                    //mat.set(i, j, binairo_initial[n*i + j]);
+                    mismatch = true;
                 }
             }
         }
@@ -162,7 +200,7 @@ public:
         int cnt_0 = mat.count(0);
         int cnt_1 = mat.count(1);
         int cnt_m1 = mat.count(-1);
-        int cnt_other = mat.count(2) + mat.count(-2);
+        int cnt_other = (n*n) - (cnt_0 + cnt_1 + cnt_m1);
 
         int cnt_illegal_row = 0;
         int cnt_illegal_col = 0;
@@ -170,10 +208,10 @@ public:
         int cnt_illegal_rowcol = 0;
         for (size_t i = 0; i < mat.size_row(); i++)
         {
-            if (mat.count_row(i, 0) >(int) (mat.size_col() / 2))
+            if (mat.count_row(i, 0) >(int) (n / 2))
                 cnt_illegal_row++;
 
-            if (mat.count_row(i, 1) > (int)(mat.size_col() / 2))
+            if (mat.count_row(i, 1) > (int)(n/ 2))
                 cnt_illegal_row++;
 
             if (mat.row_max_sequence(i, 0) > 2)
@@ -194,10 +232,10 @@ public:
 
         for (size_t i = 0; i < mat.size_col(); i++)
         {
-            if (mat.count_col(i, 0) >(int) (mat.size_row() / 2))
+            if (mat.count_col(i, 0) >(int) (n / 2))
                 cnt_illegal_col++;
 
-            if (mat.count_col(i, 1) > (int)(mat.size_row() / 2))
+            if (mat.count_col(i, 1) > (int)(n / 2))
                 cnt_illegal_col++;
 
             if (mat.col_max_sequence(i, 0) > 2)
@@ -217,15 +255,17 @@ public:
         }
 
         double penality = 0.0;
-        if (mismatch == true)  penality += 200.0;
-        penality += std::fabs((double)cnt_0 - (n * n / 2));
-        penality += std::fabs((double)cnt_1 - (n * n / 2));
-        penality += std::fabs((double)cnt_m1 - (0));
+        if (mismatch == true)  penality += 20000.0;
+        //penality += std::fabs((double)cnt_0 - (n * n / 2));
+        //penality += std::fabs((double)cnt_1 - (n * n / 2
         penality += std::fabs((double)cnt_other - (0));
-        penality += (double)cnt_illegal_row;
-        penality += (double)cnt_illegal_col;
-        penality += (double)cnt_illegal_sequ;
-        penality += (double)cnt_illegal_rowcol;
+        penality += 50 * (double)cnt_illegal_row;
+        penality += 50 * (double)cnt_illegal_col;
+        penality += 50 * (double)cnt_illegal_sequ;
+        penality += 50 * (double)cnt_illegal_rowcol;
+        penality += 10 * std::fabs((double)cnt_m1 - (0));
+
+        if ((penality > 0) && (cnt_m1 < 10)) penality += 400 * std::fabs((double)cnt_m1 - (0));
 
         double obj = -penality;
         return { obj };
@@ -241,9 +281,9 @@ void test_ga_binairo()
         mutinfo._ratio_boundary = 0.10;
         mutinfo._type = galgo::MutationType::MutationSPM;
 
-        const int       POPUL = 200;
+        const int       POPUL = 800;
         const int       N = 200000;
-        const double    MUTRATE = 0.05;
+        const double    MUTRATE = 0.09;
         const int       NBIT = 2;
 
         make_binairo();
@@ -286,9 +326,10 @@ void test_ga_binairo()
 
         galgo::GeneticAlgorithmN<BINAIRO_TEST_TYPE, NBIT> ga(BinairoObjective<BINAIRO_TEST_TYPE>::Objective, POPUL, N, true, mutinfo, vlow, vhigh, vinit);
 
+        ga.recombination_ratio = 0.50;
         ga.mutrate = MUTRATE;
         ga.Selection = RWS;
-        ga.CrossOver = P1XO;
+        ga.CrossOver = RealValuedSimpleArithmeticRecombination;
         ga.genstep = 50;
         ga.precision = 2;
 

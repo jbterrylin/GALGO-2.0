@@ -81,7 +81,7 @@ public:
    double mutrate = .05;   // mutation rate   
    double SP = 1.5;        // selective pressure for RSP selection method 
    double tolerance = 0.0; // terminal condition (inactive if equal to zero)
-   double recombination_ratio = 0.55; // Real Valued crossover ratio
+   double recombination_ratio = 0.50; // Real Valued crossover ratio
                  
    int elitpop = 1;   // elit population size
    int matsize;       // mating pool size, set to popsize by default
