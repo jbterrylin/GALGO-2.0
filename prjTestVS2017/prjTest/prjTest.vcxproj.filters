@@ -54,6 +54,9 @@
     <ClInclude Include="..\..\test\Binairo\MatriceUtil.h">
       <Filter>Test\Binairo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\test\Binairo\GA.h">
+      <Filter>Test\Binairo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\example.cpp">

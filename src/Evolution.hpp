@@ -495,27 +495,6 @@ void UXO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2
 }
 
 /*-------------------------------------------------------------------------------------------------*/
-template <typename T>
-void FixedParameter(galgo::Population<T>& x)
-{
-    std::vector<galgo::CHR<T>>& np = x.get_newpop();
-    for (size_t i = 0; i < x.matsize(); i++)
-    {
-        for (int j = 0; j < x.ga_algo()->force_value_flag.size(); j++)
-        {
-            if (x.ga_algo()->force_value_flag[j])
-            {
-                np[i]->initGene(j, x.ga_algo()->force_value[j]);
-                if (np[i]->get_value(j) != x.ga_algo()->force_value[j])
-                {
-                    int debug = 1;
-                    debug++;
-                    std::cout << "ERROR - Invalid decode/encode desired_value:" << x.ga_algo()->force_value[j] << " set_value: " << np[i]->get_value(j) << "\n";
-                }
-            }
-        }
-    }
-}
 
 // MUTATION METHODS
 

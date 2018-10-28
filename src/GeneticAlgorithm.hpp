@@ -90,7 +90,7 @@ public:
    int precision = 10; // precision for outputting results
 
    // Prototype to set fixed value of parameters while evolving
-   void (*FixedValue)(Population<T>&) = nullptr;
+   void (*FixedValue)(Population<T>&, int k) = nullptr;
    std::vector<bool> force_value_flag;
    std::vector<T> force_value;
 

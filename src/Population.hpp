@@ -194,8 +194,11 @@ void Population<T>::recombination()
       ptr->Mutation(newpop[i]);   
       ptr->Mutation(newpop[i+1]);   
 
-      //if (ptr->FixedValue != nullptr)
-      //    ptr->FixedValue(*this);
+      if (ptr->FixedValue != nullptr)
+      {
+          ptr->FixedValue(*this, i);
+          ptr->FixedValue(*this, i + 1);
+      }
 
       // evaluating new chromosomes
       newpop[i]->evaluate();
@@ -219,6 +222,11 @@ void Population<T>::completion()
 
       // mutating chromosome
       ptr->Mutation(newpop[i]);
+
+      if (ptr->FixedValue != nullptr)
+      {
+          ptr->FixedValue(*this, i);
+      }
 
       // evaluating chromosome
       newpop[i]->evaluate();
