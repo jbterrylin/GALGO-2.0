@@ -59,6 +59,9 @@ public:
    // return selection pressure
    double SP() const;
 
+   const GeneticAlgorithm<T>* ga_algo() {return ptr;}
+   std::vector<CHR<T>>& get_newpop() { return newpop;}
+
 private:
    std::vector<CHR<T>> curpop;               // current population
    std::vector<CHR<T>> matpop;               // mating population
@@ -190,6 +193,9 @@ void Population<T>::recombination()
       // mutating new chromosomes
       ptr->Mutation(newpop[i]);   
       ptr->Mutation(newpop[i+1]);   
+
+      //if (ptr->FixedValue != nullptr)
+      //    ptr->FixedValue(*this);
 
       // evaluating new chromosomes
       newpop[i]->evaluate();

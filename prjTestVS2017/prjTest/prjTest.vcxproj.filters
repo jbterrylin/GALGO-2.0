@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{fe769029-9cf7-43bd-aeac-95a1a4285c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test\Binairo">
+      <UniqueIdentifier>{083352c9-4feb-4595-8849-e87d627c4263}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Chromosome.hpp">
@@ -38,6 +44,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Randomize.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\Binairo\Algorithm.h">
+      <Filter>Test\Binairo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\Binairo\Matrice.h">
+      <Filter>Test\Binairo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\Binairo\MatriceUtil.h">
+      <Filter>Test\Binairo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

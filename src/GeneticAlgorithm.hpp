@@ -37,7 +37,7 @@ struct MutationInfo
     double _ratio_boundary;
     double _sigma_lowest;
 };
-
+/*-------------------------------------------------------------------------------------------------*/
 
 template <typename T>
 class GeneticAlgorithm
@@ -48,7 +48,7 @@ class GeneticAlgorithm
    template <typename K>  using Func = std::vector<K> (*)(const std::vector<K>&);
    template <typename Z>  using FuncKT = std::vector<double>(*)(const std::vector<Z>&);
 
-private:
+protected:
    Population<T> pop;             // population of chromosomes
    std::vector<PAR<T>> param;     // parameter(s) 
    std::vector<T> lowerBound;     // parameter(s) lower bound
@@ -89,6 +89,11 @@ public:
    int genstep = 10;  // generation step for outputting results
    int precision = 10; // precision for outputting results
 
+   // Prototype to set fixed value of parameters while evolving
+   void (*FixedValue)(Population<T>&) = nullptr;
+   std::vector<bool> force_value_flag;
+   std::vector<T> force_value;
+
    // constructor
    template <int...N>
    GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
@@ -114,8 +119,9 @@ public:
        else Mutation = SPM;
    }
 
+protected:
+   GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo);
 
-private:
    int nbbit;     // total number of bits per chromosome
    int nbgen;     // number of generations
    int nogen = 0; // numero of generation
@@ -137,9 +143,32 @@ private:
    // print results for each new generation
    void print() const;
 };
-
 /*-------------------------------------------------------------------------------------------------*/
-   
+
+template <typename T, int PARAM_NBIT>
+class GeneticAlgorithmN : public GeneticAlgorithm<T>
+{
+public:
+    // constructor
+    GeneticAlgorithmN(FuncKT<T> objective, int _popsize, int _nbgen, bool output, MutationInfo<T> mutinfo,
+        std::vector<T>& _lowerBound,
+        std::vector<T>& _upperBound,
+        std::vector<T>& _initialSet);
+};
+/*-------------------------------------------------------------------------------------------------*/
+template <typename T>
+GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo)
+{
+    this->setMutation(mutinfo);
+    this->Objective = objective;
+
+    this->nbgen = nbgen;
+
+    this->popsize = popsize;
+    this->matsize = popsize;
+    this->output = output;
+}
+
 // constructor
 template <typename T> template <int...N>
 GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
@@ -164,6 +193,37 @@ GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbge
    // initializing parameter(s) data
    this->init(tp);
 }
+
+// constructor
+template <typename T, int PARAM_NBIT>
+GeneticAlgorithmN<T, PARAM_NBIT>::GeneticAlgorithmN(FuncKT<T> objective, int _popsize, int _nbgen, bool output, MutationInfo<T> mutinfo,
+    std::vector<T>& _lowerBound,
+    std::vector<T>& _upperBound,
+    std::vector<T>& _initialSet) : GeneticAlgorithm<T>(objective, _popsize, _nbgen, output, mutinfo)
+{
+    for (int i = 0; i<_lowerBound.size(); i++)
+    {
+        std::vector<T> w;
+        w.push_back(_lowerBound[i]); w.push_back(_upperBound[i]); w.push_back(_initialSet[i]);
+        Parameter<T, PARAM_NBIT> p(w);
+        param.emplace_back(new decltype(p)(p));
+
+        if (i == 0) idx.push_back(0);
+        else idx.push_back(idx[i - 1] + PARAM_NBIT);
+    }
+    lowerBound = _lowerBound;
+    upperBound = _upperBound;
+    initialSet = _initialSet;
+
+    //this->Objective = objective;
+    this->nbbit = (int)_lowerBound.size()*PARAM_NBIT;
+    this->nbparam = (int)_lowerBound.size();
+
+    this->nbgen = _nbgen;
+    this->popsize = _popsize;
+    this->matsize = _popsize;
+    this->output = true;
+};
 
 /*-------------------------------------------------------------------------------------------------*/
 
@@ -336,7 +396,7 @@ void GeneticAlgorithm<T>::print() const
          if (nbparam > 1) {
             std::cout << std::to_string(i + 1);
          }
-         std::cout << " = "  << std::setw(9) << std::fixed << std::setprecision(precision) << bestParam[i] << " |";
+         std::cout << " = "  << std::setw(2 + precision) << std::fixed << std::setprecision(precision) << bestParam[i] << " |";
 	  }
       for (unsigned i = 0; i < bestResult.size(); ++i) 
       {
