@@ -21,6 +21,32 @@ using BINAIRO_TEST_TYPE = int;
 static std::vector<BINAIRO_TEST_TYPE> binairo_initial;
 void make_binairo()
 {
+    // hard3.txt
+    //std::string s =
+    //std::string("*1***0**1*") +
+    //std::string("0*0*******") +
+    //std::string("******1***") +
+    //std::string("**1**0****") +
+    //std::string("0*********") +
+    //std::string("*******0**") +
+    //std::string("*******1*1") +
+    //std::string("**0***0***") +
+    //std::string("******0***") +
+    //std::string("****0*****");
+
+    // hard2.txt
+    //std::string s =
+    //    std::string("*1***0**1*") +
+    //    std::string("0*0*******") +
+    //    std::string("******1***") +
+    //    std::string("**1**0****") +
+    //    std::string("0*********") +
+    //    std::string("*******00*") +
+    //    std::string("1******1*1") +
+    //    std::string("**0***0***") +
+    //    std::string("******0*1*") +
+    //    std::string("****0*****");
+
     // hard.txt
     std::string s =
         std::string("*1*1*0**1*") +
@@ -33,6 +59,28 @@ void make_binairo()
         std::string("**0***0***") +
         std::string("******0*1*") +
         std::string("****0**0**");
+
+    //--------------------------------------------
+    // 0 | 0 | 1 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 |
+    //--------------------------------------------
+    // 1 | 0 | 1 | 0 | * | * | 1 | 0 | 0 | 1 | 1 |
+    //--------------------------------------------
+    // 2 | 1 | 0 | 1 | * | * | 0 | 1 | 1 | 0 | 0 |
+    //--------------------------------------------
+    // 3 | * | * | 1 | * | * | 0 | 1 | 0 | 0 | 1 |
+    //--------------------------------------------
+    // 4 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 1 | 1 | 0 |
+    //--------------------------------------------
+    // 5 | * | * | 1 | * | 0 | 1 | 1 | 0 | 0 | 1 |
+    //--------------------------------------------
+    // 6 | 1 | 0 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 1 |
+    //--------------------------------------------
+    // 7 | * | * | 0 | * | 1 | * | 0 | * | 1 | 0 |
+    //--------------------------------------------
+    // 8 | * | * | 1 | * | * | * | 0 | * | 1 | 0 |
+    //--------------------------------------------
+    // 9 | * | * | 1 | * | 0 | * | 1 | 0 | 0 | 1 |
+    //--------------------------------------------
 
         //*1*1*0**1*
         //0*0*******
@@ -83,27 +131,6 @@ void make_binairo()
             binairo_initial[10 * i + j] = mat[i][j];
         }
     }
-    //--------------------------------------------
-    // 0 | 0 | 1 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 |
-    //--------------------------------------------
-    // 1 | 0 | 1 | 0 | * | * | 1 | 0 | 0 | 1 | 1 |
-    //--------------------------------------------
-    // 2 | 1 | 0 | 1 | * | * | 0 | 1 | 1 | 0 | 0 |
-    //--------------------------------------------
-    // 3 | * | * | 1 | * | * | 0 | 1 | 0 | 0 | 1 |
-    //--------------------------------------------
-    // 4 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 1 | 1 | 0 |
-    //--------------------------------------------
-    // 5 | * | * | 1 | * | 0 | 1 | 1 | 0 | 0 | 1 |
-    //--------------------------------------------
-    // 6 | 1 | 0 | 0 | 1 | 0 | 0 | 1 | 1 | 0 | 1 |
-    //--------------------------------------------
-    // 7 | * | * | 0 | * | 1 | * | 0 | * | 1 | 0 |
-    //--------------------------------------------
-    // 8 | * | * | 1 | * | * | * | 0 | * | 1 | 0 |
-    //--------------------------------------------
-    // 9 | * | * | 1 | * | 0 | * | 1 | 0 | 0 | 1 |
-    //--------------------------------------------
 }
 
 template <typename T>
@@ -256,8 +283,6 @@ public:
 
         double penality = 0.0;
         if (mismatch == true)  penality += 20000.0;
-        //penality += std::fabs((double)cnt_0 - (n * n / 2));
-        //penality += std::fabs((double)cnt_1 - (n * n / 2
         penality += std::fabs((double)cnt_other - (0));
         penality += 50 * (double)cnt_illegal_row;
         penality += 50 * (double)cnt_illegal_col;
@@ -265,7 +290,7 @@ public:
         penality += 50 * (double)cnt_illegal_rowcol;
         penality += 10 * std::fabs((double)cnt_m1 - (0));
 
-        if ((penality > 0) && (cnt_m1 < 10)) penality += 400 * std::fabs((double)cnt_m1 - (0));
+        //if ((penality > 0) && (cnt_m1 < 10)) penality += 400 * std::fabs((double)cnt_m1 - (0));
 
         double obj = -penality;
         return { obj };
@@ -279,11 +304,11 @@ void test_ga_binairo()
         mutinfo._sigma = 1.0;
         mutinfo._sigma_lowest = 0.01;
         mutinfo._ratio_boundary = 0.10;
-        mutinfo._type = galgo::MutationType::MutationSPM;
+        mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
 
-        const int       POPUL = 800;
-        const int       N = 200000;
-        const double    MUTRATE = 0.09;
+        const int       POPUL = 400;
+        const int       N = 9000000;
+        const double    MUTRATE = 0.05;
         const int       NBIT = 2;
 
         make_binairo();
@@ -326,10 +351,10 @@ void test_ga_binairo()
 
         galgo::GeneticAlgorithmN<BINAIRO_TEST_TYPE, NBIT> ga(BinairoObjective<BINAIRO_TEST_TYPE>::Objective, POPUL, N, true, mutinfo, vlow, vhigh, vinit);
 
-        ga.recombination_ratio = 0.50;
+        ga.recombination_ratio = 0.99;
         ga.mutrate = MUTRATE;
         ga.Selection = RWS;
-        ga.CrossOver = RealValuedSimpleArithmeticRecombination;
+        ga.CrossOver = RealValuedSingleArithmeticRecombination;
         ga.genstep = 50;
         ga.precision = 2;
 
