@@ -89,12 +89,14 @@ void SUS(galgo::Population<T>& x)
       
       while (fsum <= ptr) 
       {
-         #ifndef NDEBUG
+         //#ifndef NDEBUG
          if (j == x.popsize())
          {
-            throw std::invalid_argument("Error: in SUS(galgo::Population<T>&) index j cannot be equal to population size.");
+            //throw std::invalid_argument("Error: in SUS(galgo::Population<T>&) index j cannot be equal to population size.");
+             j = 1;
+             break;
          }
-         #endif
+         //#endif
          if (j < matsize)
          {
              fsum += x(j)->fitness;

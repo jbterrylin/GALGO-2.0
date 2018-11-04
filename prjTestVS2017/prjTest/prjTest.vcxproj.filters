@@ -57,6 +57,12 @@
     <ClInclude Include="..\..\test\Binairo\GA.h">
       <Filter>Test\Binairo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\TestFunction.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\TestTypes.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\example.cpp">

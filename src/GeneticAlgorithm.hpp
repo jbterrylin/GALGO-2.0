@@ -37,6 +37,69 @@ struct MutationInfo
     double _ratio_boundary;
     double _sigma_lowest;
 };
+
+template <typename ParamTYPE>
+struct ConfigInfo
+{
+    ConfigInfo() : mutinfo()
+    {
+        // DEFAULTS
+        covrate = .50; 
+        mutrate = .05;
+        SP = 1.5;
+        tolerance = 0.0;
+        recombination_ratio = 0.50;
+
+        elitpop = 1;
+        tntsize = 10;
+        genstep = 10;
+        precision = 10;
+
+        Objective = nullptr;
+        Selection = RWS;
+        CrossOver = P1XO;
+        Mutation = SPM;
+        Adaptation = nullptr;
+        Constraint = nullptr;
+        FixedValue = nullptr;
+
+        nbgen = 10;
+        popsize = 10;
+        output = false;
+        matsize = popsize;
+    }
+
+    MutationInfo<ParamTYPE> mutinfo;
+
+    double covrate;
+    double mutrate;
+    double SP;
+    double tolerance;
+    double recombination_ratio;
+
+    int elitpop;
+    int matsize;
+    int tntsize;
+    int genstep;
+    int precision;
+
+    std::vector<double> (*Objective)(const std::vector<ParamTYPE>&);
+    void (*Selection)(Population<ParamTYPE>&);
+    void (*CrossOver)(const Population<ParamTYPE>&, CHR<ParamTYPE>&, CHR<ParamTYPE>&);
+    void (*Mutation)(CHR<ParamTYPE>&);
+    void (*Adaptation)(Population<ParamTYPE>&) = nullptr;                           
+    std::vector<double> (*Constraint)(const std::vector<ParamTYPE>&);
+    void (*FixedValue)(Population<ParamTYPE>&, int k);
+
+    std::vector<bool>       force_value_flag;
+    std::vector<ParamTYPE>  force_value;
+
+    int nbgen;
+    int popsize;
+    bool output;
+};
+
+
 /*-------------------------------------------------------------------------------------------------*/
 
 template <typename T>
@@ -95,8 +158,8 @@ public:
    std::vector<T> force_value;
 
    // constructor
-   template <int...N>
-   GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
+   template <int...N> GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
+   template <int...N> GeneticAlgorithm(ConfigInfo<T> config, const Parameter<T, N>&...args);
 
    // run genetic algorithm
    void run();
@@ -155,43 +218,83 @@ public:
         std::vector<T>& _upperBound,
         std::vector<T>& _initialSet);
 };
+
 /*-------------------------------------------------------------------------------------------------*/
+template <typename T> template <int...N>
+GeneticAlgorithm<T>::GeneticAlgorithm(ConfigInfo<T> config, const Parameter<T, N>&...args)
+{
+    setMutation(config.mutinfo);
+
+    Objective = config.Objective;
+    Selection = config.Selection;
+    CrossOver = config.CrossOver;
+    Mutation = config.Mutation;
+    Adaptation = config.Adaptation;
+    Constraint = config.Constraint;
+    FixedValue = config.FixedValue;
+
+    covrate = config.covrate;
+    mutrate = config.mutrate;
+    SP = config.SP;
+    tolerance = config.tolerance;
+    recombination_ratio = config.recombination_ratio;
+
+    elitpop = config.elitpop;
+    matsize = config.matsize;
+    tntsize = config.tntsize;
+    genstep = config.genstep;
+    precision = config.precision;
+
+    force_value_flag = config.force_value_flag;
+    force_value = config.force_value;
+
+    nbgen = config.nbgen;
+    popsize = config.popsize;
+    output = config.output;
+
+    nogen = 0;
+
+    nbbit = sum(N...);
+    nbparam = sizeof...(N);
+    TUP<T, N...> tp(args...);
+    init(tp);
+}
+
+
 template <typename T>
 GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo)
 {
-    this->setMutation(mutinfo);
-    this->Objective = objective;
-
-    this->nbgen = nbgen;
-
-    this->popsize = popsize;
-    this->matsize = popsize;
-    this->output = output;
+    setMutation(mutinfo);
+    Objective = objective;
+    nbgen = nbgen;
+    popsize = popsize;
+    matsize = popsize;
+    output = output;
 }
 
 // constructor
 template <typename T> template <int...N>
 GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args)
 {
-   this->setMutation(mutinfo);
-   this->Objective = objective;
+   setMutation(mutinfo);
+   Objective = objective;
 
    // getting total number of bits per chromosome
-   this->nbbit = sum(N...);
-   this->nbgen = nbgen;
+   nbbit = sum(N...);
+   nbgen = nbgen;
 
    // getting number of parameters in the pack
-   this->nbparam = sizeof...(N);
+   nbparam = sizeof...(N);
 
-   this->popsize = popsize;
-   this->matsize = popsize;
-   this->output = output;
+   popsize = popsize;
+   matsize = popsize;
+   output = output;
 
    // unpacking parameter pack in tuple
    TUP<T,N...> tp(args...);
 
    // initializing parameter(s) data
-   this->init(tp);
+   init(tp);
 }
 
 // constructor
@@ -215,14 +318,13 @@ GeneticAlgorithmN<T, PARAM_NBIT>::GeneticAlgorithmN(FuncKT<T> objective, int _po
     upperBound = _upperBound;
     initialSet = _initialSet;
 
-    //this->Objective = objective;
-    this->nbbit = (int)_lowerBound.size()*PARAM_NBIT;
-    this->nbparam = (int)_lowerBound.size();
+    nbbit = (int)_lowerBound.size()*PARAM_NBIT;
+    nbparam = (int)_lowerBound.size();
 
-    this->nbgen = _nbgen;
-    this->popsize = _popsize;
-    this->matsize = _popsize;
-    this->output = true;
+    nbgen = _nbgen;
+    popsize = _popsize;
+    matsize = _popsize;
+    output = true;
 };
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -300,7 +402,7 @@ template <typename T>
 void GeneticAlgorithm<T>::run()
 {
    // checking inputs validity
-   this->check();
+   check();
 
    // setting adaptation method to default if needed
    if (Constraint != nullptr && Adaptation == nullptr) {

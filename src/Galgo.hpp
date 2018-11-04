@@ -34,6 +34,9 @@ namespace galgo {
 
 // forward declarations
 template <typename T>
+struct ConfigInfo;
+
+template <typename T>
 struct MutationInfo;
 
 template <typename T>
