@@ -6,6 +6,8 @@ New features added:
 - Add support for real-valued mutation/crossover
 - Add real-valued gaussian mutation/crossover (chromosomes genes have also a sigma that can be evolve)
 - Add a GA Binairo puzzle solver
+- Add support to fix parameter value to known fixed values after changes (mutation/crossover/...)
+- Add support to conditionally stop GA  run
 
 # Original GALGO-2.0
 Genetic Algorithm in C++ with template metaprogramming and abstraction for constrained optimization.
