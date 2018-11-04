@@ -1,4 +1,13 @@
-# GALGO-2.0
+New features added:
+- Support integral types for genetical algorithm(GA) parameters (not just float, double)
+- Support passing of initial parameters as runtime vectors
+- Support central configuring (ConfigInfo structure) when running a GA
+- Add classic GA test functions for benchmarking/testing
+- Add support for real-valued mutation/crossover
+- Add real-valued gaussian mutation/crossover (chromosomes genes have also a sigma that can be evolve)
+- Add a GA Binairo puzzle solver
+
+# Original GALGO-2.0
 Genetic Algorithm in C++ with template metaprogramming and abstraction for constrained optimization.
 
 # Description
