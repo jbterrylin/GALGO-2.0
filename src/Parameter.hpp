@@ -107,7 +107,7 @@ private:
        {
            int64_t d0 = (int64_t)data[0];
            int64_t r = d0 + GetValue(str);
-           int64_t v = std::min<int64_t>(std::max<int64_t>(r, data[0]), data[1]);
+           int64_t v = std::min<int64_t>(std::max<int64_t>(r, static_cast<int64_t>(data[0])), static_cast<int64_t>(data[1]));
            return (T)v;
        }
        else

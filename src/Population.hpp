@@ -138,15 +138,19 @@ void Population<T>::evolution()
    matidx = 0;
 
    // selecting mating population
+   // curpop[] -> matpop[]
    ptr->Selection(*this);
 
    // applying elitism if required
+   // curpop[] -> newpop[0...elitpop-1]
    this->elitism(); 
 
    // crossing-over mating population
+   // matpop[] -> newpop[elitpop...nbrcrov-1]
    this->recombination();
 
    // completing new population
+   // matpop[] -> newpop[nbrcrov...popsize]
    this->completion();
 
    // moving new population into current population for next generation
