@@ -227,7 +227,9 @@ void Population<T>::completion()
    for (int i = nbrcrov; i < ptr->popsize; ++i)
    {
       // selecting chromosome randomly from mating population
-      newpop[i] = std::make_shared<Chromosome<T>>(*matpop[uniform<int>(0, ptr->matsize)]);
+      int pos = uniform<int>(0, ptr->matsize);
+      newpop[i] = std::make_shared<Chromosome<T>>(*matpop[pos]);
+      transmit_sigma<T>(*matpop[pos], *newpop[i]);
 
       // mutating chromosome
       ptr->Mutation(newpop[i]);
