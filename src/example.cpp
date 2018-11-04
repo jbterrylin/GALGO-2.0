@@ -49,7 +49,7 @@ int main()
 #endif
 
 #ifdef TEST_BINAIRO
-    test_ga_binairo(2); //0 =one free cell(hard), 1=4 free cells(very hard), 3=7 free cells(diabolical)
+    test_ga_binairo(3); //0 =one free cell(hard), 1=4 free cells(very hard), 3=7 free cells(diabolical)
 #endif
 
     using _TYPE = float;    // Suppport float, double, char, int, long, ... for parameters

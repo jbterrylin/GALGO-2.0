@@ -22,7 +22,55 @@ static std::vector<BINAIRO_TEST_TYPE> binairo_initial;
 void make_binairo(int no = 0)
 {
     std::string s;
-    if (no == 2)
+    if (no == 3)
+    {
+        s =
+        //std::string("***0******") +
+        //std::string("*****01***") +
+        //std::string("***1******") +
+        //std::string("**********") +
+        //std::string("*****0**0*") +
+        //std::string("*1****1***") +
+        //std::string("*****0***0") +
+        //std::string("**1**0**1*") +
+        //std::string("**1*0****0") +
+        //std::string("*0*******0");
+
+        //std::string("***0******") +
+        //std::string("******1***") +
+        //std::string("***1******") +
+        //std::string("**********") +
+        //std::string("********0*") +
+        //std::string("*1****1***") +
+        //std::string("*****0***0") +
+        //std::string("**1**0**1*") +
+        //std::string("****0****0") +
+        //std::string("*0*******0");
+
+        //std::string("**********") +
+        //std::string("******1***") +
+        //std::string("***1******") +
+        //std::string("**********") +
+        //std::string("********0*") +
+        //std::string("******1***") +
+        //std::string("*********0") +
+        //std::string("*****0**1*") +
+        //std::string("****0****0") +
+        //std::string("*0*******0");
+
+        std::string("**********") +
+        std::string("******1***") +
+        std::string("**********") +
+        std::string("**********") +
+        std::string("********0*") +
+        std::string("**********") +
+        std::string("*********0") +
+        std::string("*****0****") +
+        std::string("*********0") +
+        std::string("*0*******0");
+    }
+
+    else if (no == 2)
     {
         // hard3.txt
         s =
