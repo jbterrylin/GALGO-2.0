@@ -33,7 +33,9 @@ public:
    // minimizing f(x,y) = (1 - x)^2 + 100 * (y - x^2)^2
    static std::vector<double> Objective(const std::vector<T>& x)
    {
-        double obj =  -(pow(1-x[0],2)+100*pow(x[1]-x[0]*x[0],2));
+        double x0 = (double)x[0];
+        double x1 = (double)x[1];
+        double obj =  -(pow(1.0 - x0, 2.0) + 100 * pow(x1 - x0*x0, 2.0));
         return {obj};
    }
    // NB: GALGO maximize by default so we will maximize -f(x,y)
@@ -45,7 +47,9 @@ class AckleyObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
-        double obj = -Ackley<T>(x[0], x[1]);
+        double x0 = (double)x[0];
+        double x1 = (double)x[1];
+        double obj = -Ackley<double>(x0, x1);
         return { obj };
     }
 };
@@ -54,13 +58,15 @@ public:
 template <typename T>
 std::vector<double> MyConstraint(const std::vector<T>& x)
 {
-   return 
-   {
+    double x0 = (double)x[0];
+    double x1 = (double)x[1];
+    return 
+    {
        //x[0]*x[1]+x[0]-x[1]+1.5,   // 1) x * y + x - y + 1.5 <= 0
        //10-x[0]*x[1]               // 2) 10 - x * y <= 0
-       x[0] - 2,    // x0 <= 2
-       x[1] - 2     // x1 <= 2
-   };
+       x0 - 2,    // x0 <= 2
+       x1 - 2     // x1 <= 2
+    };
 }
 
 //
@@ -98,7 +104,10 @@ class rastriginObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
-        double obj = -pso_rastrigin(x);
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+
+        double obj = -pso_rastrigin<double>(xd);
         return { obj };
     }
 };
@@ -107,7 +116,8 @@ public:
 Griewank Function
 */
 template <typename T>
-double pso_griewank(std::vector< T > particle) {
+double pso_griewank(std::vector< T > particle) 
+{
     double sum(0.), product(1.);
     for (int i = 0; i < particle.size(); i++) {
         sum += pow(particle[i], 2.);
@@ -122,7 +132,10 @@ class GriewankObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
-        double obj = -pso_griewank(x);
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+
+        double obj = -pso_griewank<double>(xd);
         return { obj };
     }
 };
@@ -147,7 +160,10 @@ class StyblinskiTangObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
-        double obj = -pso_styb_tang(x);
+        std::vector<double> xd(x.size());
+        for(size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+
+        double obj = -pso_styb_tang<double>(xd);
         return { obj };
     }
 };
@@ -158,14 +174,17 @@ class SumSameAsPrdObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
-        int ix = (int)x[0];
-        int iy = (int)x[1];
+        double x0 = (double)x[0];
+        double x1 = (double)x[1];
+
+        int ix = (int)x0;
+        int iy = (int)x1;
         double sum = ix + iy;
         double prd = ix * iy;
-        double diff = std::fabs(sum - prd);
+        double diff  = std::fabs(sum - prd);
 
         double err = 1000 * diff * diff;;
-        err += (100 * std::fabs(x[0] - ix)* std::fabs(x[0] - ix) + 100 * std::fabs(x[1] - iy)* std::fabs(x[1] - iy));
+        err += (100 * std::fabs(x0 - ix)* std::fabs(x0 - ix) + 100 * std::fabs(x1 - iy)* std::fabs(x1 - iy));
 
         double obj = -(diff + err);
         return { obj };
@@ -229,10 +248,10 @@ void TEST_TYPE()
                 mutinfo._type = mutcases[m];
                 for (size_t c = 0; c < crosscases.size(); c++)
                 {
-                    std::cout << std::endl;
+                    std::cout << s << " - " << m << " - " << c << std::endl;
                     std::cout << "SumSameAsPrd function 2x2 = 2+2";
-                    galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 60 });
-                    galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 40 });
+                    galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1.5, (_TYPE)3, 3 }); // an initial value can be added inside the initializer list after the upper bound
+                    galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1.5, (_TYPE)3, 3 });
                     galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
                     ga.mutrate = MUTRATE;
                     ga.recombination_ratio = RecombinationRatio;
@@ -283,17 +302,17 @@ int main()
     const int       N       = 400;  // Number of generation to produce
     const double    MUTRATE = 0.05;
     const int       NBIT    = 63;   // has to remain between 1 and 64
-    const double    RecombinationRatio = 0.60;
-    const int       TNT_SIZE = 2;
-    CROSS<_TYPE>    CROSSType = RealValuedSimpleArithmeticRecombination;
+    const double    RecombinationRatio = 0.10;
+    const int       TNT_SIZE    = 2;
+    CROSS<_TYPE>    CROSSType   = RealValuedSimpleArithmeticRecombination;
     SELECT<_TYPE>   SELECTType  = TNT;
 
     {
         {
             std::cout << std::endl;
             std::cout << "SumSameAsPrd function 2x2 = 2+2";
-            galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 50 }); // an initial value can be added inside the initializer list after the upper bound
-            galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 50 });
+            galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1.5, (_TYPE)3, 3 }); // an initial value can be added inside the initializer list after the upper bound
+            galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1.5, (_TYPE)3, 3 });
             galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;  
             ga.recombination_ratio = RecombinationRatio;

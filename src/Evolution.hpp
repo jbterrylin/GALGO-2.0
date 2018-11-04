@@ -73,6 +73,11 @@ void SUS(galgo::Population<T>& x)
    // computing interval size
    double dist = fitsum / matsize;
 
+   if (fitsum == 0.0)
+   {
+       dist = 1.0; // BUG to fix
+   }
+
    // initializing pointer
    double ptr = galgo::uniform<double>(0.0, dist);
    
@@ -82,14 +87,34 @@ void SUS(galgo::Population<T>& x)
       int j = 0;
       double fsum = 0;
       
-      while (fsum <= ptr) {
+      while (fsum <= ptr) 
+      {
          #ifndef NDEBUG
-         if (j == x.popsize()) {
+         if (j == x.popsize())
+         {
             throw std::invalid_argument("Error: in SUS(galgo::Population<T>&) index j cannot be equal to population size.");
          }
          #endif
-         fsum += x(j)->fitness;
-         j++;
+         if (j < matsize)
+         {
+             fsum += x(j)->fitness;
+             if (j < matsize - 1)
+             {
+                 j++;
+             }
+             else
+             {
+                 // BUG to fix
+                 j = 1;
+                 break;
+             }
+         }
+         else
+         {
+             // BUG to fix
+             j = 1;
+             break;
+         }
       }
 
       // selecting element
