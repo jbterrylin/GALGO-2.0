@@ -77,7 +77,8 @@ public:
 
 private:
    // encoding random unsigned integer
-   std::string encode() const override {
+   std::string encode() const override 
+   {
       std::string str = GetBinary(galgo::Randomize<N>::generate());
       return str.substr(str.size() - N, N);
    }
@@ -85,15 +86,36 @@ private:
    // encoding known unsigned integer
    std::string encode(T z) const override 
    {
-      uint64_t value = (uint64_t ) ( Randomize<N>::MAXVAL * (z - data[0]) / (data[1] - data[0]) );
-      std::string str = GetBinary(value);
-      return str.substr(str.size() - N, N);
+       if (std::is_integral<T>::value)
+       {
+           uint64_t value = (uint64_t)(z - data[0]);
+           std::string str = GetBinary(value);
+           return str.substr(str.size() - N, N);
+       }
+       else
+       {
+           uint64_t value = (uint64_t)(Randomize<N>::MAXVAL * (z - data[0]) / (data[1] - data[0]));
+           std::string str = GetBinary(value);
+           return str.substr(str.size() - N, N);
+       }
    }
 
-   // decoding string to real value
+   // decoding string 
    T decode(const std::string& str) const override 
    {
-      return (T)(data[0] + (GetValue(str) / static_cast<double>(Randomize<N>::MAXVAL)) * (data[1] - data[0]));
+       if (std::is_integral<T>::value)
+       {
+           int64_t d0 = (int64_t)data[0];
+           int64_t r = d0 + GetValue(str);
+           int64_t v = std::min<int64_t>(std::max<int64_t>(r, data[0]), data[1]);
+           return (T)v;
+       }
+       else
+       {
+           // decoding string to real value
+           // Randomize<N>::MAXVAL=> 0,1,3,7,15,31,...
+           return (T)(data[0] + (GetValue(str) / static_cast<double>(Randomize<N>::MAXVAL)) * (data[1] - data[0]));
+       }
    }
 };
 

@@ -19,36 +19,45 @@ using BINAIRO_TEST_TYPE = int;
 //static std::vector<BINAIRO_TEST_TYPE> binairo_solution = { 0,1,1,0,1,0,1,0,  1,0,0,1,0,1,0,1,  1,0,0,1,0,1,1,0, 0,1,1,0,1,0,0,1,
 //                                                           0,0,1,1,0,1,1,0,  1,0,0,1,1,0,1,0,  1,1,0,0,1,0,0,1, 0,1,1,0,0,1,0,1};
 static std::vector<BINAIRO_TEST_TYPE> binairo_initial;
-void make_binairo()
+void make_binairo(int no = 0)
 {
-    // hard3.txt
-    //std::string s =
-    //std::string("*1***0**1*") +
-    //std::string("0*0*******") +
-    //std::string("******1***") +
-    //std::string("**1**0****") +
-    //std::string("0*********") +
-    //std::string("*******0**") +
-    //std::string("*******1*1") +
-    //std::string("**0***0***") +
-    //std::string("******0***") +
-    //std::string("****0*****");
+    std::string s;
+    if (no == 2)
+    {
+        // hard3.txt
+        s =
+        std::string("*1***0**1*") +
+        std::string("0*0*******") +
+        std::string("******1***") +
+        std::string("**1**0****") +
+        std::string("0*********") +
+        std::string("*******0**") +
+        std::string("*******1*1") +
+        std::string("**0***0***") +
+        std::string("******0***") +
+        std::string("****0*****");
+    }
 
-    // hard2.txt
-    //std::string s =
-    //    std::string("*1***0**1*") +
-    //    std::string("0*0*******") +
-    //    std::string("******1***") +
-    //    std::string("**1**0****") +
-    //    std::string("0*********") +
-    //    std::string("*******00*") +
-    //    std::string("1******1*1") +
-    //    std::string("**0***0***") +
-    //    std::string("******0*1*") +
-    //    std::string("****0*****");
+    else if (no == 1)
+    {
+        // hard2.txt
+        s =
+        std::string("*1***0**1*") +
+        std::string("0*0*******") +
+        std::string("******1***") +
+        std::string("**1**0****") +
+        std::string("0*********") +
+        std::string("*******00*") +
+        std::string("1******1*1") +
+        std::string("**0***0***") +
+        std::string("******0*1*") +
+        std::string("****0*****");
+    }
 
-    // hard.txt
-    std::string s =
+    else
+    {
+        // hard.txt
+        s =
         std::string("*1*1*0**1*") +
         std::string("0*0*******") +
         std::string("******11**") +
@@ -59,6 +68,7 @@ void make_binairo()
         std::string("**0***0***") +
         std::string("******0*1*") +
         std::string("****0**0**");
+}
 
     //--------------------------------------------
     // 0 | 0 | 1 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 |
@@ -297,16 +307,17 @@ public:
     }
 };
 
-void test_ga_binairo()
+void test_ga_binairo(int no = 0)
 {
     {
         const int NBIT = 2;
-        make_binairo();
+        make_binairo(no);
 
         std::cout << std::endl;
         std::cout << "BINAIRO grid NxN";
         int k = 0;
         const int NBinairo = 10;
+        //[-1,0,1] 3 values/4 (2 bits) = -1=-1+00, 0=-1+01, 1=-1+10
         BINAIRO_TEST_TYPE low = -1;
         BINAIRO_TEST_TYPE high = 1;
         std::vector<BINAIRO_TEST_TYPE> vlow(NBinairo * NBinairo);
@@ -347,13 +358,17 @@ void test_ga_binairo()
         config.mutinfo._ratio_boundary = 0.10;
 
         config.popsize  = 400;
-        config.nbgen    = 9000000;
+        config.nbgen    = 10000000;
         config.output   = true;
-        config.recombination_ratio = 0.99;
-        config.mutrate = 0.05;;
+
+        config.covrate = 0.10;
+        config.elitpop = 50; // Keep enough single unmodified individuals
+        config.recombination_ratio = 0.50;
+        config.mutrate = 0.05;
+
         config.Selection = RWS;
         config.CrossOver = RealValuedSingleArithmeticRecombination;
-        config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
+        config.mutinfo._type = galgo::MutationType::MutationSPM;
         config.genstep = 50;
         config.precision = 2;
 

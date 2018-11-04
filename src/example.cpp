@@ -29,9 +29,9 @@ void set_my_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._ratio_boundary  = 0.10;
 
     config.mutrate = 0.05;
-    config.recombination_ratio = 0.40;
+    config.recombination_ratio = 0.50;
 
-    config.tntsize      = 2;
+    config.tntsize      = 5;
     config.Selection    = TNT;
     config.CrossOver    = RealValuedSimpleArithmeticRecombination;
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
@@ -48,11 +48,11 @@ int main()
 #endif
 
 #ifdef TEST_BINAIRO
-    test_ga_binairo();
+    test_ga_binairo(2); //0 =one free cell(hard), 1=4 free cells(very hard), 3=7 free cells(diabolical)
 #endif
 
     using _TYPE = float;    // Suppport float, double, char, int, long, ... for parameters
-    const int NBIT = 63;    // Has to remain between 1 and 64
+    const int NBIT = 32;    // Has to remain between 1 and 64
 
     // CONFIG
     galgo::ConfigInfo<_TYPE> config;    // A new instance of config get initial defaults
