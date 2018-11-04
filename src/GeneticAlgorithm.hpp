@@ -108,7 +108,6 @@ class GeneticAlgorithm
    template <typename K> friend class Population;
    template <typename K> friend class Chromosome;
 
-   template <typename K>  using Func = std::vector<K> (*)(const std::vector<K>&);
    template <typename Z>  using FuncKT = std::vector<double>(*)(const std::vector<Z>&);
 
 protected:
@@ -159,7 +158,7 @@ public:
 
    // constructor
    template <int...N> GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
-   template <int...N> GeneticAlgorithm(ConfigInfo<T> config, const Parameter<T, N>&...args);
+   template <int...N> GeneticAlgorithm(const ConfigInfo<T>& config, const Parameter<T, N>&...args);
 
    // run genetic algorithm
    void run();
@@ -167,7 +166,7 @@ public:
    // return best chromosome 
    const CHR<T>& result() const;
 
-   void setMutation(MutationInfo<T> mt)
+   void setMutation(const MutationInfo<T>& mt)
    {
        mutinfo = mt;
        if (mt._type == MutationType::MutationSPM)       { Mutation = SPM; }
@@ -183,7 +182,7 @@ public:
    }
 
 protected:
-   GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo);
+   GeneticAlgorithm(const ConfigInfo<T>& config); // No parameters set
 
    int nbbit;     // total number of bits per chromosome
    int nbgen;     // number of generations
@@ -205,23 +204,25 @@ protected:
 
    // print results for each new generation
    void print() const;
-};
-/*-------------------------------------------------------------------------------------------------*/
 
+   void init_from_config(const ConfigInfo<T>& config);
+};
+
+/*-------------------------------------------------------------------------------------------------*/
 template <typename T, int PARAM_NBIT>
 class GeneticAlgorithmN : public GeneticAlgorithm<T>
 {
 public:
     // constructor
-    GeneticAlgorithmN(FuncKT<T> objective, int _popsize, int _nbgen, bool output, MutationInfo<T> mutinfo,
+    GeneticAlgorithmN(const ConfigInfo<T>& config,
         std::vector<T>& _lowerBound,
         std::vector<T>& _upperBound,
         std::vector<T>& _initialSet);
 };
 
 /*-------------------------------------------------------------------------------------------------*/
-template <typename T> template <int...N>
-GeneticAlgorithm<T>::GeneticAlgorithm(ConfigInfo<T> config, const Parameter<T, N>&...args)
+template <typename T>
+void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
 {
     setMutation(config.mutinfo);
 
@@ -253,23 +254,23 @@ GeneticAlgorithm<T>::GeneticAlgorithm(ConfigInfo<T> config, const Parameter<T, N
     output = config.output;
 
     nogen = 0;
+}
 
+template <typename T> template <int...N>
+GeneticAlgorithm<T>::GeneticAlgorithm(const ConfigInfo<T>& config, const Parameter<T, N>&...args)
+{
+    init_from_config(config);
+    
     nbbit = sum(N...);
     nbparam = sizeof...(N);
     TUP<T, N...> tp(args...);
     init(tp);
 }
 
-
 template <typename T>
-GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo)
+GeneticAlgorithm<T>::GeneticAlgorithm(const ConfigInfo<T>& config)
 {
-    setMutation(mutinfo);
-    Objective = objective;
-    nbgen = nbgen;
-    popsize = popsize;
-    matsize = popsize;
-    output = output;
+    init_from_config(config);
 }
 
 // constructor
@@ -299,10 +300,8 @@ GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbge
 
 // constructor
 template <typename T, int PARAM_NBIT>
-GeneticAlgorithmN<T, PARAM_NBIT>::GeneticAlgorithmN(FuncKT<T> objective, int _popsize, int _nbgen, bool output, MutationInfo<T> mutinfo,
-    std::vector<T>& _lowerBound,
-    std::vector<T>& _upperBound,
-    std::vector<T>& _initialSet) : GeneticAlgorithm<T>(objective, _popsize, _nbgen, output, mutinfo)
+GeneticAlgorithmN<T, PARAM_NBIT>::GeneticAlgorithmN(const ConfigInfo<T>& _config, std::vector<T>& _lowerBound, std::vector<T>& _upperBound, std::vector<T>& _initialSet)
+    : GeneticAlgorithm<T>(_config)
 {
     for (int i = 0; i<_lowerBound.size(); i++)
     {
@@ -320,11 +319,6 @@ GeneticAlgorithmN<T, PARAM_NBIT>::GeneticAlgorithmN(FuncKT<T> objective, int _po
 
     nbbit = (int)_lowerBound.size()*PARAM_NBIT;
     nbparam = (int)_lowerBound.size();
-
-    nbgen = _nbgen;
-    popsize = _popsize;
-    matsize = _popsize;
-    output = true;
 };
 
 /*-------------------------------------------------------------------------------------------------*/

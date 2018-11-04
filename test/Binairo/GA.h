@@ -300,17 +300,7 @@ public:
 void test_ga_binairo()
 {
     {
-        galgo::MutationInfo<BINAIRO_TEST_TYPE> mutinfo;     // Changes mutation info as desired
-        mutinfo._sigma = 1.0;
-        mutinfo._sigma_lowest = 0.01;
-        mutinfo._ratio_boundary = 0.10;
-        mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
-
-        const int       POPUL = 400;
-        const int       N = 9000000;
-        const double    MUTRATE = 0.05;
-        const int       NBIT = 2;
-
+        const int NBIT = 2;
         make_binairo();
 
         std::cout << std::endl;
@@ -349,19 +339,29 @@ void test_ga_binairo()
         }
         display_binairio<BINAIRO_TEST_TYPE>(mat, false);
 
-        galgo::GeneticAlgorithmN<BINAIRO_TEST_TYPE, NBIT> ga(BinairoObjective<BINAIRO_TEST_TYPE>::Objective, POPUL, N, true, mutinfo, vlow, vhigh, vinit);
+        galgo::ConfigInfo<BINAIRO_TEST_TYPE> config;
+        config.Objective = BinairoObjective<BINAIRO_TEST_TYPE>::Objective;
 
-        ga.recombination_ratio = 0.99;
-        ga.mutrate = MUTRATE;
-        ga.Selection = RWS;
-        ga.CrossOver = RealValuedSingleArithmeticRecombination;
-        ga.genstep = 50;
-        ga.precision = 2;
+        config.mutinfo._sigma = 1.0;
+        config.mutinfo._sigma_lowest = 0.01;
+        config.mutinfo._ratio_boundary = 0.10;
 
-        ga.force_value_flag = force_value_flag;
-        ga.force_value = force_value;
-        ga.FixedValue = FixedParameterBinairo;  // nullptr;
+        config.popsize  = 400;
+        config.nbgen    = 9000000;
+        config.output   = true;
+        config.recombination_ratio = 0.99;
+        config.mutrate = 0.05;;
+        config.Selection = RWS;
+        config.CrossOver = RealValuedSingleArithmeticRecombination;
+        config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedOneStepSizeBoundary;
+        config.genstep = 50;
+        config.precision = 2;
 
+        config.force_value_flag = force_value_flag;
+        config.force_value = force_value;
+        config.FixedValue = FixedParameterBinairo;  // nullptr;
+
+        galgo::GeneticAlgorithmN<BINAIRO_TEST_TYPE, NBIT> ga(config, vlow, vhigh, vinit);
         ga.run();
 
         //const galgo::CHR<BINAIRO_TEST_TYPE> bestParam = ga.result(); //std::shared_ptr<Chromosome<T>>;
