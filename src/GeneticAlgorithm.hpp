@@ -173,6 +173,8 @@ public:
    // print results for each new generation
    void print(bool force  =  false) const;
 
+   Population<T>& get_pop() { return pop; }
+
 protected:
    void setMutation(const MutationInfo<T>& mt)
    {

@@ -219,20 +219,10 @@ public:
 
                 if ((x[n*i + j] != binairo_initial[n*i + j]) && ((binairo_initial[n*i + j] == 0) || (binairo_initial[n*i + j] == 1)))
                 {
-                    // Put fixed parameter back into matrice
-                    //mat.set(i, j, binairo_initial[n*i + j]);
                     mismatch = true;
                 }
             }
         }
-
-        // Put forced parameter in matrice
-        //bool is_valid;
-        //if (try_resolve_binairio(mat, is_valid) == true)
-        //{
-        //    // SOLVED
-        //}
-
 
         int cnt_0 = mat.count(0);
         int cnt_1 = mat.count(1);
@@ -300,8 +290,6 @@ public:
         penality += 50 * (double)cnt_illegal_rowcol;
         penality += 10 * std::fabs((double)cnt_m1 - (0));
 
-        //if ((penality > 0) && (cnt_m1 < 10)) penality += 400 * std::fabs((double)cnt_m1 - (0));
-
         double obj = -penality;
         return { obj };
     }
@@ -314,8 +302,30 @@ bool StopGABinairo(galgo::GeneticAlgorithm<T>& ga)
     if (bestParam->fitness >= 0.0)
     {
         std::cout << "SOLVED\n";
-        if (ga.output)
-            ga.print(true);
+        if (ga.output)  ga.print(true);
+        //galgo::Population<BINAIRO_TEST_TYPE>& x = ga.get_pop();
+        //std::vector<galgo::CHR<T>>& np = x.get_newpop();
+
+        size_t n = (int)pow((double)bestParam->nbgene(), 0.50);
+        MatriceUtil<T> mat(n, n);
+
+        int v;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                v = bestParam->get_value((int)n*i + j);
+                mat.set(i, j, v);
+            }
+        }
+
+        bool is_valid;
+        if (try_resolve_binairio(mat, is_valid) == true)
+        {
+            // SOLVED
+            display_binairio<BINAIRO_TEST_TYPE>(mat, false);
+        }
+
         return true;
     }
     return false;
