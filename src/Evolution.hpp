@@ -317,16 +317,16 @@ void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, galg
     }
     for (int i = pos; i < chr1->nbgene(); i++)
     {
-        chr1->initGene(i, (T)(r * chrmat2.get_value(i) + (1.0 - r) * chrmat1.get_value(i)));
+        chr1->initGene(i, (T)((r * chrmat2.get_value(i)) + ((1.0 - r) * chrmat1.get_value(i)) ));
     }
 
     for (int i = 0; i < pos; i++)
     {
         chr2->initGene(i, chrmat2.get_value(i));
     }
-    for (int i = pos; i < chr1->nbgene(); i++)
+    for (int i = pos; i < chr2->nbgene(); i++)
     {
-        chr2->initGene(i, (T)(r * chrmat1.get_value(i) + (1.0 - r) * chrmat2.get_value(i)));
+        chr2->initGene(i, (T)( (r * chrmat1.get_value(i)) + ((1.0 - r) * chrmat2.get_value(i)) ));
     }
 
     // Transmit sigma

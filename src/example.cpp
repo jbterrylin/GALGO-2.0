@@ -279,23 +279,25 @@ int main()
     mutinfo._ratio_boundary = 0.10;
     mutinfo._type           = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
 
-    const int       POPUL   = 100;
+    const int       POPUL   = 50;
     const int       N       = 400;  // Number of generation to produce
     const double    MUTRATE = 0.05;
     const int       NBIT    = 63;   // has to remain between 1 and 64
     const double    RecombinationRatio = 0.60;
-    CROSS<_TYPE>    CROSSType = RealValuedSingleArithmeticRecombination;
-    SELECT<_TYPE>   SELECTType  = RWS;
+    const int       TNT_SIZE = 2;
+    CROSS<_TYPE>    CROSSType = RealValuedSimpleArithmeticRecombination;
+    SELECT<_TYPE>   SELECTType  = TNT;
 
     {
         {
             std::cout << std::endl;
             std::cout << "SumSameAsPrd function 2x2 = 2+2";
-            galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 99 }); // an initial value can be added inside the initializer list after the upper bound
-            galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 99 });
+            galgo::Parameter<_TYPE, NBIT> par1({ (_TYPE)1, (_TYPE)100, 50 }); // an initial value can be added inside the initializer list after the upper bound
+            galgo::Parameter<_TYPE, NBIT> par2({ (_TYPE)1, (_TYPE)100, 50 });
             galgo::GeneticAlgorithm<_TYPE> ga(SumSameAsPrdObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;  
             ga.recombination_ratio = RecombinationRatio;
+            ga.tntsize = TNT_SIZE;
             ga.Selection = SELECTType;
             ga.CrossOver = CROSSType;
             ga.run();
@@ -309,6 +311,7 @@ int main()
             galgo::GeneticAlgorithm<_TYPE> ga(RosenbrockObjective< _TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;
             ga.recombination_ratio = RecombinationRatio;
+            ga.tntsize = TNT_SIZE;
             ga.Selection = SELECTType;
             ga.CrossOver = CROSSType;
             ga.run();
@@ -322,6 +325,7 @@ int main()
             galgo::GeneticAlgorithm<_TYPE> ga(AckleyObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2);
             ga.mutrate = MUTRATE;
             ga.recombination_ratio = RecombinationRatio;
+            ga.tntsize = TNT_SIZE;
             ga.Selection = SELECTType;
             ga.CrossOver = CROSSType;
             ga.run();
@@ -336,6 +340,7 @@ int main()
             galgo::GeneticAlgorithm<_TYPE> ga(rastriginObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
             ga.recombination_ratio = RecombinationRatio;
+            ga.tntsize = TNT_SIZE;
             ga.Selection = SELECTType;
             ga.CrossOver = CROSSType;
             ga.run();
@@ -350,6 +355,7 @@ int main()
             galgo::GeneticAlgorithm<_TYPE> ga(StyblinskiTangObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
             ga.recombination_ratio = RecombinationRatio;
+            ga.tntsize = TNT_SIZE;
             ga.Selection = SELECTType;
             ga.CrossOver = CROSSType;
             ga.run();
@@ -364,6 +370,7 @@ int main()
             galgo::GeneticAlgorithm<_TYPE> ga(GriewankObjective<_TYPE>::Objective, POPUL, N, true, mutinfo, par1, par2, par3);
             ga.mutrate = MUTRATE;
             ga.recombination_ratio = RecombinationRatio;
+            ga.tntsize = TNT_SIZE;
             ga.Selection = SELECTType;
             ga.CrossOver = CROSSType;
             ga.run();
