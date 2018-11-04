@@ -58,7 +58,7 @@ struct ConfigInfo
         Objective = nullptr;
         Selection = RWS;
         CrossOver = P1XO;
-        //Mutation = SPM; // override by setMutation()
+        //Mutation = SPM; // derived from by mutinfo._type
         Adaptation = nullptr;
         Constraint = nullptr;
         FixedValue = nullptr;
@@ -66,7 +66,6 @@ struct ConfigInfo
         nbgen = 10;
         popsize = 10;
         output = false;
-        matsize = popsize;
     }
 
     MutationInfo<ParamTYPE> mutinfo;
@@ -78,7 +77,7 @@ struct ConfigInfo
     double recombination_ratio;
 
     int elitpop;
-    int matsize;
+    //int matsize; // set to popsize when ga is constructed, maybe change by ga.matsize = ... after constructor and before ga.run()
     int tntsize;
     int genstep;
     int precision;
@@ -241,7 +240,7 @@ void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
     recombination_ratio = config.recombination_ratio;
 
     elitpop = config.elitpop;
-    matsize = config.matsize;
+    //matsize = config.matsize;
     tntsize = config.tntsize;
     genstep = config.genstep;
     precision = config.precision;
@@ -251,6 +250,7 @@ void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
 
     nbgen = config.nbgen;
     popsize = config.popsize;
+    matsize = popsize;
     output = config.output;
 
     nogen = 0;

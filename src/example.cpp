@@ -29,7 +29,7 @@ void set_my_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._ratio_boundary  = 0.10;
 
     config.mutrate = 0.05;
-    config.recombination_ratio = 0.10;
+    config.recombination_ratio = 0.40;
 
     config.tntsize      = 2;
     config.Selection    = TNT;
