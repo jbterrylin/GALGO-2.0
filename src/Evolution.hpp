@@ -317,6 +317,15 @@ void transmit_sigma(double r, const galgo::Chromosome<T>& chrmat1, const galgo::
     }
 }
 
+template <typename T>
+void transmit_sigma(const galgo::Chromosome<T>& chrmat1,  galgo::Chromosome<T>& chr1)
+{
+    for (int i = 0; i < chr1.nbgene(); i++)
+    {
+        chr1.sigma_update(i, chrmat1.get_sigma(i));
+    }
+}
+
 /*-------------------------------------------------------------------------------------------------*/
 template <typename T>
 void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)

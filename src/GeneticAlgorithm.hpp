@@ -58,7 +58,7 @@ struct ConfigInfo
         Objective = nullptr;
         Selection = RWS;
         CrossOver = P1XO;
-        Mutation = SPM;
+        //Mutation = SPM; // override by setMutation()
         Adaptation = nullptr;
         Constraint = nullptr;
         FixedValue = nullptr;
@@ -229,7 +229,7 @@ void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
     Objective = config.Objective;
     Selection = config.Selection;
     CrossOver = config.CrossOver;
-    Mutation = config.Mutation;
+    //Mutation = config.Mutation;
     Adaptation = config.Adaptation;
     Constraint = config.Constraint;
     FixedValue = config.FixedValue;

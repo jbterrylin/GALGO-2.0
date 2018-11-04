@@ -168,6 +168,11 @@ void Population<T>::elitism()
    if (ptr->elitpop > 0) {
       // copying elit chromosomes into new population
       std::transform(curpop.cbegin(), curpop.cend(), newpop.begin(), [](const CHR<T>& chr)->CHR<T>{return std::make_shared<Chromosome<T>>(*chr);});
+
+      for (size_t i = 0; i < curpop.size(); i++)
+      {
+        transmit_sigma<T>(*curpop[i], *newpop[i]);
+      }
    }
 }
 
