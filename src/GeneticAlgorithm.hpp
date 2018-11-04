@@ -165,6 +165,7 @@ public:
    // return best chromosome 
    const CHR<T>& result() const;
 
+protected:
    void setMutation(const MutationInfo<T>& mt)
    {
        mutinfo = mt;
@@ -180,7 +181,6 @@ public:
        else Mutation = SPM;
    }
 
-protected:
    GeneticAlgorithm(const ConfigInfo<T>& config); // No parameters set
 
    int nbbit;     // total number of bits per chromosome
@@ -223,12 +223,11 @@ public:
 template <typename T>
 void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
 {
-    setMutation(config.mutinfo);
+    setMutation(config.mutinfo); // Mutation is set here
 
     Objective = config.Objective;
     Selection = config.Selection;
     CrossOver = config.CrossOver;
-    //Mutation = config.Mutation;
     Adaptation = config.Adaptation;
     Constraint = config.Constraint;
     FixedValue = config.FixedValue;
@@ -240,7 +239,6 @@ void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
     recombination_ratio = config.recombination_ratio;
 
     elitpop = config.elitpop;
-    //matsize = config.matsize;
     tntsize = config.tntsize;
     genstep = config.genstep;
     precision = config.precision;
@@ -250,7 +248,7 @@ void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
 
     nbgen = config.nbgen;
     popsize = config.popsize;
-    matsize = popsize;
+    matsize = popsize;          // matsize default to popsize
     output = config.output;
 
     nogen = 0;
