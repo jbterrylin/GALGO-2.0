@@ -62,6 +62,7 @@ struct ConfigInfo
         Adaptation = nullptr;
         Constraint = nullptr;
         FixedValue = nullptr;
+        StopCondition = nullptr;
 
         nbgen = 10;
         popsize = 10;
@@ -89,6 +90,7 @@ struct ConfigInfo
     void (*Adaptation)(Population<ParamTYPE>&) = nullptr;                           
     std::vector<double> (*Constraint)(const std::vector<ParamTYPE>&);
     void (*FixedValue)(Population<ParamTYPE>&, int k);
+    bool (*StopCondition)(galgo::GeneticAlgorithm<ParamTYPE>&);
 
     std::vector<bool>       force_value_flag;
     std::vector<ParamTYPE>  force_value;
@@ -149,11 +151,14 @@ public:
    int tntsize = 10;  // tournament size
    int genstep = 10;  // generation step for outputting results
    int precision = 10; // precision for outputting results
+   bool output;   // control if results must be outputted
 
    // Prototype to set fixed value of parameters while evolving
    void (*FixedValue)(Population<T>&, int k) = nullptr;
    std::vector<bool> force_value_flag;
    std::vector<T> force_value;
+
+   bool (*StopCondition)(GeneticAlgorithm<T>&) = nullptr;
 
    // constructor
    template <int...N> GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T,N>&...args);
@@ -164,6 +169,9 @@ public:
 
    // return best chromosome 
    const CHR<T>& result() const;
+
+   // print results for each new generation
+   void print(bool force  =  false) const;
 
 protected:
    void setMutation(const MutationInfo<T>& mt)
@@ -188,7 +196,6 @@ protected:
    int nogen = 0; // numero of generation
    int nbparam;   // number of parameters to be estimated
    int popsize;   // population size
-   bool output;   // control if results must be outputted
 
    // end of recursion for initializing parameter(s) data
    template <int I = 0, int...N>
@@ -200,9 +207,6 @@ protected:
 
    // check inputs validity
    void check() const ;
-
-   // print results for each new generation
-   void print() const;
 
    void init_from_config(const ConfigInfo<T>& config);
 };
@@ -231,6 +235,7 @@ void GeneticAlgorithm<T>::init_from_config(const ConfigInfo<T>& config)
     Adaptation = config.Adaptation;
     Constraint = config.Constraint;
     FixedValue = config.FixedValue;
+    StopCondition = config.StopCondition;
 
     covrate = config.covrate;
     mutrate = config.mutrate;
@@ -440,6 +445,14 @@ void GeneticAlgorithm<T>::run()
          }
          prevBestResult = bestResult;
       }
+
+      if (StopCondition != nullptr)
+      {
+          if (StopCondition(*this) == true)
+          {
+              break;
+          }
+      }
    } 
 
    // outputting contraint value
@@ -476,13 +489,14 @@ inline const CHR<T>& GeneticAlgorithm<T>::result() const
    
 // print results for each new generation
 template <typename T>
-void GeneticAlgorithm<T>::print() const
+void GeneticAlgorithm<T>::print(bool force) const
 {
    // getting best parameter(s) from best chromosome
    std::vector<T> bestParam = pop(0)->getParam();
    std::vector<double> bestResult = pop(0)->getResult();
 
-   if (nogen % genstep == 0) {
+   if ((nogen % genstep == 0)  || force)
+   {
       std::cout << " Generation = " << std::setw(std::to_string(nbgen).size()) << nogen << " |";
       for (int i = 0; i < nbparam; ++i) 
       {

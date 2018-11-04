@@ -307,6 +307,20 @@ public:
     }
 };
 
+template <typename T>
+bool StopGABinairo(galgo::GeneticAlgorithm<T>& ga)
+{
+    const galgo::CHR<BINAIRO_TEST_TYPE> bestParam = ga.result(); //std::shared_ptr<Chromosome<T>>;
+    if (bestParam->fitness >= 0.0)
+    {
+        std::cout << "SOLVED\n";
+        if (ga.output)
+            ga.print(true);
+        return true;
+    }
+    return false;
+}
+
 void test_ga_binairo(int no = 0)
 {
     {
@@ -314,7 +328,7 @@ void test_ga_binairo(int no = 0)
         make_binairo(no);
 
         std::cout << std::endl;
-        std::cout << "BINAIRO grid NxN";
+        std::cout << "BINAIRO grid NxN\n";
         int k = 0;
         const int NBinairo = 10;
         //[-1,0,1] 3 values/4 (2 bits) = -1=-1+00, 0=-1+01, 1=-1+10
@@ -375,6 +389,7 @@ void test_ga_binairo(int no = 0)
         config.force_value_flag = force_value_flag;
         config.force_value = force_value;
         config.FixedValue = FixedParameterBinairo;  // nullptr;
+        config.StopCondition = StopGABinairo;
 
         galgo::GeneticAlgorithmN<BINAIRO_TEST_TYPE, NBIT> ga(config, vlow, vhigh, vinit);
         ga.run();

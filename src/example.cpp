@@ -28,10 +28,11 @@ void set_my_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._sigma_lowest    = 0.01;
     config.mutinfo._ratio_boundary  = 0.10;
 
+    config.covrate = 0.50;  // 0.0 if no cros-over
     config.mutrate = 0.05;
     config.recombination_ratio = 0.50;
 
-    config.tntsize      = 5;
+    config.tntsize      = 2;
     config.Selection    = TNT;
     config.CrossOver    = RealValuedSimpleArithmeticRecombination;
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
