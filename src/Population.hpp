@@ -190,6 +190,21 @@ void Population<T>::recombination()
    #ifdef _OPENMP 
    #pragma omp parallel for num_threads(MAX_THREADS)
    #endif
+
+    //std::cout << "Gen(" << ptr->nogen << ") " << "Mating population after selection before recombination:"  << std::endl;
+    //const galgo::Population<T>& x = *this;
+    //for (int i = 0; i<x.matsize();i++)
+    //{
+    //    const galgo::Chromosome<T>& chrmat = *x[i];
+    //    std::cout << "matpop[" << i << "]" << chrmat.fitness << std::endl;
+    //}
+
+    //std::cout << "Gen(" << ptr->nogen << ") " << "Elite individual retained after selection before recombination:" << std::endl;
+    //for (int i = 0; i < ptr->elitpop; i++)
+    //{
+    //    std::cout << "newpop[" << i << "]" << newpop[i]->fitness << std::endl;
+    //}
+
    for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) 
    {      
       // initializing 2 new chromosome
@@ -213,6 +228,13 @@ void Population<T>::recombination()
       newpop[i]->evaluate();
       newpop[i+1]->evaluate();
    } 
+
+   //std::cout << "Gen(" << ptr->nogen << ") " << "New individual created from crossover only  After recombination:" << std::endl;
+   //for (int i = ptr->elitpop; i < nbrcrov; i++)
+   //{
+   //    std::cout << "newpop[" << i << "]" << newpop[i]->fitness << std::endl;
+   //}
+   //std::cout << std::endl;
 }
 
 /*-------------------------------------------------------------------------------------------------*/
@@ -418,6 +440,7 @@ inline int Population<T>::nogen() const
 {
    return ptr->nogen;
 }
+
 
 /*-------------------------------------------------------------------------------------------------*/
 

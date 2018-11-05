@@ -32,6 +32,7 @@ void set_my_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutrate = 0.05;
     config.recombination_ratio = 0.50;
 
+    config.elitpop      = 5;
     config.tntsize      = 2;
     config.Selection    = TNT;
     config.CrossOver    = RealValuedSimpleArithmeticRecombination;
@@ -43,21 +44,28 @@ void set_my_config(galgo::ConfigInfo<_TYPE>& config)
 }
 
 int main()
-{
+{  
 #ifdef TEST_ALL_TYPE
     TEST_all_types();
+
+    system("pause");
+    return 0;
 #endif
 
 #ifdef TEST_BINAIRO
-    test_ga_binairo(3); //0 =one free cell(hard), 1=4 free cells(very hard), 3=7 free cells(diabolical)
+    system("color F0");
+    GA_Binairo::test_ga_binairo(4);     // 0=resolve one free cell(hard), 1=resolve 4 free cells(very hard), 2=resolve 7 free cells(diabolical), 3 , 4==generate new grid
+
+    system("pause");
+    return 0;
 #endif
 
     using _TYPE = float;    // Suppport float, double, char, int, long, ... for parameters
     const int NBIT = 32;    // Has to remain between 1 and 64
 
     // CONFIG
-    galgo::ConfigInfo<_TYPE> config;    // A new instance of config get initial defaults
-    set_my_config<_TYPE>(config);          // Override some defaults
+    galgo::ConfigInfo<_TYPE> config;        // A new instance of config get initial defaults
+    set_my_config<_TYPE>(config);           // Override some defaults
 
     {
         {

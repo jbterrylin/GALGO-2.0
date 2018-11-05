@@ -175,6 +175,8 @@ public:
 
    Population<T>& get_pop() { return pop; }
 
+   int get_genstep() const { return genstep; }
+
 protected:
    void setMutation(const MutationInfo<T>& mt)
    {
