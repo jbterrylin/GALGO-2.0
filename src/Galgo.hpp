@@ -85,6 +85,7 @@ namespace galgo {
 #include "Evolution.hpp"
 #include "Chromosome.hpp"
 #include "Population.hpp"
+#include "Config.hpp"
 #include "GeneticAlgorithm.hpp"
 
 //================================================================================================= 

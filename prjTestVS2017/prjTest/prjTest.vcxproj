@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Chromosome.hpp" />
+    <ClInclude Include="..\..\src\Config.hpp" />
     <ClInclude Include="..\..\src\Converter.hpp" />
     <ClInclude Include="..\..\src\Evolution.hpp" />
     <ClInclude Include="..\..\src\Galgo.hpp" />
