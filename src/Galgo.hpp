@@ -32,49 +32,52 @@
 
 namespace galgo {
 
-// forward declarations
-template <typename T>
-struct ConfigInfo;
+    // forward declarations
+    template <typename T>
+    struct ConfigInfo;
 
-template <typename T>
-struct MutationInfo;
+    template <typename T>
+    struct MutationInfo;
 
-template <typename T>
-class BaseParameter;
+    template <typename T>
+    class BaseParameter;
 
-template <typename T, int N = 16>
-class Parameter;
+    template <typename T, int N = 16>
+    class Parameter;
 
-template <typename T>
-class GeneticAlgorithm;
+    template <typename T>
+    class GeneticAlgorithm;
 
-template <typename T>
-class Population;
+    template <typename T, int PARAM_NBIT>
+    class GeneticAlgorithmN;
 
-template <typename T>
-class Chromosome;
+    template <typename T>
+    class Population;
 
-// convenient typedefs
-template <typename T>
-using CHR = std::shared_ptr<Chromosome<T>>;
+    template <typename T>
+    class Chromosome;
 
-template <typename T>
-using PAR = std::unique_ptr<BaseParameter<T>>;
+    // convenient typedefs
+    template <typename T>
+    using CHR = std::shared_ptr<Chromosome<T>>;
 
-template <typename T, int...N>
-using TUP = std::tuple<const Parameter<T,N>&...>;
+    template <typename T>
+    using PAR = std::unique_ptr<BaseParameter<T>>;
+
+    template <typename T, int...N>
+    using TUP = std::tuple<const Parameter<T, N>&...>;
 
 }
 
-/*-------------------------------------------------------------------------------------------------*/
+    /*-------------------------------------------------------------------------------------------------*/
 
 #ifdef _OPENMP 
-  #include <omp.h>
-  // getting maximum number of threads available
-  static const int MAX_THREADS = omp_get_max_threads();
+#include <omp.h>
+// getting maximum number of threads available
+    static const int MAX_THREADS = omp_get_max_threads();
 #endif
 
-/*-------------------------------------------------------------------------------------------------*/
+    /*-------------------------------------------------------------------------------------------------*/
 
 #include "Randomize.hpp"
 #include "Converter.hpp"

@@ -7,41 +7,9 @@
 #ifndef TESTFUNCTION_HPP
 #define TESTFUNCTION_HPP
 
-#ifdef TEST_BINAIRO
-#include "..\test\Binairo\GA.h"
-#endif
-
-// Rosenbrock objective class example
-template <typename T>
-class RosenbrockObjective
-{
-public:
-   // objective function example : Rosenbrock function
-   // minimizing f(x,y) = (1 - x)^2 + 100 * (y - x^2)^2
-   static std::vector<double> Objective(const std::vector<T>& x)
-   {
-        double x0 = (double)x[0];
-        double x1 = (double)x[1];
-        double obj =  -(pow(1.0 - x0, 2.0) + 100 * pow(x1 - x0*x0, 2.0));
-        return {obj};
-   }
-   // NB: GALGO maximize by default so we will maximize -f(x,y)
-};
-
-template <typename T>
-class AckleyObjective
-{
-public:
-    static std::vector<double> Objective(const std::vector<T>& x)
-    {
-        double x0 = (double)x[0];
-        double x1 = (double)x[1];
-        double obj = -Ackley<double>(x0, x1);
-        return { obj };
-    }
-};
-
+//--------------------------
 // constraints example:
+//--------------------------
 template <typename T>
 std::vector<double> MyConstraint(const std::vector<T>& x)
 {
@@ -56,6 +24,9 @@ std::vector<double> MyConstraint(const std::vector<T>& x)
     };
 }
 
+//--------------------------
+// functions
+//--------------------------
 //
 // this example is from
 // https://en.wikipedia.org/wiki/Test_functions_for_optimization
@@ -85,20 +56,6 @@ double pso_rastrigin(std::vector< T > particle)
     return (result);
 }
 
-template <typename T>
-class rastriginObjective
-{
-public:
-    static std::vector<double> Objective(const std::vector<T>& x)
-    {
-        std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
-
-        double obj = -pso_rastrigin<double>(xd);
-        return { obj };
-    }
-};
-
 /*
 Griewank Function
 */
@@ -112,20 +69,6 @@ double pso_griewank(std::vector< T > particle)
     }
     return (1. + (sum / 4000.) - product);
 }
-
-template <typename T>
-class GriewankObjective
-{
-public:
-    static std::vector<double> Objective(const std::vector<T>& x)
-    {
-        std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
-
-        double obj = -pso_griewank<double>(xd);
-        return { obj };
-    }
-};
 
 /*
 Styblinski-Tang Function
@@ -141,6 +84,37 @@ double pso_styb_tang(std::vector< T > particle)
     return (result / 2.);
 }
 
+//--------------------------
+// Objectives
+//--------------------------
+template <typename T>
+class rastriginObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+
+        double obj = -pso_rastrigin<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+class GriewankObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+
+        double obj = -pso_griewank<double>(xd);
+        return { obj };
+    }
+};
+
 template <typename T>
 class StyblinskiTangObjective
 {
@@ -151,6 +125,35 @@ public:
         for(size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
         double obj = -pso_styb_tang<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+class RosenbrockObjective
+{
+public:
+    // objective function example : Rosenbrock function
+    // minimizing f(x,y) = (1 - x)^2 + 100 * (y - x^2)^2
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        double x0 = (double)x[0];
+        double x1 = (double)x[1];
+        double obj = -(pow(1.0 - x0, 2.0) + 100 * pow(x1 - x0*x0, 2.0));
+        return { obj };
+    }
+    // NB: GALGO maximize by default so we will maximize -f(x,y)
+};
+
+template <typename T>
+class AckleyObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        double x0 = (double)x[0];
+        double x1 = (double)x[1];
+        double obj = -Ackley<double>(x0, x1);
         return { obj };
     }
 };

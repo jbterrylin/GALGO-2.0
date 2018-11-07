@@ -19,6 +19,12 @@
     <Filter Include="Test\Binairo">
       <UniqueIdentifier>{083352c9-4feb-4595-8849-e87d627c4263}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Test\Classic">
+      <UniqueIdentifier>{689f2ec9-3564-4891-9a1b-1a4ee33fc59f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test\Types">
+      <UniqueIdentifier>{22a934ef-5265-4873-94af-84f2e45eda99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Chromosome.hpp">
@@ -57,11 +63,11 @@
     <ClInclude Include="..\..\test\Binairo\GA.h">
       <Filter>Test\Binairo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\TestFunction.hpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="..\..\test\Classic\Functions.hpp">
+      <Filter>Test\Classic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\TestTypes.hpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="..\..\test\Types\TestTypes.hpp">
+      <Filter>Test\Types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

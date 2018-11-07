@@ -478,11 +478,11 @@ namespace GA_Binairo
             config.mutinfo._ratio_boundary = 0.10;
 
             config.popsize = 400;
-            config.nbgen = 4000;
+            config.nbgen = 8000;
             config.output = true;
 
             config.covrate = 0.10;
-            config.elitpop = 50; // Keep enough single unmodified individuals
+            config.elitpop = 60; // Keep enough single unmodified individuals
             config.recombination_ratio = 0.50;
             config.mutrate = 0.05;
 

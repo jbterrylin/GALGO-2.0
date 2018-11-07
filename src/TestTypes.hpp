@@ -95,6 +95,7 @@ void TEST_TYPE()
                 }
             }
         }
+        std::cout << " Done"  << std::endl;
     }
 }
 

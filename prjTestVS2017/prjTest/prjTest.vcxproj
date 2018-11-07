@@ -150,12 +150,12 @@
     <ClInclude Include="..\..\src\Parameter.hpp" />
     <ClInclude Include="..\..\src\Population.hpp" />
     <ClInclude Include="..\..\src\Randomize.hpp" />
-    <ClInclude Include="..\..\src\TestFunction.hpp" />
-    <ClInclude Include="..\..\src\TestTypes.hpp" />
     <ClInclude Include="..\..\test\Binairo\Algorithm.h" />
     <ClInclude Include="..\..\test\Binairo\GA.h" />
     <ClInclude Include="..\..\test\Binairo\Matrice.h" />
     <ClInclude Include="..\..\test\Binairo\MatriceUtil.h" />
+    <ClInclude Include="..\..\test\Classic\Functions.hpp" />
+    <ClInclude Include="..\..\test\Types\TestTypes.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\example.cpp" />
