@@ -71,8 +71,10 @@ namespace galgo {
         // return number of genes in chromosome
         int nbgene() const;
 
-        // return numero of generation this chromosome belongs to
-        int nogen() const;
+        // return numero of generation this chromosome belongs to (when chromo was created)
+        int nogen_initial() const;
+
+        int ga_nogen() const;
 
         // return lower bound(s)
         const std::vector<T>& lowerBound() const;
@@ -461,9 +463,15 @@ namespace galgo {
 
     // return numero of generation this chromosome belongs to
     template <typename T>
-    inline int Chromosome<T>::nogen() const
+    inline int Chromosome<T>::nogen_initial() const
     {
         return numgen;
+    }
+
+    template <typename T>
+    inline int Chromosome<T>::ga_nogen() const
+    {
+        return ptr->nogen;
     }
 
     /*-------------------------------------------------------------------------------------------------*/

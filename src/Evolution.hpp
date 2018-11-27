@@ -811,7 +811,7 @@ void GAM_sigma_adapting_per_generation(galgo::CHR<T>& chr)
             double norm01;
 
             // sigma decreasing blindly with number generation produced
-            for (int z = 1; z < chr->nogen() / 2; z++)
+            for (int z = 1; z < chr->ga_nogen() / 2; z++)
             {
                 norm01 = distribution01(galgo::rng);
                 sigma = std::max(double(0), sigma * exp(norm01));
