@@ -129,6 +129,12 @@ namespace galgo
     GeneticAlgorithm<T>::GeneticAlgorithm(const ConfigInfo<T>& config, std::vector<T> init_values, const Parameter<T, N>&...args)
         : _init_values(init_values)
     {
+        init_from_config(config);
+
+        nbbit = sum(N...);
+        nbparam = sizeof...(N);
+        TUP<T, N...> tp(args...);
+        init(tp);
     }
 
     /*-------------------------------------------------------------------------------------------------*/

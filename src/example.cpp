@@ -64,11 +64,9 @@ int main()
             galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
 
             config.Objective = rastriginObjective<_TYPE>::Objective;
-            galgo::GeneticAlgorithm<_TYPE> ga(config, par1, par2, par3);
-            ga.run();
             std::vector<_TYPE> v;
-            for (int z = 0; z < 3 * config.popsize; z++) v[z] = (_TYPE) (-4.0 + z *0.01);
-            galgo::GeneticAlgorithm<_TYPE> my_ga(config, v);
+            for (int z = 0; z < 3 * config.popsize; z++) v.push_back( (_TYPE) (-4.0 + z *0.01) );
+            galgo::GeneticAlgorithm<_TYPE> my_ga(config, v, par1, par2, par3);
             my_ga.run();
         }
     }
