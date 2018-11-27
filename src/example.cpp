@@ -10,12 +10,17 @@
 // Uncomment #define TEST_ALL_TYPE to test compiling of all types
 // Uncomment #define TEST_BINAIRO to test GA for Binairos
 // Uncomment #define TEST_CLASSIC_FUNCTIONS to test GA for classics functions
+// Uncomment #define TEST_INIT_POP to test by initializing initial population
 //------------------------------------------------------------------------------
 //#define TEST_ALL_TYPE
 //#define TEST_BINAIRO
-#define TEST_CLASSIC_FUNCTIONS
+//#define TEST_CLASSIC_FUNCTIONS
+#define TEST_INIT_POP
 
 #ifdef TEST_CLASSIC_FUNCTIONS
+#include "..\test\Classic\Functions.hpp"
+#endif
+#ifdef TEST_INIT_POP
 #include "..\test\Classic\Functions.hpp"
 #endif
 
@@ -29,7 +34,7 @@
 
 
 int main()
-{  
+{
 #ifdef TEST_ALL_TYPE
     TEST_all_types();
 #endif
@@ -40,6 +45,33 @@ int main()
 
 #ifdef TEST_CLASSIC_FUNCTIONS
     test_classic();
+#endif
+
+#ifdef TEST_INIT_POP
+    // Test init initial population
+    {
+        using _TYPE = double;       // Suppport float, double, char, int, long, ... for parameters
+        const int NBIT = 60;        // Has to remain between 1 and 64
+
+        // CONFIG
+        galgo::ConfigInfo<_TYPE> config;        // A new instance of config get initial defaults
+        set_classic_config<_TYPE>(config);      // Override some defaults
+        {
+            std::cout << std::endl;
+            std::cout << "Rastrigin function";
+            galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)5.0 });
+            galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
+            galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
+
+            config.Objective = rastriginObjective<_TYPE>::Objective;
+            galgo::GeneticAlgorithm<_TYPE> ga(config, par1, par2, par3);
+            ga.run();
+            std::vector<_TYPE> v;
+            for (int z = 0; z < 3 * config.popsize; z++) v[z] = (_TYPE) (-4.0 + z *0.01);
+            galgo::GeneticAlgorithm<_TYPE> my_ga(config, v);
+            my_ga.run();
+        }
+    }
 #endif
 
     system("pause");

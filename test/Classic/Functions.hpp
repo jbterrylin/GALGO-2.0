@@ -182,6 +182,33 @@ public:
     }
 };
 
+template <typename T>
+class MichalewiczObjective //todo not good results
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        const double pi = 3.14159265358979323846;
+        size_t dim_in = x.size();
+        std::vector<double> xx(x.size());
+        // transfer interval from [0, 1] to [0, pi]
+        for (int i = 0; i < dim_in; i++)
+            //xx[i] = pi * (double)x[i];
+            xx[i] = (double)x[i];
+        double sum = 0.;
+        double term = 0.;
+        double m = 10.;
+        for (size_t i = 0; i < dim_in; i++)
+        {
+            term = std::sin(xx[i]) * std::pow(std::sin(i * xx[i] * xx[i] / pi), 2 * m);
+            sum = sum + term;
+        }
+        double obj = sum;
+        return{ obj }; //max= -1.8013(2D) at (2.20,1.57)/-4.687658(5D)/-9.66015(10D)
+    }
+};
+
+
 template <typename _TYPE>
 void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
 {
@@ -190,15 +217,15 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._sigma_lowest = 0.01;
     config.mutinfo._ratio_boundary = 0.10;
 
-    config.covrate = 0.50;  // 0.0 if no cros-over
-    config.mutrate = 0.05;
+    config.covrate = 0.20;  // 0.0 if no cros-over
+    config.mutrate = 0.01 * 5;
     config.recombination_ratio = 0.50;
 
     config.elitpop = 5;
-    config.tntsize = 2;
-    config.Selection = TNT;
-    config.CrossOver = RealValuedSimpleArithmeticRecombination;
-    config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary;
+    config.tntsize = 4;
+    config.Selection = SUS; // TNT; //RWS
+    config.CrossOver = RealValuedWholeArithmeticRecombination; //P1XO
+    config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary; //MutationSPM
 
     config.popsize = 100;
     config.nbgen = 400;
@@ -207,14 +234,28 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
 
 void test_classic()
 {
-    using _TYPE = float;    // Suppport float, double, char, int, long, ... for parameters
-    const int NBIT = 32;    // Has to remain between 1 and 64
+    using _TYPE = double;    // Suppport float, double, char, int, long, ... for parameters
+    const int NBIT = 60;    // Has to remain between 1 and 64
 
     // CONFIG
     galgo::ConfigInfo<_TYPE> config;        // A new instance of config get initial defaults
     set_classic_config<_TYPE>(config);           // Override some defaults
 
     {
+        {
+            std::cout << std::endl;
+            std::cout << "Michalewicz function";
+            galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-9.0,(_TYPE)9.0 });
+            galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-9.0,(_TYPE)9.0 });
+            galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-9.0,(_TYPE)9.0 });
+            galgo::Parameter<_TYPE, NBIT > par4({ (_TYPE)-9.0,(_TYPE)9.0 });
+            galgo::Parameter<_TYPE, NBIT > par5({ (_TYPE)-9.0,(_TYPE)9.0 });
+
+            config.Objective = MichalewiczObjective<_TYPE>::Objective;
+            galgo::GeneticAlgorithm<_TYPE> ga(config, par1, par2, par3, par4, par5);
+            ga.run();
+        }
+
         {
             std::cout << std::endl;
             std::cout << "SumSameAsPrd function 2x2 = 2+2";
@@ -283,6 +324,7 @@ void test_classic()
             galgo::GeneticAlgorithm<_TYPE> ga(config, par1, par2, par3);
             ga.run();
         }
+
     }
 }
 #endif

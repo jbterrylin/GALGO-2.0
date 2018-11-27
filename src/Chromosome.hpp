@@ -19,8 +19,11 @@ namespace galgo {
         Chromosome(const GeneticAlgorithm<T>& ga);
         // copy constructor
         Chromosome(const Chromosome<T>& rhs);
+
         // create new chromosome 
         void create();
+        void create(std::vector<T>& _init_values, int& index);
+
         // initialize chromosome
         void initialize();
         // evaluate chromosome 
@@ -161,6 +164,26 @@ namespace galgo {
             _sigma_iteration[i] = 0;
 
             i++;
+        }
+    }
+
+    template <typename T>
+    inline void Chromosome<T>::create(std::vector<T>& _init_values, int& index)
+    {
+        chr.clear();
+
+        int i(0);
+        for (const auto& x : ptr->param)
+        {
+            // encoding parameter random value
+            std::string str = x->encode();
+            chr.append(str);
+
+            if (index < _init_values.size())
+                initGene(i, _init_values[index++]);
+
+            _sigma[i] = 0.0;
+            _sigma_iteration[i] = 0;
         }
     }
 

@@ -17,8 +17,11 @@ public:
    Population() {}
    // constructor
    Population(const GeneticAlgorithm<T>& ga);
+
    // create a population of chromosomes
    void creation();
+   void creation(std::vector<T>& _init_values);
+
    // evolve population, get next generation
    void evolution();
 
@@ -61,6 +64,7 @@ public:
 
    const GeneticAlgorithm<T>* ga_algo() {return ptr;}
    std::vector<CHR<T>>& get_newpop() { return newpop;}
+   std::vector<CHR<T>>& get_curpop() { return curpop; }
 
 private:
    std::vector<CHR<T>> curpop;               // current population
@@ -77,6 +81,8 @@ private:
    void recombination();
    // complete new population randomly
    void completion();
+
+public:
    // update population (adapting, sorting)
    void updating();
 };
@@ -126,6 +132,33 @@ void Population<T>::creation()
    }
    // updating population
    this->updating();
+}
+
+template <typename T>
+void Population<T>::creation(std::vector<T>& _init_values)
+{
+    int index = 0;
+    int start = 0;
+
+    // initializing first chromosome
+    if (!ptr->initialSet.empty()) 
+    {
+        curpop[0] = std::make_shared<Chromosome<T>>(*ptr);
+        curpop[0]->initialize();
+        curpop[0]->evaluate();
+        start++;
+    }
+
+    // getting the rest
+    for (int i = start; i < ptr->popsize; ++i)
+    {
+        curpop[i] = std::make_shared<Chromosome<T>>(*ptr);
+        curpop[i]->create(_init_values, index);
+        curpop[i]->evaluate();
+    }
+
+    // updating population
+    this->updating();
 }
 
 /*-------------------------------------------------------------------------------------------------*/

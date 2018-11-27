@@ -150,6 +150,8 @@
     <ClInclude Include="..\..\src\Parameter.hpp" />
     <ClInclude Include="..\..\src\Population.hpp" />
     <ClInclude Include="..\..\src\Randomize.hpp" />
+    <ClInclude Include="..\..\src\TestFunction.hpp" />
+    <ClInclude Include="..\..\test\Classic\Functions.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\example.cpp" />
