@@ -181,11 +181,17 @@ namespace galgo {
             std::string str = x->encode();
             chr.append(str);
 
-            if (index < _init_values.size())
-                initGene(i, _init_values[index++]);
-
             _sigma[i] = 0.0;
             _sigma_iteration[i] = 0;
+            i++;
+        }
+
+        i = 0;
+        for (const auto& x : ptr->param)
+        {
+            if (index < _init_values.size())
+                initGene(i, _init_values[index++]);
+            i++;
         }
     }
 
