@@ -21,7 +21,9 @@ include_directories(
   ${SOURCE_CORE}
 )
 
-# Test application
+# Test core
 add_executable(testga ${SOURCE_CORE}/example.cpp)
-# target_link_libraries(testga galgo)
+
+# Test binairo
+add_executable(testbinairo ${SOURCE_TEST}/Binairo/main.cpp)
 

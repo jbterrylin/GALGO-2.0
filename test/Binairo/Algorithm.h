@@ -16,6 +16,8 @@
 #include <string>
 #include <fstream>
 
+template<class T> bool valid_binairio(MatriceUtil<T> m, bool check_row_col_same = true);
+
 // Description: Fonction pour afficher une grille Binairo (matrice)
 // Parametre m : Matrice a utiliser
 // Parametre show_verification : Si true afficher les nombres de verification
@@ -144,7 +146,7 @@ bool valid_empty_cells(MatriceUtil<T> m_work)
 // Retourne bool - true si grille valide, false sinon
 //
 template<class T>
-bool valid_binairio(MatriceUtil<T> m, bool check_row_col_same = true)
+bool valid_binairio(MatriceUtil<T> m, bool check_row_col_same)
 {
     for (size_t i = 0; i < m.size_row(); i++)
     {

@@ -6,7 +6,36 @@
 //--------------------------------------------------
 #include "MatriceUtil.h"
 #include "Algorithm.h"
+#ifdef _WIN32
 #include <conio.h>
+#else
+#include <unistd.h> 
+#include <termios.h> 
+inline char getch()
+{
+    /*#include <unistd.h>   //_getch*/
+    /*#include <termios.h>  //_getch*/
+    char buf=0;
+    struct termios old={0};
+    fflush(stdout);
+    if(tcgetattr(0, &old)<0)
+        perror("tcsetattr()");
+    old.c_lflag&=~ICANON;
+    old.c_lflag&=~ECHO;
+    old.c_cc[VMIN]=1;
+    old.c_cc[VTIME]=0;
+    if(tcsetattr(0, TCSANOW, &old)<0)
+        perror("tcsetattr ICANON");
+    if(read(0,&buf,1)<0)
+        perror("read()");
+    old.c_lflag|=ICANON;
+    old.c_lflag|=ECHO;
+    if(tcsetattr(0, TCSADRAIN, &old)<0)
+        perror ("tcsetattr ~ICANON");
+    printf("%c\n",buf);
+    return buf;
+}
+#endif
 
 // Description Grille Binairo:
 //  Chacune des lignes et chacune des colonnes doit contenir autant de 0 que de 1. 
@@ -26,7 +55,11 @@ const std::string str_menu_continuer = "Presser une touche pour continuer (x pou
 bool menu_continuer()
 {
     std::cout << str_menu_continuer;
+#ifdef _WIN32
     int ch = _getch();
+#else
+   int ch = getch();
+#endif
     ch = toupper(ch);
     if (ch == 'X') return true;
     else return false;
@@ -149,13 +182,13 @@ void resoudre_batch()
 }
 
 // Point d' entrer du programme principale
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     // Mode batch
     if (argc == 2)
     {
         resoudre_batch();
-        return;
+        return 0;
     }
 
     // mat: Grille Binairo a resoudre
@@ -167,7 +200,11 @@ void main(int argc, char* argv[])
     // Afficher menu tant usager n' a pas terminer
     while (done == false)
     {
+#ifdef _WIN32
         system("CLS");
+#else
+	// TODO...
+#endif
         std::cout << "Entrez le nom du fichier contenant la grille (Ex: ct01.txt) : ";
 
         // filename contient nom du fichier (grille) a lire
@@ -238,5 +275,5 @@ void main(int argc, char* argv[])
         // Demander a l'usager de continuer ou non
         done = menu_continuer();
     }
-
+    return 0;
 }
