@@ -18,18 +18,18 @@
 #define TEST_INIT_POP
 
 #ifdef TEST_CLASSIC_FUNCTIONS
-#include "..\test\Classic\Functions.hpp"
+#include "../test/Classic/Functions.hpp"
 #endif
 #ifdef TEST_INIT_POP
-#include "..\test\Classic\Functions.hpp"
+#include "../test/Classic/Functions.hpp"
 #endif
 
 #ifdef TEST_ALL_TYPE
-#include "..\test\Types\TestTypes.hpp"
+#include "../test/Types/TestTypes.hpp"
 #endif
 
 #ifdef TEST_BINAIRO
-#include "..\test\Binairo\GA.h"
+#include "../test/Binairo/GA.h"
 #endif
 
 
@@ -72,7 +72,10 @@ int main()
     }
 #endif
 
-    system("pause");
+#ifdef _WIN32
+	system("pause");
+#endif
+
     return 0;
 }
 

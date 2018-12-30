@@ -237,17 +237,17 @@ namespace galgo
             std::vector<T> w;
             w.push_back(_lowerBound[i]); w.push_back(_upperBound[i]); w.push_back(_initialSet[i]);
             Parameter<T, PARAM_NBIT> p(w);
-            param.emplace_back(new decltype(p)(p));
+            GeneticAlgorithm<T>::param.emplace_back(new decltype(p)(p));
 
-            if (i == 0) idx.push_back(0);
-            else idx.push_back(idx[i - 1] + PARAM_NBIT);
+            if (i == 0) GeneticAlgorithm<T>::idx.push_back(0);
+            else GeneticAlgorithm<T>::idx.push_back(GeneticAlgorithm<T>::idx[i - 1] + PARAM_NBIT);
         }
-        lowerBound = _lowerBound;
-        upperBound = _upperBound;
-        initialSet = _initialSet;
+        GeneticAlgorithm<T>::lowerBound = _lowerBound;
+        GeneticAlgorithm<T>::upperBound = _upperBound;
+        GeneticAlgorithm<T>::initialSet = _initialSet;
 
-        nbbit = (int)_lowerBound.size()*PARAM_NBIT;
-        nbparam = (int)_lowerBound.size();
+        GeneticAlgorithm<T>::nbbit = (int)_lowerBound.size()*PARAM_NBIT;
+        GeneticAlgorithm<T>::nbparam = (int)_lowerBound.size();
     };
 
     /*-------------------------------------------------------------------------------------------------*/
