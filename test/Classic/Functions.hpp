@@ -224,7 +224,7 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
     config.elitpop = 5;
     config.tntsize = 4;
     config.Selection = SUS; // TNT; //RWS
-    config.CrossOver = RealValuedWholeArithmeticRecombination; //P1XO
+    config.CrossOver = P1XO; //P1XO
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary; //MutationSPM
 
     config.popsize = 100;

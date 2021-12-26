@@ -71,7 +71,10 @@ namespace galgo
         template <int...N> GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const Parameter<T, N>&...args);
         template <int...N> GeneticAlgorithm(const ConfigInfo<T>& config, const Parameter<T, N>&...args);
         template <int...N> GeneticAlgorithm(const ConfigInfo<T>& config, std::vector<T> init_values, const Parameter<T, N>&...args);
-
+        template <int N> GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const std::vector< Parameter<T, N> >& args);
+        template <int N> GeneticAlgorithm(const ConfigInfo<T>& config, const std::vector< Parameter<T, N> >& args);
+        template <int N> GeneticAlgorithm(const ConfigInfo<T>& config, std::vector<T> init_values, const std::vector< Parameter<T, N> >& args);
+        
         // run genetic algorithm
         void run();
 
@@ -103,7 +106,7 @@ namespace galgo
 
         GeneticAlgorithm(const ConfigInfo<T>& config); // No parameters set
 
-        int nbbit;     // total number of bits per chromosome
+        int nbbit = 0;     // total number of bits per chromosome
         int nbgen;     // number of generations
         int nogen = 0; // numero of generation
         int nbparam;   // number of parameters to be estimated
@@ -117,6 +120,8 @@ namespace galgo
         template <int I = 0, int...N>
         typename std::enable_if < I < sizeof...(N), void>::type init(const TUP<T, N...>&);
 
+        template <int N> void init(const std::vector< Parameter<T, N> >& args);
+        
         // check inputs validity
         void check() const;
 
@@ -134,7 +139,22 @@ namespace galgo
         nbbit = sum(N...);
         nbparam = sizeof...(N);
         TUP<T, N...> tp(args...);
+
         init(tp);
+    }
+
+    template <typename T> template <int N>
+    GeneticAlgorithm<T>::GeneticAlgorithm(const ConfigInfo<T>& config, std::vector<T> init_values, const std::vector< Parameter<T, N> >& args)
+        : _init_values(init_values)
+    {
+        init_from_config(config);
+        for(int i=0; i<args.size(); i++) {
+            nbbit += args[i].size();
+        }
+        nbparam = args.size();
+
+        // TUP<T, N...> tp(args...);
+        init(args);
     }
 
     /*-------------------------------------------------------------------------------------------------*/
@@ -196,6 +216,19 @@ namespace galgo
         init(tp);
     }
 
+    template <typename T> template <int N>
+    GeneticAlgorithm<T>::GeneticAlgorithm(const ConfigInfo<T>& config, const std::vector< Parameter<T, N> >& args)
+    {
+        init_from_config(config);
+        for(int i=0; i<args.size(); i++) {
+            nbbit += args[i].size();
+        }
+        nbparam = args.size();
+
+        // TUP<T, N...> tp(args...);
+        init(args);
+    }
+
     template <typename T>
     GeneticAlgorithm<T>::GeneticAlgorithm(const ConfigInfo<T>& config)
     {
@@ -225,6 +258,35 @@ namespace galgo
 
         // initializing parameter(s) data
         init(tp);
+    }
+
+    // constructor
+    template <typename T> template <int N>
+    GeneticAlgorithm<T>::GeneticAlgorithm(FuncKT<T> objective, int popsize, int nbgen, bool output, MutationInfo<T> mutinfo, const std::vector< Parameter<T, N> >& args)
+    {
+        setMutation(mutinfo);
+        Objective = objective;
+
+        // getting total number of bits per chromosome
+        for(int i=0; i<args.size(); i++) {
+            nbbit += args[i].size();
+        }
+        nbgen = nbgen;
+
+        // getting number of parameters in the pack
+        // nbparam = sizeof...(N);
+        nbparam = args.size();
+
+        popsize = popsize;
+        matsize = popsize;
+        output = output;
+
+        // unpacking parameter pack in tuple
+        // TUP<T, N...> tp(args...);
+
+        // initializing parameter(s) data
+        // init(tp);
+        init(args);
     }
 
     // constructor
@@ -287,6 +349,36 @@ namespace galgo
         }
         // recursing
         init<I + 1>(tp);
+    }
+
+    template <typename T> template <int N>
+    void GeneticAlgorithm<T>::init(const std::vector< Parameter<T, N> >& args)
+    {
+        for(int I=0; I<args.size(); I++) {
+            auto par = args[I];
+
+            // getting Ith parameter initial data
+            const std::vector<T>& data = par.getData();
+
+            // copying parameter data
+            param.emplace_back(new decltype(par)(par));
+
+            lowerBound.push_back(data[0]);
+            upperBound.push_back(data[1]);
+
+            // if parameter has initial value
+            if (data.size() > 2) {
+                initialSet.push_back(data[2]);
+            }
+            // setting indexes for chromosome breakdown
+            if (I == 0) {
+                idx.push_back(0);
+            }
+            else {
+                idx.push_back(idx[I - 1] + par.size());
+                std::cout << idx[I - 1] + par.size() <<std::endl;
+            }
+        }
     }
 
     /*-------------------------------------------------------------------------------------------------*/
