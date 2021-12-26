@@ -28,6 +28,9 @@
 #include <cmath>
 #include <cstring>
 
+#include <fstream>
+#include <sstream>
+
 /*-------------------------------------------------------------------------------------------------*/
 
 namespace galgo {

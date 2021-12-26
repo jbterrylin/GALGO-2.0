@@ -60,6 +60,9 @@ namespace galgo
         int precision = 10; // precision for outputting results
         bool output;   // control if results must be outputted
 
+        bool resultToCsv;
+        std::string csvFileName;
+
         // Prototype to set fixed value of parameters while evolving
         void(*FixedValue)(Population<T>&, int k) = nullptr;
         std::vector<bool> force_value_flag;
@@ -83,6 +86,8 @@ namespace galgo
 
         // print results for each new generation
         void print(bool force = false) const;
+
+        void saveToCsv(int nogen);
 
         Population<T>& get_pop() { return pop; }
 
@@ -445,6 +450,7 @@ namespace galgo
 
         // outputting results 
         if (output) print();
+        if (resultToCsv) saveToCsv(nogen);
 
         // starting population evolution
         for (nogen = 1; nogen <= nbgen; ++nogen)
@@ -457,6 +463,7 @@ namespace galgo
 
             // outputting results
             if (output) print();
+            if (resultToCsv) saveToCsv(nogen);
 
             // checking convergence
             if (tolerance != 0.0)
@@ -546,6 +553,39 @@ namespace galgo
         }
     }
 
+    template <typename T>
+    void GeneticAlgorithm<T>::saveToCsv(int nogen)
+    {
+        std:: ofstream fs(csvFileName + ".csv", std:: ios::app);
+        if (fs.is_open())
+        {
+            if(nogen == 0 ){
+                fs <<  "Generation" << ",";
+                for (int i = 0; i < nbparam; ++i) {
+                    fs <<  "X" << i+1 << ",";
+                }
+                fs <<  "F(x)" << "\n";
+            }
+            std::vector<T> bestParam = pop(0)->getParam();
+            std::vector<T> bestResult = pop(0)->getResult();
 
+            if (nogen % genstep == 0) {
+                fs << nogen << ",";
+                for (int i = 0; i < nbparam; ++i) {
+                    fs <<  bestParam[i] << ",";
+                }
+                for (unsigned i = 0; i < bestResult.size(); ++i) {
+                    fs <<  bestResult[i] << ",";
+                    if (i < bestResult.size() - 1) {
+                        fs << ",";
+                    } else {
+                        fs << "\n";
+                    }
+                }
+            }
+            fs.close();
+        }
+        else std::cout << "Unable to open file";
+    }
 }
 #endif

@@ -52,6 +52,7 @@ int main()
     {
         using _TYPE = double;       // Suppport float, double, char, int, long, ... for parameters
         const int NBIT = 60;        // Has to remain between 1 and 64
+        bool resultToCsv = true;
 
         // CONFIG
         galgo::ConfigInfo<_TYPE> config;        // A new instance of config get initial defaults
@@ -59,12 +60,11 @@ int main()
         {
             std::cout << std::endl;
             std::cout << "Rastrigin function";
-            galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)5.0 });
-            galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
-            galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
+            // galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)5.0 });
+            // galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
+            // galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
 
             config.Objective = rastriginObjective<_TYPE>::Objective;
-            
             
             std::vector<galgo::Parameter<_TYPE, NBIT >> myvector {};
             for (int z = 0; z < 3; z++) myvector.push_back(galgo::Parameter<_TYPE, NBIT > ({ (_TYPE)-4.0,(_TYPE)5.0 }));
@@ -74,6 +74,8 @@ int main()
             // galgo::GeneticAlgorithm<_TYPE> my_ga(config, v, par1, par2, par3);
             
             galgo::GeneticAlgorithm<_TYPE> my_ga(config, myvector);
+            my_ga.resultToCsv = resultToCsv;
+            my_ga.csvFileName = "P1XO + Rastrigin function";
 
             my_ga.run();
         }
