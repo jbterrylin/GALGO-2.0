@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe",
     "files.associations": {
         "ostream": "cpp",
         "algorithm": "cpp",

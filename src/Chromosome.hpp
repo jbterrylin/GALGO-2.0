@@ -93,10 +93,12 @@ namespace galgo {
             _sigma[k] = new_sigma;
         }
 
+        std::string chr;
+
     private:
         std::vector<T> param;                     // estimated parameter(s)
         std::vector<double> result;               // chromosome objective function(s) result
-        std::string chr;                          // string of bits representing chromosome
+        // std::string chr;                          // string of bits representing chromosome
         const GeneticAlgorithm<T>* ptr = nullptr; // pointer to genetic algorithm
 
         std::vector<double> _sigma;             // stddev per parameter

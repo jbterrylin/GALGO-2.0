@@ -90,6 +90,7 @@ namespace galgo {
 #include "Population.hpp"
 #include "Config.hpp"
 #include "GeneticAlgorithm.hpp"
+#include "../test/Crossover.hpp"
 
 //================================================================================================= 
 
