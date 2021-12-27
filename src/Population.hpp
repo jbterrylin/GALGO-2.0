@@ -237,6 +237,9 @@ void Population<T>::recombination()
     //{
     //    std::cout << "newpop[" << i << "]" << newpop[i]->fitness << std::endl;
     //}
+   if() {
+      
+   }
 
    for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) 
    {      
