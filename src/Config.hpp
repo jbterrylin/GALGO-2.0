@@ -60,6 +60,7 @@ namespace galgo
             Objective = nullptr;
             Selection = RWS;
             CrossOver = P1XO;
+            isMultiCrossover = false;
             //Mutation = SPM; // derived from by mutinfo._type
             Adaptation = nullptr;
             Constraint = nullptr;
@@ -89,6 +90,7 @@ namespace galgo
         void(*Selection)(Population<ParamTYPE>&);
         // void(*CrossOver)(const Population<ParamTYPE>&, CHR<ParamTYPE>&, CHR<ParamTYPE>&);
         void(*CrossOver)(const Population<ParamTYPE>&, std::vector< CHR<ParamTYPE> >&);
+        bool isMultiCrossover = false;
         void(*Mutation)(CHR<ParamTYPE>&);
         void(*Adaptation)(Population<ParamTYPE>&) = nullptr;
         std::vector<double>(*Constraint)(const std::vector<ParamTYPE>&);

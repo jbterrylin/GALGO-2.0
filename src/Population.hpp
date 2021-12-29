@@ -237,38 +237,41 @@ void Population<T>::recombination()
     //{
     //    std::cout << "newpop[" << i << "]" << newpop[i]->fitness << std::endl;
     //}
-   // if() {
+    
+   if(ptr->isMultiCrossover == true) {
       
-   // }
+   } else {
+      for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) 
+      {      
+         // initializing 2 new chromosome
+         newpop[i] = std::make_shared<Chromosome<T>>(*ptr);
+         newpop[i+1] = std::make_shared<Chromosome<T>>(*ptr);
 
-   for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) 
-   {      
-      // initializing 2 new chromosome
-      newpop[i] = std::make_shared<Chromosome<T>>(*ptr);
-      newpop[i+1] = std::make_shared<Chromosome<T>>(*ptr);
+         // crossing-over mating population to create 2 new chromosomes
+         std::vector< galgo::CHR<T> > newpops { newpop[i], newpop[i+1] };
+         
+         
+         // crossing-over mating population to create 2 new chromosomes
+         ptr->CrossOver(*this, newpops);
+         // ptr->CrossOver(*this, newpop[i], newpop[i+1]);
 
-      // crossing-over mating population to create 2 new chromosomes
-      std::vector< galgo::CHR<T> > newpops { newpop[i], newpop[i+1] };
-      
-      
-      // crossing-over mating population to create 2 new chromosomes
-      ptr->CrossOver(*this, newpops);
-      // ptr->CrossOver(*this, newpop[i], newpop[i+1]);
+         // mutating new chromosomes
+         ptr->Mutation(newpop[i]);   
+         ptr->Mutation(newpop[i+1]);   
 
-      // mutating new chromosomes
-      ptr->Mutation(newpop[i]);   
-      ptr->Mutation(newpop[i+1]);   
+         if (ptr->FixedValue != nullptr)
+         {
+            ptr->FixedValue(*this, i);
+            ptr->FixedValue(*this, i + 1);
+         }
 
-      if (ptr->FixedValue != nullptr)
-      {
-          ptr->FixedValue(*this, i);
-          ptr->FixedValue(*this, i + 1);
-      }
+         // evaluating new chromosomes
+         newpop[i]->evaluate();
+         newpop[i+1]->evaluate();
+      } 
+   }
 
-      // evaluating new chromosomes
-      newpop[i]->evaluate();
-      newpop[i+1]->evaluate();
-   } 
+   
 
    //std::cout << "Gen(" << ptr->nogen << ") " << "New individual created from crossover only  After recombination:" << std::endl;
    //for (int i = ptr->elitpop; i < nbrcrov; i++)

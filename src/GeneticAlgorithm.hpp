@@ -36,6 +36,7 @@ namespace galgo
         // cross-over method initialized to 1-point cross-over                                
         // void(*CrossOver)(const Population<T>&, CHR<T>&, CHR<T>&) = P1XO;
         void(*CrossOver)(const Population<T>&, std::vector< CHR<T> >&); //  = P1XO
+        bool isMultiCrossover = false;
         
         // mutation method initialized to single-point mutation 
         void(*Mutation)(CHR<T>&) = SPM;
@@ -184,6 +185,7 @@ namespace galgo
         Objective = config.Objective;
         Selection = config.Selection;
         CrossOver = config.CrossOver;
+        isMultiCrossover = config.isMultiCrossover;
         Adaptation = config.Adaptation;
         Constraint = config.Constraint;
         FixedValue = config.FixedValue;
