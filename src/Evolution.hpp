@@ -328,7 +328,7 @@ void transmit_sigma(const galgo::Chromosome<T>& chrmat1,  galgo::Chromosome<T>& 
 
 /*-------------------------------------------------------------------------------------------------*/
 template <typename T>
-void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
     // choosing randomly 2 chromosomes from mating population
     int idx1 = galgo::uniform<int>(0, x.matsize());
@@ -339,9 +339,9 @@ void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, galg
     }
 
     // choosing randomly a position for cross-over
-    int pos = galgo::uniform<int>(0, chr1->nbgene());
+    int pos = galgo::uniform<int>(0, chr[0]->nbgene());
 
-    double r = chr1->recombination_ratio();
+    double r = chr[0]->recombination_ratio();
 
     // *x[idx1] is operator[](int pos) is access element in mating population at position pos
     const galgo::Chromosome<T>& chrmat1 = *x[idx1];
@@ -349,28 +349,28 @@ void RealValuedSimpleArithmeticRecombination(const galgo::Population<T>& x, galg
 
     for (int i = 0; i < pos; i++)
     {
-        chr1->initGene(i, chrmat1.get_value(i));
+        chr[0]->initGene(i, chrmat1.get_value(i));
     }
-    for (int i = pos; i < chr1->nbgene(); i++)
+    for (int i = pos; i < chr[0]->nbgene(); i++)
     {
-        chr1->initGene(i, (T)((r * chrmat2.get_value(i)) + ((1.0 - r) * chrmat1.get_value(i)) ));
+        chr[0]->initGene(i, (T)((r * chrmat2.get_value(i)) + ((1.0 - r) * chrmat1.get_value(i)) ));
     }
 
     for (int i = 0; i < pos; i++)
     {
-        chr2->initGene(i, chrmat2.get_value(i));
+        chr[1]->initGene(i, chrmat2.get_value(i));
     }
-    for (int i = pos; i < chr2->nbgene(); i++)
+    for (int i = pos; i < chr[1]->nbgene(); i++)
     {
-        chr2->initGene(i, (T)( (r * chrmat1.get_value(i)) + ((1.0 - r) * chrmat2.get_value(i)) ));
+        chr[1]->initGene(i, (T)( (r * chrmat1.get_value(i)) + ((1.0 - r) * chrmat2.get_value(i)) ));
     }
 
     // Transmit sigma
-    transmit_sigma<T>(r, chrmat1, chrmat2, chr1, chr2);
+    transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 template <typename T>
-void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
     // choosing randomly 2 chromosomes from mating population
     int idx1 = galgo::uniform<int>(0, x.matsize());
@@ -381,30 +381,30 @@ void RealValuedSingleArithmeticRecombination(const galgo::Population<T>& x, galg
     }
 
     // choosing randomly a position for cross-over
-    int pos = galgo::uniform<int>(0, chr1->nbgene());
+    int pos = galgo::uniform<int>(0, chr[0]->nbgene());
 
-    double r = chr1->recombination_ratio();
+    double r = chr[0]->recombination_ratio();
     const galgo::Chromosome<T>& chrmat1 = *x[idx1];
     const galgo::Chromosome<T>& chrmat2 = *x[idx2];
 
-    for (int i = 0; i < chr1->nbgene(); i++)
+    for (int i = 0; i < chr[0]->nbgene(); i++)
     {
-        chr1->initGene(i, chrmat1.get_value(i));
+        chr[0]->initGene(i, chrmat1.get_value(i));
     }
-    chr1->initGene(pos, (T)(r * chrmat2.get_value(pos) + (1.0 - r) * chrmat1.get_value(pos)));
+    chr[0]->initGene(pos, (T)(r * chrmat2.get_value(pos) + (1.0 - r) * chrmat1.get_value(pos)));
 
-    for (int i = 0; i < chr2->nbgene(); i++)
+    for (int i = 0; i < chr[1]->nbgene(); i++)
     {
-        chr2->initGene(i, chrmat2.get_value(i));
+        chr[1]->initGene(i, chrmat2.get_value(i));
     }
-    chr2->initGene(pos, (T)(r * chrmat1.get_value(pos) + (1.0 - r) * chrmat2.get_value(pos)));
+    chr[1]->initGene(pos, (T)(r * chrmat1.get_value(pos) + (1.0 - r) * chrmat2.get_value(pos)));
 
     // Transmit sigma
-    transmit_sigma<T>(r, chrmat1, chrmat2, chr1, chr2);
+    transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 template <typename T>
-void RealValuedWholeArithmeticRecombination(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+void RealValuedWholeArithmeticRecombination(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
     // choosing randomly 2 chromosomes from mating population
     int idx1 = galgo::uniform<int>(0, x.matsize());
@@ -414,27 +414,27 @@ void RealValuedWholeArithmeticRecombination(const galgo::Population<T>& x, galgo
         while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
     }
 
-    double r = chr1->recombination_ratio();
+    double r = chr[0]->recombination_ratio();
     const galgo::Chromosome<T>& chrmat1 = *x[idx1];
     const galgo::Chromosome<T>& chrmat2 = *x[idx2];
 
-    for (int i = 0; i < chr1->nbgene(); i++)
+    for (int i = 0; i < chr[0]->nbgene(); i++)
     {
-        chr1->initGene(i, (T)(r * chrmat2.get_value(i) + (1.0 - r) * chrmat1.get_value(i)));
+        chr[0]->initGene(i, (T)(r * chrmat2.get_value(i) + (1.0 - r) * chrmat1.get_value(i)));
     }
-    for (int i = 0; i < chr2->nbgene(); i++)
+    for (int i = 0; i < chr[1]->nbgene(); i++)
     {
-        chr2->initGene(i, (T)(r * chrmat1.get_value(i) + (1.0 - r) * chrmat2.get_value(i)));
+        chr[1]->initGene(i, (T)(r * chrmat1.get_value(i) + (1.0 - r) * chrmat2.get_value(i)));
     }
 
     // Transmit sigma
-    transmit_sigma<T>(r, chrmat1, chrmat2, chr1, chr2);
+    transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 
 // one-point random cross-over of 2 chromosomes
 template <typename T>
-void P1XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+void P1XO(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
    // choosing randomly 2 chromosomes from mating population
    int idx1 = galgo::uniform<int>(0, x.matsize());
@@ -445,27 +445,27 @@ void P1XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr
    }
 
    // choosing randomly a position for cross-over
-   int pos = galgo::uniform<int>(0, chr1->size());
+   int pos = galgo::uniform<int>(0, chr[0]->size());
 
    // transmitting portion of bits to new chromosomes
-   chr1->setPortion(*x[idx1], 0, pos);
-   chr2->setPortion(*x[idx2], 0, pos);
-   chr1->setPortion(*x[idx2], pos + 1);
-   chr2->setPortion(*x[idx1], pos + 1);
+   chr[0]->setPortion(*x[idx1], 0, pos);
+   chr[1]->setPortion(*x[idx2], 0, pos);
+   chr[0]->setPortion(*x[idx2], pos + 1);
+   chr[1]->setPortion(*x[idx1], pos + 1);
 
-   double r = chr1->recombination_ratio();
+   double r = chr[0]->recombination_ratio();
    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
 
    // Transmit sigma
-   transmit_sigma<T>(r, chrmat1, chrmat2, chr1, chr2);
+   transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 /*-------------------------------------------------------------------------------------------------*/
 
 // two-point random cross-over of 2 chromosomes
 template <typename T, int...N>
-void P2XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+void P2XO(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
    // choosing randomly 2 chromosomes from mating population
    int idx1 = galgo::uniform<int>(0, x.matsize());
@@ -476,34 +476,34 @@ void P2XO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr
    }
 
    // choosing randomly 2 positions for cross-over
-   int pos1 = galgo::uniform<int>(0, chr1->size());
-   int pos2 = galgo::uniform<int>(0, chr1->size());
+   int pos1 = galgo::uniform<int>(0, chr[0]->size());
+   int pos2 = galgo::uniform<int>(0, chr[0]->size());
 
    // ordering these 2 random positions
    int m = std::min(pos1,pos2);
    int M = std::max(pos1,pos2);
 
    // transmitting portion of bits new chromosomes
-   chr1->setPortion(*x[idx1], 0, m);   
-   chr2->setPortion(*x[idx2], 0, m);
-   chr1->setPortion(*x[idx2], m + 1, M);
-   chr2->setPortion(*x[idx1], m + 1, M);
-   chr1->setPortion(*x[idx1], M + 1);
-   chr2->setPortion(*x[idx2], M + 1);
+   chr[0]->setPortion(*x[idx1], 0, m);   
+   chr[1]->setPortion(*x[idx2], 0, m);
+   chr[0]->setPortion(*x[idx2], m + 1, M);
+   chr[1]->setPortion(*x[idx1], m + 1, M);
+   chr[0]->setPortion(*x[idx1], M + 1);
+   chr[1]->setPortion(*x[idx2], M + 1);
 
-   double r = chr1->recombination_ratio();
+   double r = chr[0]->recombination_ratio();
    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
 
    // Transmit sigma
-   transmit_sigma<T>(r, chrmat1, chrmat2, chr1, chr2);
+   transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 /*-------------------------------------------------------------------------------------------------*/
 
 // uniform random cross-over of 2 chromosomes
 template <typename T>
-void UXO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2)
+void UXO(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
    // choosing randomly 2 chromosomes from mating population
    int idx1 = galgo::uniform<int>(0, x.matsize());
@@ -513,28 +513,28 @@ void UXO(const galgo::Population<T>& x, galgo::CHR<T>& chr1, galgo::CHR<T>& chr2
        while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
    }
 
-   for (int j = 0; j < chr1->size(); ++j) 
+   for (int j = 0; j < chr[0]->size(); ++j) 
    {
       // choosing 1 of the 2 chromosomes randomly
       if (galgo::proba(galgo::rng) < 0.50) 
       {
          // adding its jth bit to new chromosome
-         chr1->addBit(x[idx1]->getBit(j));
-         chr2->addBit(x[idx2]->getBit(j));
+         chr[0]->addBit(x[idx1]->getBit(j));
+         chr[1]->addBit(x[idx2]->getBit(j));
       } else 
       {
          // adding its jth bit to new chromosomes
-         chr1->addBit(x[idx2]->getBit(j));
-         chr2->addBit(x[idx1]->getBit(j));
+         chr[0]->addBit(x[idx2]->getBit(j));
+         chr[1]->addBit(x[idx1]->getBit(j));
       }
    }
 
-   double r = chr1->recombination_ratio();
+   double r = chr[0]->recombination_ratio();
    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
 
    // Transmit sigma
-   transmit_sigma<T>(r, chrmat1, chrmat2, chr1, chr2);
+   transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 /*-------------------------------------------------------------------------------------------------*/

@@ -87,7 +87,8 @@ namespace galgo
 
         std::vector<double>(*Objective)(const std::vector<ParamTYPE>&);
         void(*Selection)(Population<ParamTYPE>&);
-        void(*CrossOver)(const Population<ParamTYPE>&, CHR<ParamTYPE>&, CHR<ParamTYPE>&);
+        // void(*CrossOver)(const Population<ParamTYPE>&, CHR<ParamTYPE>&, CHR<ParamTYPE>&);
+        void(*CrossOver)(const Population<ParamTYPE>&, std::vector< CHR<ParamTYPE> >&);
         void(*Mutation)(CHR<ParamTYPE>&);
         void(*Adaptation)(Population<ParamTYPE>&) = nullptr;
         std::vector<double>(*Constraint)(const std::vector<ParamTYPE>&);

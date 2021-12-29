@@ -237,9 +237,9 @@ void Population<T>::recombination()
     //{
     //    std::cout << "newpop[" << i << "]" << newpop[i]->fitness << std::endl;
     //}
-   if() {
+   // if() {
       
-   }
+   // }
 
    for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) 
    {      
@@ -248,7 +248,12 @@ void Population<T>::recombination()
       newpop[i+1] = std::make_shared<Chromosome<T>>(*ptr);
 
       // crossing-over mating population to create 2 new chromosomes
-      ptr->CrossOver(*this, newpop[i], newpop[i+1]);
+      std::vector< galgo::CHR<T> > newpops { newpop[i], newpop[i+1] };
+      
+      
+      // crossing-over mating population to create 2 new chromosomes
+      ptr->CrossOver(*this, newpops);
+      // ptr->CrossOver(*this, newpop[i], newpop[i+1]);
 
       // mutating new chromosomes
       ptr->Mutation(newpop[i]);   
