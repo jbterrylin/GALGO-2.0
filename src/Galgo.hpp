@@ -91,6 +91,7 @@ namespace galgo {
 #include "Config.hpp"
 #include "GeneticAlgorithm.hpp"
 #include "../test/Crossover.hpp"
+#include "../test/Benchmark.hpp"
 
 //================================================================================================= 
 

@@ -161,7 +161,7 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
 }
 
 template <typename T>
-void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>& x)
+void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
     int idx1 = galgo::uniform<int>(0, x.matsize());
     int idx2 = galgo::uniform<int>(0, x.matsize());
@@ -175,6 +175,90 @@ void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>&
 
     // Transmit sigmas
     // transmit_sigma<T>(chr[0]->recombination_ratio(), chrmat1, chrmat2, chr[0], chr[1]);
+}
+
+template <typename T>
+void FrontRearCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
+{
+    // choosing randomly 2 chromosomes from mating population
+    int idx1 = galgo::uniform<int>(0, x.matsize());
+    int idx2 = galgo::uniform<int>(0, x.matsize());
+    if (x.matsize() >= 2)
+    {
+        while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
+    }
+
+    // choosing randomly a position for cross-over
+    int pos = galgo::uniform<int>(0, chr[0]->size());
+
+    chr[0]->chr = (*x[idx2]).chr.substr(chr[0]->size() - pos);
+    chr[0]->setPortion(*x[idx1], pos);
+    chr[1]->setPortion(*x[idx2], 0, chr[0]->size() - pos - 1);
+    chr[1]->chr += (*x[idx1]).chr.substr(0, pos);
+
+    double r = chr[0]->recombination_ratio();
+    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+
+    // Transmit sigma
+    transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
+}
+
+// radius = recombination_ratio
+template <typename T>
+void HybridCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
+{
+    int child_size = 0;
+    int pop_pat [chr[0]->size()] = {  };
+
+    for (int idx = 0; idx < chr.size(); idx++)
+        for (int i = 0; i < (*x[idx]).chr.length(); i++)
+            if((*x[idx]).chr[i] == '1')
+                pop_pat[i]++;
+
+    do {
+        // choosing randomly 2 chromosomes from mating population
+        int idx1 = galgo::uniform<int>(0, x.matsize());
+        int idx2 = galgo::uniform<int>(0, x.matsize());
+        if (x.matsize() >= 2)
+        {
+            while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
+        }
+
+        for (int j = 0; j <  (*x[j]).chr.length(); j++) {
+            if(pop_pat[j]-chr.size()/2 < chr[0]->recombination_ratio()) {
+                chr[0]->chr += (*x[idx2]).chr[j];
+                chr[1]->chr += (*x[idx1]).chr[j];
+            } else {
+                if(galgo::uniform<float>(0, 1) < 1 - pop_pat[j]/chr.size())
+                    chr[0]->chr += '1';
+                else
+                    chr[0]->chr += '0';
+            }
+
+            pop_pat[j] = 0;
+            for (int idx = 0; idx < chr.size(); idx++)
+                if((*x[idx]).chr[j] == '1')
+                    pop_pat[j]++;
+        }
+
+        child_size += 2;
+    } while(child_size !=chr.size());
+
+    // choosing randomly a position for cross-over
+    // int pos = galgo::uniform<int>(0, chr[0]->size());
+
+    // chr[0]->chr = (*x[idx2]).chr.substr(chr[0]->size() - pos);
+    // chr[0]->setPortion(*x[idx1], pos);
+    // chr[1]->setPortion(*x[idx2], 0, chr[0]->size() - pos - 1);
+    // chr[1]->chr += (*x[idx1]).chr.substr(0, pos);
+
+    // double r = chr[0]->recombination_ratio();
+    // const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+    // const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+
+    // Transmit sigma
+    // transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 #endif

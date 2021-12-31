@@ -239,6 +239,23 @@ void Population<T>::recombination()
     //}
     
    if(ptr->isMultiCrossover == true) {
+      std::vector< galgo::CHR<T> > newpops { };
+      for (int i = ptr->elitpop; i < nbrcrov; i++) {
+         newpop[i] = std::make_shared<Chromosome<T>>(*ptr);
+         newpops.push_back(newpop[i]);
+      }
+      
+      ptr->CrossOver(*this, newpops);
+
+      for (int i = ptr->elitpop; i < nbrcrov; i = i++) {
+         ptr->Mutation(newpop[i]);   
+
+         if (ptr->FixedValue != nullptr)
+            ptr->FixedValue(*this, i);
+
+         // evaluating new chromosomes
+         newpop[i]->evaluate();
+      }
       
    } else {
       for (int i = ptr->elitpop; i < nbrcrov; i = i + 2) 

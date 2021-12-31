@@ -217,19 +217,19 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._sigma_lowest = 0.01;
     config.mutinfo._ratio_boundary = 0.10;
 
-    config.covrate = 0.20;  // 0.0 if no cros-over
-    config.mutrate = 0.01 * 5;
+    config.covrate = 1;  // 0.0 if no cros-over
+    config.mutrate = 0;
     config.recombination_ratio = 0.50;
 
-    config.elitpop = 5;
+    config.elitpop = 0;
     config.tntsize = 4;
     config.Selection = SUS; // TNT; //RWS
-    config.CrossOver = P1XO; //P1XO
-    config.isMultiCrossover = false;
+    config.CrossOver = HybridCrossover; //P1XO
+    config.isMultiCrossover = true;
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary; //MutationSPM
 
     config.popsize = 100;
-    config.nbgen = 400;
+    config.nbgen = 100;
     config.output = true;
 }
 
