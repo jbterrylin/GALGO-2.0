@@ -247,7 +247,7 @@ void Population<T>::recombination()
       
       ptr->CrossOver(*this, newpops);
 
-      for (int i = ptr->elitpop; i < nbrcrov; i = i++) {
+      for (int i = ptr->elitpop; i < nbrcrov; i++) {
          ptr->Mutation(newpop[i]);   
 
          if (ptr->FixedValue != nullptr)
@@ -338,7 +338,10 @@ void Population<T>::updating()
       ptr->Adaptation(*this); 
    }
    // sorting chromosomes from best to worst fitness
-   std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness > chr2->fitness;});
+   if(ptr->sortByBiggerSign)
+      std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness < chr2->fitness;});
+   else
+      std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness < chr2->fitness;});
 }
 
 /*-------------------------------------------------------------------------------------------------*/

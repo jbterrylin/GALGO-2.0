@@ -32,7 +32,6 @@
 #include "../test/Binairo/GA.h"
 #endif
 
-
 int main()
 {
 #ifdef TEST_ALL_TYPE
@@ -51,8 +50,8 @@ int main()
     // Test init initial population
     {
         using _TYPE = double;       // Suppport float, double, char, int, long, ... for parameters
-        const int NBIT = 8;        // Has to remain between 1 and 64
-        bool resultToCsv = true;
+        const int NBIT = 64;        // Has to remain between 1 and 64
+        bool resultToCsv = false;
 
         // CONFIG
         galgo::ConfigInfo<_TYPE> config;        // A new instance of config get initial defaults
@@ -64,10 +63,10 @@ int main()
             // galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
             // galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
 
-            config.Objective = rastriginObjective<_TYPE>::Objective;
+            config.Objective = RosenbrocksValleyObjective<_TYPE>::Objective;
             
             std::vector<galgo::Parameter<_TYPE, NBIT >> myvector {};
-            for (int z = 0; z < 3; z++) myvector.push_back(galgo::Parameter<_TYPE, NBIT > ({ (_TYPE)-4.0,(_TYPE)5.0 }));
+            for (int z = 0; z < 2; z++) myvector.push_back(galgo::Parameter<_TYPE, NBIT > ({ (_TYPE)-100,(_TYPE)100 }));
             
             // std::vector<_TYPE> v;
             // for (int z = 0; z < 3 * config.popsize; z++) v.push_back( (_TYPE) (-4.0 + z *0.01) );

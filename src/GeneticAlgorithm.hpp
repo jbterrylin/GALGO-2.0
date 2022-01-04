@@ -64,6 +64,7 @@ namespace galgo
 
         bool resultToCsv;
         std::string csvFileName;
+        bool sortByBiggerSign;
 
         // Prototype to set fixed value of parameters while evolving
         void(*FixedValue)(Population<T>&, int k) = nullptr;
@@ -186,6 +187,7 @@ namespace galgo
         Selection = config.Selection;
         CrossOver = config.CrossOver;
         isMultiCrossover = config.isMultiCrossover;
+        sortByBiggerSign = config.sortByBiggerSign;
         Adaptation = config.Adaptation;
         Constraint = config.Constraint;
         FixedValue = config.FixedValue;
