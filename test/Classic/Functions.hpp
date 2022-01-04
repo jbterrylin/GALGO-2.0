@@ -50,7 +50,7 @@ Rastrigin Function
 template <typename T>
 double pso_rastrigin(std::vector< T > particle)
 {
-    double result(10. * static_cast<T> (particle.size())), A(10.), PI(3.14159);
+    double result(10. * static_cast<T> (particle.size())), A(10.);
     for (auto dim : particle) {
         result += pow(dim, 2.) - (A * cos(2. * PI * dim));
     }
@@ -98,6 +98,7 @@ public:
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
         double obj = -pso_rastrigin<double>(xd);
+        
         return { obj };
     }
 };
@@ -218,14 +219,15 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._ratio_boundary = 0.10;
 
     config.covrate = 1;  // 0.0 if no cros-over
-    config.mutrate = 0;
+    config.mutrate = 0.05;
     config.recombination_ratio = 0.50;
 
-    config.elitpop = 0;
+    config.elitpop = 5;
     config.tntsize = 4;
-    config.Selection = SUS; // TNT; //RWS
-    config.CrossOver = HybridCrossover; //P1XO
-    config.isMultiCrossover = true;
+    config.Selection = TNT; // TNT; //RWS
+    config.CrossOver = UXO; //P1XO
+    config.isMultiCrossover = false;
+    config.sortByBiggerSign = false; // default is true, if want use use benchmark.hpp (cec17), it should set to false
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary; //MutationSPM
 
     config.popsize = 100;

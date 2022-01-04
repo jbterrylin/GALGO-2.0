@@ -205,6 +205,7 @@ void FrontRearCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T
 }
 
 // radius = recombination_ratio
+// todo
 template <typename T>
 void HybridCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
@@ -243,7 +244,7 @@ void HybridCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >
         }
 
         child_size += 2;
-    } while(child_size !=chr.size());
+    } while(child_size < chr.size());
 
     // choosing randomly a position for cross-over
     // int pos = galgo::uniform<int>(0, chr[0]->size());

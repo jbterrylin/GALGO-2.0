@@ -7,6 +7,16 @@
 #ifndef GALGO_H
 #define GALGO_H
 
+// #include <WINDOWS.H>      
+#include <stdio.h>
+#include <math.h>
+#include <malloc.h>
+
+#define INF 1.0e99
+#define EPS 1.0e-14
+#define E  2.7182818284590452353602874713526625
+#define PI 3.1415926535897932384626433832795029
+
 #include <algorithm>
 #include <bitset>
 #include <functional>
@@ -91,6 +101,7 @@ namespace galgo {
 #include "Config.hpp"
 #include "GeneticAlgorithm.hpp"
 #include "../test/Crossover.hpp"
+#include "../test/Cec17.hpp"
 #include "../test/Benchmark.hpp"
 
 //================================================================================================= 

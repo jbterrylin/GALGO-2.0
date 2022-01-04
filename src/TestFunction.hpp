@@ -49,7 +49,7 @@ Rastrigin Function
 template <typename T>
 double pso_rastrigin(std::vector< T > particle)
 {
-    double result(10. * static_cast<T> (particle.size())), A(10.), PI(3.14159);
+    double result(10. * static_cast<T> (particle.size())), A(10.);
     for (auto dim : particle) {
         result += pow(dim, 2.) - (A * cos(2. * PI * dim));
     }
