@@ -63,10 +63,10 @@ int main()
             // galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
             // galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
 
-            config.Objective = RosenbrocksValleyObjective<_TYPE>::Objective;
+            config.Objective = ShiftedandRotatedRosenbrockObjective<_TYPE>::Objective;
             
             std::vector<galgo::Parameter<_TYPE, NBIT >> myvector {};
-            for (int z = 0; z < 2; z++) myvector.push_back(galgo::Parameter<_TYPE, NBIT > ({ (_TYPE)-100,(_TYPE)100 }));
+            for (int z = 0; z < 30; z++) myvector.push_back(galgo::Parameter<_TYPE, NBIT > ({ (_TYPE)-100,(_TYPE)100 }));
             
             // std::vector<_TYPE> v;
             // for (int z = 0; z < 3 * config.popsize; z++) v.push_back( (_TYPE) (-4.0 + z *0.01) );
@@ -77,6 +77,12 @@ int main()
             my_ga.csvFileName = "P1XO + Rastrigin function";
 
             my_ga.run();
+            
+            free(y);
+            // free(z);
+            free(M);
+            free(OShift);
+            free(x_bound);
         }
     }
 #endif

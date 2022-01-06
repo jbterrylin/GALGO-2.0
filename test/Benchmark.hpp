@@ -164,67 +164,85 @@ public:
 double *OShift,*M,*y,*z,*x_bound;
 int ini_flag=0,n_flag,func_flag,*SS;
 
+void checknode() {
+    int  heapstatus;
+
+    // Check heap status
+    heapstatus = _heapchk();
+    switch( heapstatus )
+    {
+        case _HEAPOK:
+            printf(" OK - heap is fine\n" );
+            break;
+        case _HEAPEMPTY:
+            printf(" OK - heap is empty\n" );
+            break;
+        case _HEAPBADBEGIN:
+            printf( "ERROR - bad start of heap\n" );
+            break;
+        case _HEAPBADNODE:
+            printf( "ERROR - bad node in heap\n" );
+            break;
+    }
+}
+
+template <typename T>
+double cec17_entrance(std::vector< T > genes, int fun_num)
+{
+    int i,j,k,n,m,func_num=fun_num;
+	double *f,*x;
+	FILE *fpt;
+	char FileName[30];
+	m=1;
+	n=genes.size();
+	x=(double *)malloc(m*n*sizeof(double));
+	f=(double *)malloc(sizeof(double)  *  m);
+    z=(double *)malloc(sizeof(double)  *  n);
+    for (i = 0; i < n; i++) z[i] = (double)genes[i];
+
+    sprintf(FileName, "input_data/shift_data_%d.txt", func_num);
+    fpt = fopen(FileName,"r");
+    if (fpt==NULL)
+    {
+        printf("\n Error: Cannot open input file for reading \n");
+    }
+
+    if (x==NULL)
+        printf("\nError: there is insufficient memory available!\n");
+
+    for(k=0;k<n;k++)
+    {
+            fscanf(fpt,"%lf",&x[k]);
+            /*printf("%Lf\n",x[k]);*/
+    }
+    fclose(fpt);
+
+    // for (j = 0; j < n; j++)
+    // {
+    //     std::cout << 1*n+j << std::endl;
+    //     x[1*n+j]=0.0;
+    //	    printf("%f\n",x[1*n+j]);
+    // }
+
+    cec17_test_func(x, f, n,m,func_num);
+
+
+    auto ans = f[0];
+
+	free(x);
+	free(f);
+    free(z);
+    
+    return ans;
+}
+
 template <typename T>
 class ShiftedandRotatedBentCigarObjective
 {
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        int i,j,k,n,m,func_num=1;
-        double *f,*x;
-        FILE *fpt;
-        char FileName[30];
-        m=1;
-        n=genes.size();
-        x=(double *)malloc(m*n*sizeof(double));
-        f=(double *)malloc(sizeof(double)  *  m);
-
-        sprintf(FileName, "input_data/shift_data_%d.txt", func_num);
-        fpt = fopen(FileName,"r");
-        if (fpt==NULL)
-        {
-            printf("\n Error: Cannot open input file for reading \n");
-        }
-
-        if (x==NULL)
-            printf("\nError: there is insufficient memory available!\n");
-
-        for(k=0;k<n;k++)
-        {
-                fscanf(fpt,"%lf",&x[k]);
-                // std::cout << "x[k]" << x[k] << std::endl;
-        }
-
-        fclose(fpt);
-
-        for (j = 0; j < n; j++)
-        {
-            x[1*n+j]=0.0;
-        }
-
-        z=(double *)malloc(sizeof(double)  *  genes.size());
-        for (size_t i = 0; i < genes.size(); i++) z[i] = (double)genes[i];
-        // for (size_t i = 0; i < genes.size(); i++) std::cout << "z[i]" << z[i] << std::endl;
-
-        for (k = 0; k < 1; k++)
-        {
-            f[0] = 0;
-            // for (j = 0; j < 2; j++)
-            // {
-            //     printf(" f%d(x[%d]) = %lf,",func_num,j+1,f[j]);
-            // }
-            // printf("\n");
-            cec17_test_func(x, f, n,m,func_num);
-            // for (j = 0; j < 2; j++)
-            // {
-            //     printf(" f%d(x[%d]) = %lf,",func_num,j+1,f[j]);
-            // }
-            // printf("\n");
-        }
-
-        // for (size_t i = 0; i < genes.size(); i++) z[i] = (double)x[i];
-        // double obj = bentCigar<double>(xd);
-        return { f[0] };
+        return { cec17_entrance(genes, 1) };
     }
 };
 
@@ -234,61 +252,8 @@ class ShiftedandRotatedRosenbrockObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        int i,j,k,n,m,func_num=3;
-        double *f,*x;
-        FILE *fpt;
-        char FileName[30];
-        m=1;
-        n=genes.size();
-        x=(double *)malloc(m*n*sizeof(double));
-        f=(double *)malloc(sizeof(double)  *  m);
-
-        sprintf(FileName, "input_data/shift_data_%d.txt", func_num);
-        fpt = fopen(FileName,"r");
-        if (fpt==NULL)
-        {
-            printf("\n Error: Cannot open input file for reading \n");
-        }
-
-        if (x==NULL)
-            printf("\nError: there is insufficient memory available!\n");
-
-        for(k=0;k<n;k++)
-        {
-                fscanf(fpt,"%lf",&x[k]);
-                // std::cout << "x[k]" << x[k] << std::endl;
-        }
-
-        fclose(fpt);
-
-        for (j = 0; j < n; j++)
-        {
-            x[1*n+j]=0.0;
-        }
-
-        z=(double *)malloc(sizeof(double)  *  genes.size());
-        for (size_t i = 0; i < genes.size(); i++) z[i] = (double)genes[i];
-        // for (size_t i = 0; i < genes.size(); i++) std::cout << "z[i]" << z[i] << std::endl;
-
-        for (k = 0; k < 1; k++)
-        {
-            f[0] = 0;
-            // for (j = 0; j < 2; j++)
-            // {
-            //     printf(" f%d(x[%d]) = %lf,",func_num,j+1,f[j]);
-            // }
-            // printf("\n");
-            cec17_test_func(x, f, n,m,func_num);
-            // for (j = 0; j < 2; j++)
-            // {
-            //     printf(" f%d(x[%d]) = %lf,",func_num,j+1,f[j]);
-            // }
-            // printf("\n");
-        }
-
-        // for (size_t i = 0; i < genes.size(); i++) z[i] = (double)x[i];
-        // double obj = bentCigar<double>(xd);
-        return { f[0] };
+        // std:: cout << cec17_entrance(genes, 3) << std::endl;
+        return { cec17_entrance(genes, 3) };
     }
 };
 

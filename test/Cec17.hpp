@@ -112,7 +112,6 @@ void cec17_test_func(double *x, double *f, int nx, int mx,int func_num)
 			for (i=0; i<nx*nx; i++)
 			{
 				fscanf(fpt,"%lf",&M[i]);
-				// std::cout << "M[i]" << M[i] << std::endl;
 			}
 		}
 		else
@@ -143,7 +142,6 @@ void cec17_test_func(double *x, double *f, int nx, int mx,int func_num)
 			for(i=0;i<nx;i++)
 			{
 				fscanf(fpt,"%lf",&OShift[i]);
-				// std::cout << "OShift[i]" << OShift[i] << std::endl;
 			}
 		}
 		else
@@ -220,11 +218,6 @@ void cec17_test_func(double *x, double *f, int nx, int mx,int func_num)
 		case 1:
 			bent_cigar_func(&x[i*nx],&f[i],nx,OShift,M,1,1);
 			f[i]+=100.0;
-			// for(int i=0; i<sizeof(x); i++ )
-			// 	std::cout << "x[i*nx]" << x[i] << std::endl;
-			// for(int i=0; i<sizeof(f); i++ )
-			// 	std::cout << "f[i]" << f[i] << std::endl;
-			// std::cout << "nx" << nx << std::endl;
 			break;
 		case 2:
 			//sum_diff_pow_func(&x[i*nx],&f[i],nx,OShift,M,1,1);

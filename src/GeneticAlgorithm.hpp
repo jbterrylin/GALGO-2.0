@@ -386,7 +386,6 @@ namespace galgo
             }
             else {
                 idx.push_back(idx[I - 1] + par.size());
-                std::cout << idx[I - 1] + par.size() <<std::endl;
             }
         }
     }
