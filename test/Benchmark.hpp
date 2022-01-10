@@ -3,6 +3,8 @@
 #ifndef BENCHMARK_HPP
 #define BENCHMARK_HPP
 
+#include "../src/Galgo.hpp"
+
 // Ring Crossover
 template <typename T>
 double sphere(std::vector< T > particle) 
@@ -161,6 +163,10 @@ public:
     }
 };
 
+//=================================================================================================
+
+// CEC17
+
 double *OShift,*M,*y,*z,*x_bound;
 int ini_flag=0,n_flag,func_flag,*SS;
 
@@ -247,14 +253,206 @@ public:
 };
 
 template <typename T>
+class ShiftedandRotatedZakharovObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& genes)
+    {
+        return { cec17_entrance(genes, 3) };
+    }
+};
+
+template <typename T>
 class ShiftedandRotatedRosenbrockObjective
 {
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        // std:: cout << cec17_entrance(genes, 3) << std::endl;
-        return { cec17_entrance(genes, 3) };
+        return { cec17_entrance(genes, 4) };
     }
 };
+
+template <typename T>
+class ShiftedandRotatedRastriginObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& genes)
+    {
+        return { cec17_entrance(genes, 5) };
+    }
+};
+
+template <typename T>
+class ShiftedandRotatedLunacekBi_RastriginObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& genes)
+    {
+        return { cec17_entrance(genes, 7) };
+    }
+};
+
+template <typename T>
+class ShiftedandRotatedLevyObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& genes)
+    {
+        return { cec17_entrance(genes, 9) };
+    }
+};
+
+template <typename T>
+class ShiftedandRotatedSchwefelObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& genes)
+    {
+        return { cec17_entrance(genes, 10) };
+    }
+};
+
+//=================================================================================================
+
+template <typename T>
+double shubert(std::vector< T > particle) 
+{
+    double tmp1(0.),tmp2(0.),sum(0.);
+
+    for (int i = 1; i <= 5; i++) {
+        tmp1 += i * cos((i+1) * particle[0] + i);
+        tmp2 += i * cos((i+1) * particle[1] + i);
+    }
+    sum = tmp1 * tmp2;
+
+    return sum;
+}
+
+template <typename T>
+class ShubertObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = shubert<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+double zakharov(std::vector< T > particle) 
+{
+    double sum1(0.),sum2(0.),sum(0.);
+
+    for (int i=0; i<particle.size(); i++)
+	{
+		double xi = particle[i];
+		sum1 = sum1 + pow(xi,2);
+		sum2 = sum2 + 0.5*(i+1)*xi;
+	}
+
+	sum = sum1 + pow(sum2,2) + pow(sum2,4);
+
+    return sum;
+}
+
+template <typename T>
+class ZakharovObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = zakharov<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+double dixonPrice(std::vector< T > particle) 
+{
+    double sum1(0.),sum2(0.),sum(0.);
+
+    double x1 = particle[0];;
+    double term1 = pow((x1-1),2);
+
+    for (int i=1; i<particle.size(); i++)
+    {
+        double xi = particle[i];
+        double xold = particle[i-1];
+        double newv = i * pow((pow(2*xi,2) - xold),2);
+        sum = sum + newv;
+    }
+
+    sum = term1 + sum;
+
+    return sum;
+}
+
+template <typename T>
+class DixonPriceObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = dixonPrice<double>(xd);
+        return { obj };
+    }
+};
+
+//=================================================================================================
+
+extern std::vector< galgo::Parameter<galgo::_TYPE, galgo::NBIT > > myvector;
+
+template <typename T>
+double maxProblem(const std::vector<T>& x, int oneOrZero) {
+    std::string str = "";
+    for (size_t i = 0; i < x.size(); i++){
+        uint64_t value = (uint64_t)(galgo::Randomize<galgo::NBIT>::MAXVAL * (x[i] - myvector[i].getData()[0]) / (myvector[i].getData()[1] - myvector[i].getData()[0]));
+        std::string temp = galgo::GetBinary(value);
+        str += temp.substr(temp.size() - galgo::NBIT, galgo::NBIT);
+    }
+
+    int total = 0;
+    for(int i=0;i< galgo::NBIT;i++)
+        if(oneOrZero == 1)
+            if(str[i] == '1')
+                total++;
+        else if(oneOrZero == 0)
+            if(str[i] == '0')
+                total++;
+
+    return { (double)total };
+}
+
+template <typename T>
+class OneMaxObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        return { maxProblem(x, 1) };
+    }
+};
+
+template <typename T>
+class ZeroMaxObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        return { maxProblem(x, 0) };
+    }
+};
+
+//=================================================================================================
 
 #endif

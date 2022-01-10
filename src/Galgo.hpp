@@ -80,6 +80,9 @@ namespace galgo {
     template <typename T, int...N>
     using TUP = std::tuple<const Parameter<T, N>&...>;
 
+    using _TYPE = double;       // Suppport float, double, char, int, long, ... for parameters
+
+    const int NBIT = 30;
 }
 
     /*-------------------------------------------------------------------------------------------------*/

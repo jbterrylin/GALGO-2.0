@@ -32,6 +32,9 @@
 #include "../test/Binairo/GA.h"
 #endif
 
+// const int NBIT = 30;        // Has to remain between 1 and 64
+std::vector<galgo::Parameter<galgo::_TYPE, galgo::NBIT >> myvector;
+
 int main()
 {
 #ifdef TEST_ALL_TYPE
@@ -49,37 +52,25 @@ int main()
 #ifdef TEST_INIT_POP
     // Test init initial population
     {
-        using _TYPE = double;       // Suppport float, double, char, int, long, ... for parameters
-        const int NBIT = 64;        // Has to remain between 1 and 64
         bool resultToCsv = false;
-
         // CONFIG
-        galgo::ConfigInfo<_TYPE> config;        // A new instance of config get initial defaults
-        set_classic_config<_TYPE>(config);      // Override some defaults
+        galgo::ConfigInfo<galgo::_TYPE> config;        // A new instance of config get initial defaults
+        set_classic_config<galgo::_TYPE>(config);      // Override some defaults
         {
             std::cout << std::endl;
             std::cout << "Rastrigin function";
-            // galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-4.0,(_TYPE)5.0 });
-            // galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-4.0,(_TYPE)5.0 });
-            // galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-4.0,(_TYPE)5.0 });
 
-            config.Objective = ShiftedandRotatedRosenbrockObjective<_TYPE>::Objective;
+            config.Objective = OneMaxObjective<galgo::_TYPE>::Objective;
             
-            std::vector<galgo::Parameter<_TYPE, NBIT >> myvector {};
-            for (int z = 0; z < 30; z++) myvector.push_back(galgo::Parameter<_TYPE, NBIT > ({ (_TYPE)-100,(_TYPE)100 }));
+            for (int z = 0; z < 1; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));
             
-            // std::vector<_TYPE> v;
-            // for (int z = 0; z < 3 * config.popsize; z++) v.push_back( (_TYPE) (-4.0 + z *0.01) );
-            // galgo::GeneticAlgorithm<_TYPE> my_ga(config, v, par1, par2, par3);
-            
-            galgo::GeneticAlgorithm<_TYPE> my_ga(config, myvector);
+            galgo::GeneticAlgorithm<galgo::_TYPE> my_ga(config, myvector);
             my_ga.resultToCsv = resultToCsv;
             my_ga.csvFileName = "P1XO + Rastrigin function";
 
             my_ga.run();
             
             free(y);
-            // free(z);
             free(M);
             free(OShift);
             free(x_bound);

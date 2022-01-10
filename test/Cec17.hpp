@@ -462,26 +462,13 @@ void dixon_price_func (double *x, double *f, int nx, double *Os,double *Mr, int 
 void bent_cigar_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* Bent_Cigar */
 {
     int i;
-	// std::cout<< "z[0]" << z[0] << std::endl;
 	sr_func (x, z, nx, Os, Mr,1.0, s_flag, r_flag); /* shift and rotate */
-	// std::cout<< "z[0]=" << z[0] << std::endl;
 
 	f[0] = z[0]*z[0];
-	// std::cout << "------------" <<  std::endl;
-	// std::cout << "z[0]" << z[0] << std::endl;
-	// std::cout << "f[0]" << f[0] << std::endl;
-	// std::cout << "------------" <<  std::endl;
 	for (i=1; i<nx; i++)
 	{
 		f[0] += pow(10.0,6.0)*z[i]*z[i];
-		// std::cout << "------------" <<  std::endl;
-		// std::cout << "z[i]" << z[i] << std::endl;
-		// std::cout << "f[0]" << f[0] << std::endl;
-		// std::cout << "pow(10.0,6.0)*z[i]*z[i]" << pow(10.0,6.0)*z[i]*z[i] << std::endl;
-		// std::cout << "------------" <<  std::endl;
 	}
-	// std::cout<< "f[0]==" << f[0] << std::endl;
-
 }
 
 void discus_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* Discus */
