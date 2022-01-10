@@ -455,4 +455,114 @@ public:
 
 //=================================================================================================
 
+template <typename T>
+double schaffersF6(std::vector< T > particle) 
+{
+    double sum(0.), numerator(0.), denominator(0.);
+
+    auto xsqrdysqrd = pow(particle[0],2) + pow(particle[1],2);
+    numerator = sin(sqrt(xsqrdysqrd, 2)) - 0.5;
+    denominator = pow((1+0.001*xsqrdysqrd),2);
+    sum += 0.5 + (numerator/denominator);
+
+    return sum;
+}
+
+template <typename T>
+class SchaffersF6Objective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = schaffersF6<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+double griewangks(std::vector< T > particle) 
+{
+    double sum(0.), s(0.), p(1.);
+    for (int i=0; i<particle.size(); i++)
+	{
+		s += particle[i]*particle[i];
+		p *= cos(particle[i]/sqrt(1.0+i));
+	}
+	sum = 1.0 + s/4000.0 - p;
+
+    return sum;
+}
+
+template <typename T>
+class GriewangksObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = griewangks<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+double hansen(std::vector< T > particle) 
+{
+    double sum(0.), s(0.), p(1.);
+    for (int i=1; i<=5; i++)
+	{
+		s += i * cos( (i-1) * particle[0] + i );
+		p += i * cos( (i+1) * particle[1] + i );
+	}
+	sum = s * p;
+
+    return sum;
+}
+
+template <typename T>
+class HansenObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = hansen<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+double michalewicz(std::vector< T > particle) 
+{
+    double sum(0.), m(10.);
+    for (int i=1; i<=2; i++)
+	{
+		sum += sin(particle[i]) * pow( sin( i * pow(particle[i],2) / PI ), 2*m);
+	}
+	sum = sum * -1;
+
+    return sum;
+}
+
+template <typename T>
+class MichalewiczObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = michalewicz<double>(xd);
+        return { obj };
+    }
+};
+
 #endif

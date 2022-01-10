@@ -183,31 +183,31 @@ public:
     }
 };
 
-template <typename T>
-class MichalewiczObjective //todo not good results
-{
-public:
-    static std::vector<double> Objective(const std::vector<T>& x)
-    {
-        const double pi = 3.14159265358979323846;
-        size_t dim_in = x.size();
-        std::vector<double> xx(x.size());
-        // transfer interval from [0, 1] to [0, pi]
-        for (int i = 0; i < dim_in; i++)
-            //xx[i] = pi * (double)x[i];
-            xx[i] = (double)x[i];
-        double sum = 0.;
-        double term = 0.;
-        double m = 10.;
-        for (size_t i = 0; i < dim_in; i++)
-        {
-            term = std::sin(xx[i]) * std::pow(std::sin(i * xx[i] * xx[i] / pi), 2 * m);
-            sum = sum + term;
-        }
-        double obj = sum;
-        return{ obj }; //max= -1.8013(2D) at (2.20,1.57)/-4.687658(5D)/-9.66015(10D)
-    }
-};
+// template <typename T>
+// class MichalewiczObjective //todo not good results
+// {
+// public:
+//     static std::vector<double> Objective(const std::vector<T>& x)
+//     {
+//         const double pi = 3.14159265358979323846;
+//         size_t dim_in = x.size();
+//         std::vector<double> xx(x.size());
+//         // transfer interval from [0, 1] to [0, pi]
+//         for (int i = 0; i < dim_in; i++)
+//             //xx[i] = pi * (double)x[i];
+//             xx[i] = (double)x[i];
+//         double sum = 0.;
+//         double term = 0.;
+//         double m = 10.;
+//         for (size_t i = 0; i < dim_in; i++)
+//         {
+//             term = std::sin(xx[i]) * std::pow(std::sin(i * xx[i] * xx[i] / pi), 2 * m);
+//             sum = sum + term;
+//         }
+//         double obj = sum;
+//         return{ obj }; //max= -1.8013(2D) at (2.20,1.57)/-4.687658(5D)/-9.66015(10D)
+//     }
+// };
 
 
 template <typename _TYPE>
@@ -227,7 +227,7 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
     config.Selection = TNT; // TNT; //RWS
     config.CrossOver = P1XO; //P1XO
     config.isMultiCrossover = false;
-    config.sortByBiggerSign = false; // default is true, if want use use benchmark.hpp (cec17), it should set to false
+    config.sortByBiggerSign = true; // default is true, if want use use benchmark.hpp (cec17), it should set to false, max problem should be true
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary; //MutationSPM
 
     config.popsize = 100;
@@ -245,19 +245,19 @@ void test_classic()
     set_classic_config<_TYPE>(config);           // Override some defaults
 
     {
-        {
-            std::cout << std::endl;
-            std::cout << "Michalewicz function";
-            galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-9.0,(_TYPE)9.0 });
-            galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-9.0,(_TYPE)9.0 });
-            galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-9.0,(_TYPE)9.0 });
-            galgo::Parameter<_TYPE, NBIT > par4({ (_TYPE)-9.0,(_TYPE)9.0 });
-            galgo::Parameter<_TYPE, NBIT > par5({ (_TYPE)-9.0,(_TYPE)9.0 });
+        // {
+        //     std::cout << std::endl;
+        //     std::cout << "Michalewicz function";
+        //     galgo::Parameter<_TYPE, NBIT > par1({ (_TYPE)-9.0,(_TYPE)9.0 });
+        //     galgo::Parameter<_TYPE, NBIT > par2({ (_TYPE)-9.0,(_TYPE)9.0 });
+        //     galgo::Parameter<_TYPE, NBIT > par3({ (_TYPE)-9.0,(_TYPE)9.0 });
+        //     galgo::Parameter<_TYPE, NBIT > par4({ (_TYPE)-9.0,(_TYPE)9.0 });
+        //     galgo::Parameter<_TYPE, NBIT > par5({ (_TYPE)-9.0,(_TYPE)9.0 });
 
-            config.Objective = MichalewiczObjective<_TYPE>::Objective;
-            galgo::GeneticAlgorithm<_TYPE> ga(config, par1, par2, par3, par4, par5);
-            ga.run();
-        }
+        //     config.Objective = MichalewiczObjective<_TYPE>::Objective;
+        //     galgo::GeneticAlgorithm<_TYPE> ga(config, par1, par2, par3, par4, par5);
+        //     ga.run();
+        // }
 
         {
             std::cout << std::endl;
