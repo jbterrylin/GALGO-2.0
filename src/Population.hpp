@@ -62,6 +62,8 @@ public:
    // return selection pressure
    double SP() const;
 
+
+   const GeneticAlgorithm<T>* ptr = nullptr; // pointer to genetic algorithm  
    const GeneticAlgorithm<T>* ga_algo() {return ptr;}
    std::vector<CHR<T>>& get_newpop() { return newpop;}
    std::vector<CHR<T>>& get_curpop() { return curpop; }
@@ -70,8 +72,7 @@ private:
    std::vector<CHR<T>> curpop;               // current population
    std::vector<CHR<T>> matpop;               // mating population
    std::vector<CHR<T>> newpop;               // new population
-
-   const GeneticAlgorithm<T>* ptr = nullptr; // pointer to genetic algorithm              
+            
    int nbrcrov;                              // number of cross-over
    int matidx;                               // mating population index
 
@@ -339,7 +340,7 @@ void Population<T>::updating()
    }
    // sorting chromosomes from best to worst fitness
    if(ptr->sortByBiggerSign)
-      std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness < chr2->fitness;});
+      std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness > chr2->fitness;});
    else
       std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness < chr2->fitness;});
 }
