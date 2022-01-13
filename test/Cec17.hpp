@@ -1500,16 +1500,10 @@ void rotatefunc (double *x, double *xrot, int nx,double *Mr)
 	int i,j;
     for (i=0; i<nx; i++)
     {
-        // xrot[i]=0;
-			for (j=0; j<nx; j++)
-			{
-				xrot[i]=xrot[i]+x[j]*Mr[i*nx+j];
-				// std::cout << "xrot[i]" << xrot[i] << std::endl;
-				// std::cout << "x[j]" << x[j] << std::endl;
-				// std::cout << "Mr[i*nx+j]" << Mr[i*nx+j] << std::endl;
-				// std::cout << "-------------------" << std::endl;
-			}
-		// std::cout << "xrot[i]" << xrot[i] << std::endl;
+		for (j=0; j<nx; j++)
+		{
+			xrot[i]=xrot[i]+x[j]*Mr[i*nx+j];
+		}
     }
 }
 

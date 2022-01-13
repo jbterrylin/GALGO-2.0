@@ -99,6 +99,7 @@ namespace galgo
 
         std::vector<bool>       force_value_flag;
         std::vector<ParamTYPE>  force_value;
+        std::string csvFileName;
 
         int nbgen;
         int popsize;

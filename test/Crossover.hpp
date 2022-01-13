@@ -7,7 +7,6 @@
     // Arithmetic crossover
 
 // Ring Crossover
-// void RingCrossover(const galgo::Population<T>& x, galgo::CHR<T>& chr[0], galgo::CHR<T>& chr[1])
 template <typename T>
 void RingCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
@@ -210,10 +209,11 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo1(const galgo::Population
     int child_size = 0;
     int pop_pat [chr[0].size()] = {  };
 
-    for (int idx = 0; idx < chr.size(); idx++)
+    for (int idx = 0; idx < chr.size(); idx++) {
         for (int i = 0; i < (*x[idx]).chr.length(); i++)
             if((*x[idx]).chr[i] == '1')
                 pop_pat[i]++;
+    }
 
     do {
         // choosing randomly 2 chromosomes from mating population
@@ -224,7 +224,7 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo1(const galgo::Population
             while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
         }
 
-        for (int j = 0; j <  (*x[j]).chr.length(); j++) {
+        for (int j = 0; j <  (*x[0]).chr.length(); j++) {
             if(pop_pat[j]-chr.size()/2 < 3) {
                 chr[child_size].chr += (*x[idx2]).chr[j];
                 chr[child_size+1].chr += (*x[idx1]).chr[j];
@@ -240,11 +240,11 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo1(const galgo::Population
             }
 
             pop_pat[j] = 0;
-            for (int idx = 0; idx < chr.size(); idx++)
+            for (int idx = 0; idx < chr.size(); idx++) {
                 if((*x[idx]).chr[j] == '1')
                     pop_pat[j]++;
+            }
         }
-
         child_size += 2;
     } while(child_size < chr.size());
     return chr;

@@ -187,6 +187,7 @@ namespace galgo
         Selection = config.Selection;
         CrossOver = config.CrossOver;
         isMultiCrossover = config.isMultiCrossover;
+        csvFileName = config.csvFileName;
         Adaptation = config.Adaptation;
         Constraint = config.Constraint;
         FixedValue = config.FixedValue;
@@ -559,7 +560,10 @@ namespace galgo
     template <typename T>
     void GeneticAlgorithm<T>::saveToCsv(int nogen)
     {
-        std:: ofstream fs(csvFileName + ".csv", std:: ios::app);
+        if (!std::filesystem::is_directory("result") || !std::filesystem::exists("result")) { // Check if src folder exists
+            std::filesystem::create_directory("result"); // create src folder
+        }
+        std:: ofstream fs("result\\" + csvFileName + ".csv", std:: ios::app);
         if (fs.is_open())
         {
             if(nogen == 0 ){

@@ -40,6 +40,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 /*-------------------------------------------------------------------------------------------------*/
 
@@ -82,7 +83,7 @@ namespace galgo {
 
     using _TYPE = double;       // Suppport float, double, char, int, long, ... for parameters
 
-    const int NBIT = 30;
+    const int NBIT = 15;
 }
 
     /*-------------------------------------------------------------------------------------------------*/
@@ -104,6 +105,7 @@ namespace galgo {
 #include "Config.hpp"
 #include "GeneticAlgorithm.hpp"
 #include "../test/Crossover.hpp"
+#include "../test/Selection.hpp"
 #include "../test/Cec17.hpp"
 #include "../test/Benchmark.hpp"
 
