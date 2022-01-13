@@ -219,15 +219,14 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._ratio_boundary = 0.10;
 
     config.covrate = 0.7;  // 0.0 if no cros-over
-    config.mutrate = 0.01;
+    config.mutrate = 0;
     config.recombination_ratio = 0.50;
 
     config.elitpop = 0;
     config.tntsize = 4;
     config.Selection = TNT; // TNT; //RWS
-    config.CrossOver = P1XO; //P1XO
-    config.isMultiCrossover = false;
-    config.sortByBiggerSign = true; // default is true, if want use use benchmark.hpp (cec17), it should set to false, max problem should be true
+    config.CrossOver = HybridCrossover; //P1XO
+    config.isMultiCrossover = true;
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary; //MutationSPM
 
     config.popsize = 100;

@@ -316,8 +316,7 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo2(const galgo::Population
 //                         chr[i].chr.replace(j, 1, "0");
 
 //                     chr[i].evaluate();
-//                     if( x.ptr->sortByBiggerSign && chr[i].fitness < oldFitness ||
-//                         !x.ptr->sortByBiggerSign && chr[i].fitness > oldFitness )
+//                     if(chr[i].fitness < oldFitness)
 //                         if(chr[i].fitness < oldFitness) 
 //                             if(chr[i].chr.substr (j, 1) == "0")
 //                                 chr[i].chr.replace(j, 1, "1");
@@ -364,8 +363,7 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo3(const galgo::Population
         chr[i].evaluate();
         
         // if result is bad then change back
-        if( x.ptr->sortByBiggerSign && chr[i].fitness < algo2result[i].fitness ||
-            !x.ptr->sortByBiggerSign && chr[i].fitness > algo2result[i].fitness ) {
+        if(chr[i].fitness < algo2result[i].fitness) {
             chr[i].chr = algo2result[i].chr;
         }
         // std::cout << "chr[i].chr" << chr[i].chr << std::endl;

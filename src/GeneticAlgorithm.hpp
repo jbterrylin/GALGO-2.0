@@ -64,7 +64,7 @@ namespace galgo
 
         bool resultToCsv;
         std::string csvFileName;
-        bool sortByBiggerSign;
+        int times= 0;
 
         // Prototype to set fixed value of parameters while evolving
         void(*FixedValue)(Population<T>&, int k) = nullptr;
@@ -187,7 +187,6 @@ namespace galgo
         Selection = config.Selection;
         CrossOver = config.CrossOver;
         isMultiCrossover = config.isMultiCrossover;
-        sortByBiggerSign = config.sortByBiggerSign;
         Adaptation = config.Adaptation;
         Constraint = config.Constraint;
         FixedValue = config.FixedValue;
@@ -564,7 +563,7 @@ namespace galgo
         if (fs.is_open())
         {
             if(nogen == 0 ){
-                fs <<  "Generation" << ",";
+                fs << "Repeat," <<  "Generation,";
                 for (int i = 0; i < nbparam; ++i) {
                     fs <<  "X" << i+1 << ",";
                 }
@@ -574,7 +573,7 @@ namespace galgo
             std::vector<T> bestResult = pop(0)->getResult();
 
             if (nogen % genstep == 0) {
-                fs << nogen << ",";
+                fs << times << "," << nogen << ",";
                 for (int i = 0; i < nbparam; ++i) {
                     fs <<  bestParam[i] << ",";
                 }

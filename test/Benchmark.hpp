@@ -26,7 +26,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
-        double obj = sphere<double>(xd);
+        double obj = -sphere<double>(xd);
         return { obj };
     }
 };
@@ -51,7 +51,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
-        double obj = axisParallelHyperEllipsoid<double>(xd);
+        double obj = -axisParallelHyperEllipsoid<double>(xd);
         return { obj };
     }
 };
@@ -80,7 +80,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
-        double obj = rotatedHyperEllipsoid<double>(xd);
+        double obj = -rotatedHyperEllipsoid<double>(xd);
         return { obj };
     }
 };
@@ -106,7 +106,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
-        double obj = normalizedSchwefel<double>(xd);
+        double obj = -normalizedSchwefel<double>(xd);
         return { obj };
     }
 };
@@ -132,7 +132,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
-        double obj = generalizedRastrigin<double>(xd);
+        double obj = -generalizedRastrigin<double>(xd);
         return { obj };
     }
 };
@@ -158,7 +158,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = rosenbrocksValley<double>(xd);
+        double obj = -rosenbrocksValley<double>(xd);
         return { obj };
     }
 };
@@ -248,7 +248,7 @@ class ShiftedandRotatedBentCigarObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        return { cec17_entrance(genes, 1) };
+        return { -cec17_entrance(genes, 1) };
     }
 };
 
@@ -258,7 +258,7 @@ class ShiftedandRotatedZakharovObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        return { cec17_entrance(genes, 3) };
+        return { -cec17_entrance(genes, 3) };
     }
 };
 
@@ -268,7 +268,7 @@ class ShiftedandRotatedRosenbrockObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        return { cec17_entrance(genes, 4) };
+        return { -cec17_entrance(genes, 4) };
     }
 };
 
@@ -278,7 +278,7 @@ class ShiftedandRotatedRastriginObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        return { cec17_entrance(genes, 5) };
+        return { -cec17_entrance(genes, 5) };
     }
 };
 
@@ -288,7 +288,7 @@ class ShiftedandRotatedLunacekBi_RastriginObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        return { cec17_entrance(genes, 7) };
+        return { -cec17_entrance(genes, 7) };
     }
 };
 
@@ -298,7 +298,7 @@ class ShiftedandRotatedLevyObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        return { cec17_entrance(genes, 9) };
+        return { -cec17_entrance(genes, 9) };
     }
 };
 
@@ -308,7 +308,7 @@ class ShiftedandRotatedSchwefelObjective
 public:
     static std::vector<double> Objective(const std::vector<T>& genes)
     {
-        return { cec17_entrance(genes, 10) };
+        return { -cec17_entrance(genes, 10) };
     }
 };
 
@@ -337,7 +337,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = shubert<double>(xd);
+        double obj = -shubert<double>(xd);
         return { obj };
     }
 };
@@ -368,7 +368,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = zakharov<double>(xd);
+        double obj = -zakharov<double>(xd);
         return { obj };
     }
 };
@@ -403,7 +403,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = dixonPrice<double>(xd);
+        double obj = -dixonPrice<double>(xd);
         return { obj };
     }
 };
@@ -477,7 +477,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = schaffersF6<double>(xd);
+        double obj = -schaffersF6<double>(xd);
         return { obj };
     }
 };
@@ -505,7 +505,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = griewangks<double>(xd);
+        double obj = -griewangks<double>(xd);
         return { obj };
     }
 };
@@ -533,7 +533,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = hansen<double>(xd);
+        double obj = -hansen<double>(xd);
         return { obj };
     }
 };
@@ -560,7 +560,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
-        double obj = michalewicz<double>(xd);
+        double obj = -michalewicz<double>(xd);
         return { obj };
     }
 };

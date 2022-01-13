@@ -339,10 +339,7 @@ void Population<T>::updating()
       ptr->Adaptation(*this); 
    }
    // sorting chromosomes from best to worst fitness
-   if(ptr->sortByBiggerSign)
-      std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness > chr2->fitness;});
-   else
-      std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness < chr2->fitness;});
+   std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness > chr2->fitness;});
 }
 
 /*-------------------------------------------------------------------------------------------------*/
