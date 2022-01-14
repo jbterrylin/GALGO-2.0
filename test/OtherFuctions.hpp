@@ -1,5 +1,5 @@
-#ifndef SELECTION_HPP
-#define SELECTION_HPP
+#ifndef OTHERFUNCTIONS_HPP
+#define OTHERFUNCTIONS_HPP
 
 // Review Paper of Various Selection Methods in Genetic Algorithm
 // actually this algorithm contain some problem (not sure my guess is correct or not)
@@ -35,6 +35,15 @@ void StochasticUniformSelection(galgo::Population<T>& x)
             fitnessTillI += x( i )->fitness;
         }
         x.select( i );
+    }
+}
+
+template <typename T>
+void NoSelection(galgo::Population<T>& x)
+{
+    for (int i = 0; i < x.matsize(); i++)
+    {
+        x.select(i);
     }
 }
 

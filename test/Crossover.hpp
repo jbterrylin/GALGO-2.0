@@ -111,52 +111,71 @@ void IntermediateCrossover(const galgo::Population<T>& x, std::vector< galgo::CH
     transmit_sigma<T>(chr[0]->recombination_ratio(), chrmat1, chrmat2, chr[0], chr[1]);
 }
 
+// turn to multi
 template <typename T>
 void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
+    // Algorithm 1(Crossover)
+    std::vector< galgo::Chromosome<T> >  popc;
+    for(int i=0; i< chr.size(); i++) {
+        popc.push_back( galgo::Chromosome<T>( *chr[i] ) );
+    }
+
     int matingPoolSize = 0;
     for (int n = 1; n <= x.popsize(); n++) matingPoolSize += n;
 
-    for (int i = 0; i < chr[0]->nbgene(); i++) {
-        int targetChromosomeInPool = galgo::uniform<int>(0, matingPoolSize);
-        int temp = 0;
-        for (int n = 0; n < x.popsize(); n++) {
-            temp += n;
-            if(targetChromosomeInPool < temp){
-                chr[0]->initGene(i, (T)( x(n-1)->get_value(i) ));
-                break;
-            } else if (x.popsize() == n+1) {
-                chr[0]->initGene(i, (T)( x(n)->get_value(i) ));
+    for(int popi=0; popi<popc.size(); popi++) {
+        for (int i = 0; i < chr[0]->nbgene(); i++) {
+            int targetChromosomeInPool = galgo::uniform<int>(0, matingPoolSize);
+            int temp = 0;
+            for (int n = 0; n < x.popsize(); n++) {
+                temp += n;
+                if(targetChromosomeInPool < temp){
+                    popc[popi].initGene(i, (T)( x(n-1)->get_value(i) ));
+                    break;
+                } else if (x.popsize() == n+1) {
+                    popc[popi].initGene(i, (T)( x(n)->get_value(i) ));
+                }
             }
         }
     }
 
-    for (int i = 0; i < chr[1]->nbgene(); i++) {
-        int targetChromosomeInPool = galgo::uniform<int>(0, matingPoolSize);
-        int temp = 0;
-        for (int n = 0; n < x.popsize(); n++) {
-            temp += n;
-            if(targetChromosomeInPool < temp){
-                chr[1]->initGene(i, (T)( x(n-1)->get_value(i) ));
-                break;
-            } else if (x.popsize() == n+1) {
-                chr[1]->initGene(i, (T)( x(n)->get_value(i) ));
+    // mutate
+    std::vector< galgo::Chromosome<T> >  popm;
+    double mutrate = chr[0]->mutrate();
+    if (mutrate != 0.0)
+        for(int i=0; i<x.popsize(); i++) {
+            // select mutate chromosome
+            if(galgo::proba(galgo::rng) <= mutrate) {
+                popm.push_back( galgo::Chromosome<T>( *x(i) ) );
+                // select genes to mutate
+                for (int n = 0; n < chr[0]->nbgene(); n++) {
+                    if(galgo::proba(galgo::rng) <= 0.1){
+                        // get genes from current pop to subsitute
+                        int targetChromo = galgo::uniform<int>(0, x.popsize());
+                        popm.back().initGene(n, (T)( x(targetChromo)->get_value(n) ));
+                    }
+                    // popm.push_back( galgo::Chromosome<T>( *x(i) ) );
+                }
             }
         }
+
+    // join
+    std::vector< galgo::Chromosome<T> > pop = popc;
+    pop.insert(pop.end(), popm.begin(), popm.end());
+    for(int i=0; i<x.popsize(); i++) {
+        pop.push_back(*x(i));
+    }
+
+    // get highest fitness to list
+    for(int i=0; i<pop.size(); i++) {
+        pop[i].evaluate();
+    }
+    std::sort(pop.begin(),pop.end(),[](const galgo::Chromosome<T>& chr1,const galgo::Chromosome<T>& chr2)->bool{return chr1.fitness > chr2.fitness;});
+    for(int i=0; i<chr.size(); i++) {
+        chr[i]->chr = pop[i].chr;
     }
     
-    int idx1 = galgo::uniform<int>(0, x.matsize());
-    int idx2 = galgo::uniform<int>(0, x.matsize());
-    if (x.matsize() >= 2)
-    {
-        while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
-    }
-
-    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
-    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
-
-    // Transmit sigmas
-    transmit_sigma<T>(chr[0]->recombination_ratio(), chrmat1, chrmat2, chr[0], chr[1]);
 }
 
 // todo
@@ -371,7 +390,7 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo3(const galgo::Population
     return chr;
 }
 
-// radius = recombination_ratio
+// radius = 3
 // todo
 template <typename T>
 void HybridCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
@@ -396,6 +415,8 @@ void HybridCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >
         // Transmit sigma
         transmit_sigma<T>(r, chrmat1, chrmat2, chr[i], chr[i+1]);
     }
+
+    // mutation
 }
 
 #endif
