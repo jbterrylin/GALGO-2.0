@@ -458,6 +458,56 @@ public:
     }
 };
 
+template <typename T>
+void trapProblem(const std::vector<T>& x, int trapSize) {
+    std::string str = "";
+    for (size_t i = 0; i < x.size(); i++){
+        uint64_t value = (uint64_t)(galgo::Randomize<galgo::NBIT>::MAXVAL * (x[i] - myvector[i].getData()[0]) / (myvector[i].getData()[1] - myvector[i].getData()[0]));
+        std::string temp = galgo::GetBinary(value);
+        str += temp.substr(temp.size() - galgo::NBIT, galgo::NBIT);
+    }
+
+    if (str.size() % trapSize != 0) {
+        throw std::invalid_argument("bit length can't fully divide by trap size");
+    }
+
+    std::string fullzero("");
+    for(int i=0; i<trapSize; i++) fullzero += "0";
+
+    int total = 0;
+    for(int i=0; i<str.size(); i+=trapSize) {
+        auto block = str.substr(i, trapSize);
+        if(fullzero == block) 
+            total += trapSize-1;
+        else
+            for(int j=0; j<block.size(); j++)
+                if(block[j] == '1')
+                    total++;
+    }
+
+    return { (double)total };
+}
+
+template <typename T>
+class TrapThreeObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        return { trapProblem(x, 3) };
+    }
+};
+
+template <typename T>
+class TrapFiveObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        return { trapProblem(x, 5) };
+    }
+};
+
 //=================================================================================================
 
 template <typename T>

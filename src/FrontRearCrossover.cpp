@@ -22,6 +22,18 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
     std::cout << std::endl;
     std::cout << config.csvFileName << "->" << benchmarkName << std::endl;
 
+    if(benchmarkName == "TrapFiveObjective") {
+        config.nbgen = 1000;
+    } else {
+        config.nbgen = 500;
+    }
+
+    if(benchmarkName == "TrapFiveObjective") {
+        config.popsize = 80;
+    } else {
+        config.popsize = 30;
+    }
+
     config.Objective = Objective;
 
     for(int i=0; i < 100; i++) {
@@ -40,6 +52,8 @@ template <typename _TYPE>
 void runFuntions(galgo::ConfigInfo<_TYPE>& config, int dimension) {
     runGA(config, OneMaxObjective<galgo::_TYPE>::Objective, "OneMaxObjective", dimension);
     runGA(config, ZeroMaxObjective<galgo::_TYPE>::Objective, "ZeroMaxObjective", dimension);
+    runGA(config, TrapThreeObjective<galgo::_TYPE>::Objective, "TrapThreeObjective", dimension);
+    runGA(config, TrapFiveObjective<galgo::_TYPE>::Objective, "TrapFiveObjective", dimension);
 }
 
 int main()
