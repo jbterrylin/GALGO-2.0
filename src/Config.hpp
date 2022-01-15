@@ -21,6 +21,7 @@ namespace galgo
         MutationGAM_UncorrelatedNStepSizeBoundary,
         MutationGAM_sigma_adapting_per_generation,
         MutationGAM_sigma_adapting_per_mutation,
+        MutationNoMutation,
     };
 
     template <typename T>

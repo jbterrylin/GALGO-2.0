@@ -109,6 +109,7 @@ namespace galgo
             else if (mt._type == MutationType::MutationGAM_UncorrelatedNStepSizeBoundary) { Mutation = GAM_UncorrelatedNStepSizeBoundary; }
             else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_generation) { Mutation = GAM_sigma_adapting_per_generation; }
             else if (mt._type == MutationType::MutationGAM_sigma_adapting_per_mutation) { Mutation = GAM_sigma_adapting_per_mutation; }
+            else if (mt._type == MutationType::MutationNoMutation) { Mutation = NoMutation; }
             else Mutation = SPM;
         }
 

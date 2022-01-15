@@ -117,7 +117,7 @@ double generalizedRastrigin(std::vector< T > particle)
     double sum(0.);
 
     for (int i = 1; i <= particle.size(); i++) {
-        sum += ( pow(particle[i],2) - 10 * cos(2 * PI * particle[i]) );
+        sum += ( pow(particle[i],2) - 10 * cos(2 * PI * particle[i]) +10);
     }
 
     return sum;
@@ -427,7 +427,7 @@ double maxProblem(const std::vector<T>& x, int oneOrZero) {
     }
 
     int total = 0;
-    for(int i=0;i< galgo::NBIT;i++)
+    for(int i=0;i< str.size();i++)
         if(oneOrZero == 1)
             if(str[i] == '1')
                 total++;
@@ -465,9 +465,9 @@ double schaffersF6(std::vector< T > particle)
 {
     double sum(0.), numerator(0.), denominator(0.);
 
-    auto xsqrdysqrd = pow(particle[0],2) + pow(particle[1],2);
-    numerator = sin(sqrt(xsqrdysqrd, 2)) - 0.5;
-    denominator = pow((1+0.001*xsqrdysqrd),2);
+    double xysqr = pow(particle[0],2) + pow(particle[1],2);
+    numerator = pow( sin( sqrt(xysqr) ), 2) - 0.5;
+    denominator = pow((1+0.001*xysqr),2);
     sum += 0.5 + (numerator/denominator);
 
     return sum;

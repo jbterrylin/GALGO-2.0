@@ -47,4 +47,10 @@ void NoSelection(galgo::Population<T>& x)
     }
 }
 
+template <typename T>
+void NoMutation(galgo::CHR<T>& chr)
+{
+    return;
+}
+
 #endif

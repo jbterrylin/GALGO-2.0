@@ -52,7 +52,8 @@ void TEST_TYPE()
             galgo::MutationType::MutationGAM_UncorrelatedNStepSize,
             galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary,
             galgo::MutationType::MutationGAM_sigma_adapting_per_generation,
-            galgo::MutationType::MutationGAM_sigma_adapting_per_mutation
+            galgo::MutationType::MutationGAM_sigma_adapting_per_mutation,
+            galgo::MutationType::MutationNoMutation
         };
 
         std::vector<CROSS<_TYPE>> crosscases = {
