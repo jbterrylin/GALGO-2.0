@@ -175,7 +175,6 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
     for(int i=0; i<chr.size(); i++) {
         chr[i]->chr = pop[i].chr;
     }
-    
 }
 
 // todo

@@ -13,7 +13,7 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
 
     config.covrate = 0.8;  // 0.0 if no cros-over
     config.mutrate = 0.01;
-    config.recombination_ratio = 0.50;
+    config.recombination_ratio = 0.5;
 
     config.elitpop = 0;
     config.tntsize = 4;
@@ -52,7 +52,6 @@ template <typename _TYPE>
 void set_HeuristicCrossover(galgo::ConfigInfo<_TYPE>& config)
 {
     config.csvFileName = "HeuristicCrossover";
-    config.recombination_ratio = 1.2;
     config.CrossOver = HeuristicCrossover; //P1XO
 }
 
@@ -60,7 +59,6 @@ template <typename _TYPE>
 void set_IntermediateCrossover(galgo::ConfigInfo<_TYPE>& config)
 {
     config.csvFileName = "IntermediateCrossover";
-    config.recombination_ratio = 0.5;
     config.CrossOver = IntermediateCrossover; //P1XO
 }
 
@@ -68,7 +66,6 @@ template <typename _TYPE>
 void set_ArithmeticCrossover(galgo::ConfigInfo<_TYPE>& config)
 {
     config.csvFileName = "ArithmeticCrossover";
-    config.recombination_ratio = 0.5;
     config.CrossOver = RealValuedWholeArithmeticRecombination; //P1XO
 }
 
