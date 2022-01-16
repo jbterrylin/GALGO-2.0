@@ -181,18 +181,44 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
 template <typename T>
 void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
-    int idx1 = galgo::uniform<int>(0, x.matsize());
-    int idx2 = galgo::uniform<int>(0, x.matsize());
-    if (x.matsize() >= 2)
-    {
-        while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
+    // std::vector< galgo::Chromosome<T> > matPool;
+    // for(int i=0; i<x.matsize(); i++) {
+    //     matPool.push_back(*x[i]);
+    // }
+
+    double p1 = 0.9;
+    std::vector<int> selectedGenes;
+    for(int i=0; i<(*x[0]).nbgene(); i++) {
+        if(galgo::proba(galgo::rng) <= p1) {
+            selectedGenes.push_back(i);
+        } else {
+            selectedGenes.push_back(-1);
+        }
     }
 
-    // const galgo::Chromosome<T>& chrmat1 = *x[idx1];
-    // const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+    for(int chri=0; chri<chr.size(); chri=chri+2) {
+        for(int genei=0; genei<(*x[0]).nbgene(); genei++) {
+            // if -1 means no need to change
+            if(selectedGenes[genei] == -1) {
+                chr[chri]->initGene(genei, x[chri]->get_value(genei));
+                chr[chri+1]->initGene(genei, x[chri+1]->get_value(genei));
+            } else {
+                int nGeneBit = x[0]->size() / x[0]->nbgene();
+                int pos = galgo::uniform<int>(0, nGeneBit);
 
-    // Transmit sigmas
-    // transmit_sigma<T>(chr[0]->recombination_ratio(), chrmat1, chrmat2, chr[0], chr[1]);
+                std::string geneBits1 = x[chri]->chr.substr(genei* x[0]->size()/x[0]->nbgene(), nGeneBit);
+                std::string geneBits2 = x[chri+1]->chr.substr(genei* x[0]->size()/x[0]->nbgene(), nGeneBit);
+
+                auto genes1temp = geneBits1.substr(pos, nGeneBit);
+                geneBits1 = geneBits1.substr(0, pos) + geneBits2.substr(pos, nGeneBit);
+                geneBits2 = geneBits2.substr(0, pos) + genes1temp;
+
+                chr[chri]->chr += geneBits1;
+                chr[chri+1]->chr += geneBits2;
+            }
+        }
+        transmit_sigma<T>(chr[0]->recombination_ratio(), *x[chri], *x[chri], chr[chri], chr[chri+1]);
+    }
 }
 
 template <typename T>

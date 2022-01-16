@@ -62,7 +62,7 @@ int main()
 
             config.Objective = OneMaxObjective<galgo::_TYPE>::Objective;
             
-            for (int z = 0; z < 1; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));
+            for (int z = 0; z < 5; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));
             
             galgo::GeneticAlgorithm<galgo::_TYPE> my_ga(config, myvector);
             my_ga.resultToCsv = resultToCsv;

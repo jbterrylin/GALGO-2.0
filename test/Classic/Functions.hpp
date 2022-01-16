@@ -224,8 +224,8 @@ void set_classic_config(galgo::ConfigInfo<_TYPE>& config)
 
     config.elitpop = 0;
     config.tntsize = 4;
-    config.Selection = TNT; // TNT; //RWS
-    config.CrossOver = HybridCrossover; //P1XO
+    config.Selection = RWS; // TNT; //RWS
+    config.CrossOver = HighDimensionalGeneticAlgorithmToolboxCrossover; //P1XO
     config.isMultiCrossover = true;
     config.mutinfo._type = galgo::MutationType::MutationGAM_UncorrelatedNStepSizeBoundary; //MutationSPM
 

@@ -459,7 +459,7 @@ public:
 };
 
 template <typename T>
-void trapProblem(const std::vector<T>& x, int trapSize) {
+double trapProblem(const std::vector<T>& x, int trapSize) {
     std::string str = "";
     for (size_t i = 0; i < x.size(); i++){
         uint64_t value = (uint64_t)(galgo::Randomize<galgo::NBIT>::MAXVAL * (x[i] - myvector[i].getData()[0]) / (myvector[i].getData()[1] - myvector[i].getData()[0]));
