@@ -135,6 +135,7 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
                     break;
                 } else if (x.popsize() == n+1) {
                     popc[popi].initGene(i, (T)( x(n)->get_value(i) ));
+                    break;
                 }
             }
         }
@@ -143,7 +144,7 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
     // mutate
     std::vector< galgo::Chromosome<T> >  popm;
     double mutrate = chr[0]->mutrate();
-    if (mutrate != 0.0)
+    if (mutrate != 0.0) {
         for(int i=0; i<x.popsize(); i++) {
             // select mutate chromosome
             if(galgo::proba(galgo::rng) <= mutrate) {
@@ -159,7 +160,7 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
                 }
             }
         }
-
+    }
     // join
     std::vector< galgo::Chromosome<T> > pop = popc;
     pop.insert(pop.end(), popm.begin(), popm.end());
@@ -254,9 +255,11 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo1(const galgo::Population
     int pop_pat [chr[0].size()] = {  };
 
     for (int idx = 0; idx < chr.size(); idx++) {
-        for (int i = 0; i < (*x[idx]).chr.length(); i++)
-            if((*x[idx]).chr[i] == '1')
+        for (int i = 0; i < (*x[idx]).chr.length(); i++) {
+            if((*x[idx]).chr[i] == '1') {
                 pop_pat[i]++;
+            }
+        }
     }
 
     do {
@@ -285,8 +288,9 @@ std::vector< galgo::Chromosome<T> > hybridCrossoverAlgo1(const galgo::Population
 
             pop_pat[j] = 0;
             for (int idx = 0; idx < chr.size(); idx++) {
-                if((*x[idx]).chr[j] == '1')
+                if((*x[idx]).chr[j] == '1') {
                     pop_pat[j]++;
+                }
             }
         }
         child_size += 2;

@@ -17,7 +17,7 @@ std::vector<galgo::Parameter<galgo::_TYPE, galgo::NBIT >> myvector;
 template <typename Z>  using FuncKT = std::vector<double>(*)(const std::vector<Z>&);
 
 template <typename _TYPE, typename T>
-void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string benchmarkName, int dimension) {
+void runGA(galgo::ConfigInfo<_TYPE> config, FuncKT<T> Objective, std::string benchmarkName, int dimension) {
     bool resultToCsv = true;
     std::cout << std::endl;
     std::cout << config.csvFileName << "->" << benchmarkName << std::endl;
@@ -75,30 +75,18 @@ int main()
         set_config<galgo::_TYPE>(config);      // Override some defaults
         std::vector<int> dimension = {30, 50, 100};
         for(int i=0; i< dimension.size(); i++) {
-            set_CollectiveCrossover<galgo::_TYPE>(config);
-            runFuntions(config, dimension[i]);
-
-            free(y);
-            free(M);
-            free(OShift);
-            free(x_bound);
+            // set_CollectiveCrossover<galgo::_TYPE>(config);
+            // runFuntions(config, dimension[i]);
             set_SinglePointCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
-
-            
-            free(y);
-            free(M);
-            free(OShift);
-            free(x_bound);
             set_TwoPointCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
-
-            
-            free(y);
-            free(M);
-            free(OShift);
-            free(x_bound);
         }
+    
+        free(y);
+        free(M);
+        free(OShift);
+        free(x_bound);
     }
 #endif
 

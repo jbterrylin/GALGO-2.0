@@ -65,6 +65,9 @@ int main()
 #ifdef TEST_INIT_POP
     // Test init initial population
     {
+        if(galgo::NBIT != 15) {
+            std::cout << "bit length for one genes is not same with experiment requirement." << std::endl;
+        }
         // CONFIG
         galgo::ConfigInfo<galgo::_TYPE> config;        // A new instance of config get initial defaults
         set_config<galgo::_TYPE>(config);      // Override some defaults

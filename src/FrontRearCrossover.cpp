@@ -38,12 +38,13 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
 
     for(int i=0; i < 100; i++) {
         myvector.clear();
-        for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)DBL_MIN, (galgo::_TYPE)DBL_MAX }));
+        for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-(pow(2,galgo::NBIT-1)-1), (galgo::_TYPE)(pow(2,galgo::NBIT-1)-1) }));
         
         galgo::GeneticAlgorithm<galgo::_TYPE> my_ga(config, myvector);
         my_ga.resultToCsv = resultToCsv;
         my_ga.csvFileName += "+" + benchmarkName;
         my_ga.times = i;
+        my_ga.showBits = true;
         my_ga.run();
     }
 }

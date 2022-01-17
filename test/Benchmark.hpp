@@ -422,13 +422,15 @@ double maxProblem(const std::vector<T>& x, int oneOrZero) {
     }
 
     int total = 0;
-    for(int i=0;i< str.size();i++)
-        if(oneOrZero == 1)
+    for(int i=0;i< str.size();i++) {
+        if(oneOrZero == 1) {
             if(str[i] == '1')
                 total++;
-        else if(oneOrZero == 0)
+        } else if(oneOrZero == 0) {
             if(str[i] == '0')
                 total++;
+        }
+    }
 
     return { (double)total };
 }
@@ -472,12 +474,15 @@ double trapProblem(const std::vector<T>& x, int trapSize) {
     int total = 0;
     for(int i=0; i<str.size(); i+=trapSize) {
         auto block = str.substr(i, trapSize);
-        if(fullzero == block) 
+        if(fullzero == block) {
             total += trapSize-1;
-        else
-            for(int j=0; j<block.size(); j++)
-                if(block[j] == '1')
+        } else {
+            for(int j=0; j<block.size(); j++) {
+                if(block[j] == '1') {
                     total++;
+                }
+            }
+        }
     }
 
     return { (double)total };

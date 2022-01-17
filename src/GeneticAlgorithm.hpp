@@ -65,6 +65,7 @@ namespace galgo
         bool resultToCsv;
         std::string csvFileName;
         int times= 0;
+        bool showBits = false;
 
         // Prototype to set fixed value of parameters while evolving
         void(*FixedValue)(Population<T>&, int k) = nullptr;
@@ -579,11 +580,14 @@ namespace galgo
 
             if (nogen % genstep == 0) {
                 fs << times << "," << nogen << ",";
-                for (int i = 0; i < nbparam; ++i) {
-                    fs <<  bestParam[i] << ",";
-                }
+                if(!showBits)
+                    for (int i = 0; i < nbparam; ++i) {
+                        fs << std::setprecision(128) <<  bestParam[i] << ",";
+                    }
+                else 
+                    fs << pop(0)->chr << ",";
                 for (unsigned i = 0; i < bestResult.size(); ++i) {
-                    fs <<  bestResult[i] << ",";
+                    fs << std::setprecision(128) <<  bestResult[i] << ",";
                     if (i < bestResult.size() - 1) {
                         fs << ",";
                     } else {
