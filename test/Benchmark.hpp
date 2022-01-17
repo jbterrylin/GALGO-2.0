@@ -238,11 +238,6 @@ double cec17_entrance(std::vector< T > genes, int fun_num)
 	free(x);
 	free(f);
     free(z);
-
-    free(y);
-    free(M);
-    free(OShift);
-    free(x_bound);
     
     return ans;
 }

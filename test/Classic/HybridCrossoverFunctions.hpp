@@ -22,7 +22,6 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._type = galgo::MutationType::MutationSPM; //MutationSPM
 
     config.popsize = 50;
-    config.popsize * 0.05 * config.popsize;
     config.nbgen = 500;
     config.output = false;
 }

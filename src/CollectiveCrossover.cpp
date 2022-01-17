@@ -77,10 +77,27 @@ int main()
         for(int i=0; i< dimension.size(); i++) {
             set_CollectiveCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
+
+            free(y);
+            free(M);
+            free(OShift);
+            free(x_bound);
             set_SinglePointCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
+
+            
+            free(y);
+            free(M);
+            free(OShift);
+            free(x_bound);
             set_TwoPointCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
+
+            
+            free(y);
+            free(M);
+            free(OShift);
+            free(x_bound);
         }
     }
 #endif
