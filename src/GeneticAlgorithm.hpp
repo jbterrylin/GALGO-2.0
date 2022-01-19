@@ -570,8 +570,12 @@ namespace galgo
         {
             if(nogen == 0 ){
                 fs << "Repeat," <<  "Generation,";
-                for (int i = 0; i < nbparam; ++i) {
-                    fs <<  "X" << i+1 << ",";
+                if(!showBits) {
+                    for (int i = 0; i < nbparam; ++i) {
+                        fs <<  "X" << i+1 << ",";
+                    }
+                } else {
+                    fs <<  "X1" << ",";
                 }
                 fs <<  "F(x)" << "\n";
             }
@@ -580,12 +584,14 @@ namespace galgo
 
             if (nogen % genstep == 0) {
                 fs << times << "," << nogen << ",";
-                if(!showBits)
+                if(!showBits) {
                     for (int i = 0; i < nbparam; ++i) {
                         fs << std::setprecision(128) <<  bestParam[i] << ",";
                     }
-                else 
+                }
+                else {
                     fs << pop(0)->chr << ",";
+                }
                 for (unsigned i = 0; i < bestResult.size(); ++i) {
                     fs << std::setprecision(128) <<  bestResult[i] << ",";
                     if (i < bestResult.size() - 1) {
