@@ -42,7 +42,7 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
         
         galgo::GeneticAlgorithm<galgo::_TYPE> my_ga(config, myvector);
         my_ga.resultToCsv = resultToCsv;
-        my_ga.csvFileName += "+" + benchmarkName;
+        my_ga.csvFileName += std::string("-") + std::to_string(dimension) + "+" + benchmarkName;
         my_ga.times = i;
         my_ga.showBits = true;
         my_ga.run();
@@ -72,7 +72,7 @@ int main()
         } 
         std::vector<int> dimension = {30/galgo::NBIT, 60/galgo::NBIT, 120/galgo::NBIT};
         for(int i=0; i< dimension.size(); i++) {
-            set_FrontRearCrossover<galgo::_TYPE>(config);
+            set_FrontRearCrossover<galgo::_TYPE>(config);   
             runFuntions(config, dimension[i]);
             set_SinglePointCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
