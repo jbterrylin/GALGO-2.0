@@ -32,7 +32,6 @@
 #include "../test/Binairo/GA.h"
 #endif
 
-// const int NBIT = 30;        // Has to remain between 1 and 64
 std::vector<galgo::Parameter<galgo::_TYPE, galgo::NBIT >> myvector;
 
 int main()

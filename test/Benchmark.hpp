@@ -63,11 +63,12 @@ double rotatedHyperEllipsoid(std::vector< T > particle)
 
     for (int i = 0; i < particle.size(); i++) {
         double inner (0.);
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j < i; j++) {
             inner += pow(particle[j],2);
+        }
         sum += inner;
     }
-
+    
     return sum;
 }
 

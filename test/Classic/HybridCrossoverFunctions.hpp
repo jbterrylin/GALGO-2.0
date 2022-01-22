@@ -50,4 +50,12 @@ void set_TwoPointCrossover(galgo::ConfigInfo<_TYPE>& config)
     config.isMultiCrossover = false;
 }
 
+template <typename _TYPE>
+void set_UniformCrossover(galgo::ConfigInfo<_TYPE>& config)
+{
+    config.csvFileName = "UniformCrossover";
+    config.CrossOver = UXO; //P1XO
+    config.isMultiCrossover = false;
+}
+
 #endif

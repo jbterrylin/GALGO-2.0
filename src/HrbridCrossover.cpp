@@ -28,6 +28,7 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
         my_ga.resultToCsv = resultToCsv;
         my_ga.csvFileName += "+" + benchmarkName;
         my_ga.times = i;
+        my_ga.genstep = 1;
         my_ga.run();
     }
 }
@@ -72,6 +73,8 @@ int main()
         set_SinglePointCrossover<galgo::_TYPE>(config);
         runFuntions(config);
         set_TwoPointCrossover<galgo::_TYPE>(config);
+        runFuntions(config);
+        set_UniformCrossover<galgo::_TYPE>(config);
         runFuntions(config);
     }
 #endif

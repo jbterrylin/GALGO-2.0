@@ -11,7 +11,6 @@
 #include "../test/Classic/HighDimensionalCrossoverFunctions.hpp"
 #endif
 
-// const int NBIT = 30;        // Has to remain between 1 and 64
 std::vector<galgo::Parameter<galgo::_TYPE, galgo::NBIT >> myvector;
 
 template <typename Z>  using FuncKT = std::vector<double>(*)(const std::vector<Z>&);

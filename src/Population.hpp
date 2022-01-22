@@ -249,10 +249,10 @@ void Population<T>::recombination()
       ptr->CrossOver(*this, newpops);
 
       for (int i = ptr->elitpop; i < nbrcrov; i++) {
-         ptr->Mutation(newpop[i]);   
+         // ptr->Mutation(newpop[i]);   
 
-         if (ptr->FixedValue != nullptr)
-            ptr->FixedValue(*this, i);
+         // if (ptr->FixedValue != nullptr)
+         //    ptr->FixedValue(*this, i);
 
          // evaluating new chromosomes
          newpop[i]->evaluate();
@@ -274,14 +274,14 @@ void Population<T>::recombination()
          // ptr->CrossOver(*this, newpop[i], newpop[i+1]);
 
          // mutating new chromosomes
-         ptr->Mutation(newpop[i]);   
-         ptr->Mutation(newpop[i+1]);   
+         // ptr->Mutation(newpop[i]);   
+         // ptr->Mutation(newpop[i+1]);   
 
-         if (ptr->FixedValue != nullptr)
-         {
-            ptr->FixedValue(*this, i);
-            ptr->FixedValue(*this, i + 1);
-         }
+         // if (ptr->FixedValue != nullptr)
+         // {
+         //    ptr->FixedValue(*this, i);
+         //    ptr->FixedValue(*this, i + 1);
+         // }
 
          // evaluating new chromosomes
          newpop[i]->evaluate();

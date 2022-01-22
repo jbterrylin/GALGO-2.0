@@ -11,7 +11,6 @@
 #include "../test/Classic/CollectiveCrossoverFunctions.hpp"
 #endif
 
-// const int NBIT = 30;        // Has to remain between 1 and 64
 std::vector<galgo::Parameter<galgo::_TYPE, galgo::NBIT >> myvector;
 
 template <typename Z>  using FuncKT = std::vector<double>(*)(const std::vector<Z>&);
@@ -48,21 +47,22 @@ void runFuntions(galgo::ConfigInfo<_TYPE>& config, int dimension) {
     for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
     runGA(config, ShiftedandRotatedRosenbrockObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedRosenbrockObjective", dimension);
 
-    // myvector.clear();
-    // for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
-    // runGA(config, ShiftedandRotatedRastriginObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedRastriginObjective", dimension);
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
+    runGA(config, ShiftedandRotatedRastriginObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedRastriginObjective", dimension);
 
-    // myvector.clear();
-    // for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
-    // runGA(config, ShiftedandRotatedLunacekBi_RastriginObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedLunacekBi_RastriginObjective", dimension);
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
+    runGA(config, ShiftedandRotatedLunacekBi_RastriginObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedLunacekBi_RastriginObjective", dimension);
 
-    // myvector.clear();
-    // for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
-    // runGA(config, ShiftedandRotatedLevyObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedLevyObjective", dimension);
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
+    runGA(config, ShiftedandRotatedLevyObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedLevyObjective", dimension);
 
-    // myvector.clear();
-    // for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
-    // runGA(config, ShiftedandRotatedSchwefelObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedSchwefelObjective", dimension);
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
+    runGA(config, ShiftedandRotatedSchwefelObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedSchwefelObjective", dimension);
+    
 }
 
 int main()
@@ -73,7 +73,8 @@ int main()
         // CONFIG
         galgo::ConfigInfo<galgo::_TYPE> config;        // A new instance of config get initial defaults
         set_config<galgo::_TYPE>(config);      // Override some defaults
-        std::vector<int> dimension = {30, 50, 100};
+        // std::vector<int> dimension = {30, 50, 100};
+        std::vector<int> dimension = {30};
         for(int i=0; i< dimension.size(); i++) {
             set_CollectiveCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
