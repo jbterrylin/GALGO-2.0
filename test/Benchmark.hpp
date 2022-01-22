@@ -36,8 +36,8 @@ double axisParallelHyperEllipsoid(std::vector< T > particle)
 {
     double sum(0.);
 
-    for (int i = 1; i <= particle.size(); i++) {
-        sum += (i * pow(particle[i], 2.));
+    for (int i = 0; i < particle.size(); i++) {
+        sum += ((i+1) * pow(particle[i], 2.));
     }
     return sum;
 }
@@ -61,9 +61,9 @@ double rotatedHyperEllipsoid(std::vector< T > particle)
 {
     double sum(0.);
 
-    for (int i = 1; i <= particle.size(); i++) {
+    for (int i = 0; i < particle.size(); i++) {
         double inner (0.);
-        for (int j = 1; j <= i; j++)
+        for (int j = 0; j < i; j++)
             inner += pow(particle[j],2);
         sum += inner;
     }
@@ -90,13 +90,14 @@ double normalizedSchwefel(std::vector< T > particle)
 {
     double sum(0.);
 
-    for (int i = 1; i <= particle.size(); i++) {
+    for (int i = 0; i < particle.size(); i++) {
         sum += ( -(particle[i]) * sin(sqrt(abs(particle[i]))) );
     }
 
-    return sum;
+    return sum/particle.size();
 }
 
+// http://profesores.elo.utfsm.cl/~tarredondo/info/soft-comp/functions/node10.html
 template <typename T>
 class NormalizedSchwefelObjective
 {
@@ -116,7 +117,7 @@ double generalizedRastrigin(std::vector< T > particle)
 {
     double sum(0.);
 
-    for (int i = 1; i <= particle.size(); i++) {
+    for (int i = 0; i < particle.size(); i++) {
         sum += ( pow(particle[i],2) - 10 * cos(2 * PI * particle[i]) +10);
     }
 
@@ -142,7 +143,7 @@ double rosenbrocksValley(std::vector< T > particle)
 {
     double sum(0.);
 
-    for (int i = 1; i <= particle.size()-1; i++) {
+    for (int i = 0; i < particle.size()-1; i++) {
         sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(particle[i] - 1,2));
     }
 
@@ -376,9 +377,9 @@ public:
 template <typename T>
 double dixonPrice(std::vector< T > particle) 
 {
-    double sum1(0.),sum2(0.),sum(0.);
+    double sum(0.);
 
-    double x1 = particle[0];;
+    double x1 = particle[0];
     double term1 = pow((x1-1),2);
 
     for (int i=1; i<particle.size(); i++)
@@ -597,9 +598,9 @@ template <typename T>
 double michalewicz(std::vector< T > particle) 
 {
     double sum(0.), m(10.);
-    for (int i=1; i<=2; i++)
+    for (int i=0; i<particle.size(); i++)
 	{
-		sum += sin(particle[i]) * pow( sin( i * pow(particle[i],2) / PI ), 2*m);
+		sum += sin(particle[i]) * pow( sin( (i+1) * pow(particle[i],2) / PI ), 2*m);
 	}
 	sum = sum * -1;
 
