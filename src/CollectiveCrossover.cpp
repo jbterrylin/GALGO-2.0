@@ -29,6 +29,7 @@ void runGA(galgo::ConfigInfo<_TYPE> config, FuncKT<T> Objective, std::string ben
         my_ga.resultToCsv = resultToCsv;
         my_ga.csvFileName += "-" + std::to_string(dimension) + "+" + benchmarkName;
         my_ga.times = i;
+        my_ga.genstep = config.nbgen;
         my_ga.run();
     }
 }
@@ -74,7 +75,7 @@ int main()
         galgo::ConfigInfo<galgo::_TYPE> config;        // A new instance of config get initial defaults
         set_config<galgo::_TYPE>(config);      // Override some defaults
         // std::vector<int> dimension = {30, 50, 100};
-        std::vector<int> dimension = {30};
+        std::vector<int> dimension = {50};
         for(int i=0; i< dimension.size(); i++) {
             set_CollectiveCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
