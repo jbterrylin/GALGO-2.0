@@ -44,6 +44,8 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
         my_ga.csvFileName += std::string("-") + std::to_string(dimension) + "+" + benchmarkName;
         my_ga.times = i;
         my_ga.showBits = true;
+        my_ga.showNFitnessEvaluateReachTarget = true;
+        my_ga.targetFitness = galgo::NBIT * dimension;
         my_ga.run();
     }
 }

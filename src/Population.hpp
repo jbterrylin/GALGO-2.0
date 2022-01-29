@@ -65,8 +65,11 @@ public:
 
    const GeneticAlgorithm<T>* ptr = nullptr; // pointer to genetic algorithm  
    const GeneticAlgorithm<T>* ga_algo() {return ptr;}
-   std::vector<CHR<T>>& get_newpop() { return newpop;}
+   std::vector<CHR<T>>& get_newpop() { return newpop; }
    std::vector<CHR<T>>& get_curpop() { return curpop; }
+
+   int fitnessEvaluateCount = 0;
+   bool stopCount = false;
 
 private:
    std::vector<CHR<T>> curpop;               // current population
@@ -338,6 +341,17 @@ void Population<T>::updating()
    if (ptr->Constraint != nullptr) {
       ptr->Adaptation(*this); 
    }
+
+   if (!stopCount) {
+      for(int i=0; i<curpop.size(); i++) {
+         if(curpop[i]->fitness == ptr->targetFitness) {
+            stopCount = true;
+         } else {
+            fitnessEvaluateCount++;
+         }
+      }
+   }
+
    // sorting chromosomes from best to worst fitness
    std::sort(curpop.begin(),curpop.end(),[](const CHR<T>& chr1,const CHR<T>& chr2)->bool{return chr1->fitness > chr2->fitness;});
 }

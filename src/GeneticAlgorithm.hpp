@@ -67,6 +67,10 @@ namespace galgo
         int times= 0;
         bool showBits = false;
 
+        bool showNFitnessEvaluateReachTarget = false;
+        int targetFitness;
+        void saveFitnessEvaluateCountToCsv();
+
         // Prototype to set fixed value of parameters while evolving
         void(*FixedValue)(Population<T>&, int k) = nullptr;
         std::vector<bool> force_value_flag;
@@ -509,6 +513,10 @@ namespace galgo
                 std::cout << "\n";
             }
         }
+
+        if (showNFitnessEvaluateReachTarget) {
+            saveFitnessEvaluateCountToCsv();
+        }
     }
 
     /*-------------------------------------------------------------------------------------------------*/
@@ -604,6 +612,18 @@ namespace galgo
             fs.close();
         }
         else std::cout << "Unable to open file";
+    }
+
+    template <typename T>
+    void GeneticAlgorithm<T>::saveFitnessEvaluateCountToCsv()
+    {
+        std:: ofstream fs("result\\" + csvFileName + "+FitnessEvaluateCountReachTarget.csv", std:: ios::app);
+        if (fs.is_open())
+        {
+            fs << "Repeat," <<  "FitnessEvaluateCountReachTarget" << "\n";
+            fs << times  << "," << pop.fitnessEvaluateCount << "\n";
+        }
+        else std::cout << "able to open file";
     }
 }
 #endif
