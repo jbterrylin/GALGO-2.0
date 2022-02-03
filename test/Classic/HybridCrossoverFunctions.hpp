@@ -15,6 +15,7 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutrate = 0.05;
     config.recombination_ratio = 0.50;
 
+    config.elitpop = 1;
     config.tntsize = 4;
     config.Selection = RWS; // TNT; //RWS
     config.CrossOver = HybridCrossover; //P1XO
