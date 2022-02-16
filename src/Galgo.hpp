@@ -85,6 +85,8 @@ namespace galgo {
     using _TYPE = double;       // Suppport float, double, char, int, long, ... for parameters
 
     const int NBIT = 15;        // Has to remain between 1 and 64
+
+    const int HDGA_NBIT = 8;        // Has to remain between 1 and 64
 }
 
     /*-------------------------------------------------------------------------------------------------*/

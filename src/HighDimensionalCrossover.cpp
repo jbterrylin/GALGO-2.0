@@ -11,7 +11,7 @@
 #include "../test/Classic/HighDimensionalCrossoverFunctions.hpp"
 #endif
 
-std::vector<galgo::Parameter<galgo::_TYPE, galgo::NBIT >> myvector;
+std::vector<galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT >> HDGAvector;
 
 template <typename Z>  using FuncKT = std::vector<double>(*)(const std::vector<Z>&);
 
@@ -24,7 +24,7 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
     config.Objective = Objective;
 
     for(int i=0; i < 100; i++) {
-        galgo::GeneticAlgorithm<galgo::_TYPE> my_ga(config, myvector);
+        galgo::GeneticAlgorithm<galgo::_TYPE> my_ga(config, HDGAvector);
         my_ga.resultToCsv = resultToCsv;
         my_ga.csvFileName += "+" + benchmarkName;
         my_ga.times = i;
@@ -34,20 +34,20 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
 
 template <typename _TYPE>
 void runFuntions(galgo::ConfigInfo<_TYPE>& config) {
-    myvector.clear();
-    for (int z = 0; z < 2; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-10, (galgo::_TYPE)10 }));    
+    HDGAvector.clear();
+    for (int z = 0; z < 2; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-10, (galgo::_TYPE)10 }));    
     runGA(config, ShubertObjective<galgo::_TYPE>::Objective, "ShubertObjective");
 
-    myvector.clear();
-    for (int z = 0; z < 10; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));    
+    HDGAvector.clear();
+    for (int z = 0; z < 10; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));    
     runGA(config, SphereObjective<galgo::_TYPE>::Objective, "SphereObjective");
 
-    myvector.clear();
-    for (int z = 0; z < 10; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-5, (galgo::_TYPE)10 }));    
+    HDGAvector.clear();
+    for (int z = 0; z < 10; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-5, (galgo::_TYPE)10 }));    
     runGA(config, ZakharovObjective<galgo::_TYPE>::Objective, "ZakharovObjective");
 
-    myvector.clear();
-    for (int z = 0; z < 10; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-10, (galgo::_TYPE)10 }));    
+    HDGAvector.clear();
+    for (int z = 0; z < 10; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-10, (galgo::_TYPE)10 }));    
     runGA(config, DixonPriceObjective<galgo::_TYPE>::Objective, "DixonPriceObjective");
 }
 

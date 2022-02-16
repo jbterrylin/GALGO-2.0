@@ -12,10 +12,9 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._ratio_boundary = 1;
 
     config.covrate = 0.9;  // 0.0 if no cros-over
-    config.mutrate = 0.7 / galgo::NBIT;
+    config.mutrate = 0.7 / galgo::HDGA_NBIT;
     config.recombination_ratio = 0.50;
 
-    config.elitpop = 0;
     config.tntsize = 4;
     config.Selection = RWS; // TNT; //RWS
     config.CrossOver = HighDimensionalGeneticAlgorithmToolboxCrossover; //P1XO
@@ -23,6 +22,8 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._type = galgo::MutationType::MutationSPM; //MutationSPM
 
     config.popsize = 50;
+    
+    config.elitpop = 0.05 * config.popsize;
     config.nbgen = 50;
     config.output = false;
 }
