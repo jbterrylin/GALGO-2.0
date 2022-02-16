@@ -351,7 +351,9 @@ public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
         std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+        for (size_t i = 0; i < x.size(); i++) {
+            xd[i] = (double)x[i];
+        }
     
         double obj = -shubert<double>(xd);
         return { obj };
@@ -382,7 +384,9 @@ public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
         std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+        for (size_t i = 0; i < x.size(); i++) {
+            xd[i] = (double)x[i];
+        }
     
         double obj = -zakharov<double>(xd);
         return { obj };
@@ -401,7 +405,7 @@ double dixonPrice(std::vector< T > particle)
     {
         double xi = particle[i];
         double xold = particle[i-1];
-        double newv = i * pow((pow(2*xi,2) - xold),2);
+        double newv = (i+1) * pow((2*pow(xi,2) - xold),2);
         sum = sum + newv;
     }
 
@@ -417,7 +421,9 @@ public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
         std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+        for (size_t i = 0; i < x.size(); i++){
+            xd[i] = (double)x[i];
+        } 
     
         double obj = -dixonPrice<double>(xd);
         return { obj };
@@ -525,6 +531,31 @@ public:
 };
 
 //=================================================================================================
+
+template <typename T>
+double rastrigrin(std::vector< T > particle) 
+{
+    double sum(0.);
+    for (int i = 0; i < 2; i++) {
+        sum = 10 + (particle[i] * particle[i]) - 10 * cos(2*PI*particle[i]);
+    }
+
+    return sum;
+}
+
+template <typename T>
+class RastrigrinObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = -rastrigrin<double>(xd);
+        return { obj };
+    }
+};
 
 template <typename T>
 double schaffersF6(std::vector< T > particle) 
