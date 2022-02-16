@@ -24,7 +24,9 @@ public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
         std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+        for (size_t i = 0; i < x.size(); i++) {
+            xd[i] = (double)x[i];
+        }
 
         double obj = -sphere<double>(xd);
         return { obj };
@@ -49,7 +51,9 @@ public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
         std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+        for (size_t i = 0; i < x.size(); i++) {
+            xd[i] = (double)x[i];
+        }
 
         double obj = -axisParallelHyperEllipsoid<double>(xd);
         return { obj };
@@ -63,10 +67,12 @@ double rotatedHyperEllipsoid(std::vector< T > particle)
 
     for (int i = 0; i < particle.size(); i++) {
         double inner (0.);
-        for (int j = 0; j < i; j++) {
-            inner += pow(particle[j],2);
+        for (int j = 0; j <= i; j++) {
+            // inner += pow(particle[j],2);
+            inner += particle[j];
         }
-        sum += inner;
+        // sum += inner;
+        sum += pow(inner,2);
     }
     
     return sum;
@@ -79,7 +85,9 @@ public:
     static std::vector<double> Objective(const std::vector<T>& x)
     {
         std::vector<double> xd(x.size());
-        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+        for (size_t i = 0; i < x.size(); i++) {
+            xd[i] = (double)x[i];
+        }
 
         double obj = -rotatedHyperEllipsoid<double>(xd);
         return { obj };
@@ -91,14 +99,18 @@ double normalizedSchwefel(std::vector< T > particle)
 {
     double sum(0.);
 
+    // for (int i = 0; i < particle.size(); i++) {
+    //     sum += ( particle[i] * sin(pow(abs(particle[i]),0.5)) );
+    // }
+
+    // return 418.9829 * particle.size() - sum;
     for (int i = 0; i < particle.size(); i++) {
         sum += ( -(particle[i]) * sin(sqrt(abs(particle[i]))) );
     }
 
-    return sum/particle.size();
+    return sum;
 }
 
-// http://profesores.elo.utfsm.cl/~tarredondo/info/soft-comp/functions/node10.html
 template <typename T>
 class NormalizedSchwefelObjective
 {
@@ -119,10 +131,11 @@ double generalizedRastrigin(std::vector< T > particle)
     double sum(0.);
 
     for (int i = 0; i < particle.size(); i++) {
-        sum += ( pow(particle[i],2) - 10 * cos(2 * PI * particle[i]) +10);
+        // sum += ( pow(particle[i],2) - 10 * cos(2 * PI * particle[i]) +10);
+        sum += ( pow(particle[i],2) - 10 * cos(2 * PI * particle[i]) );
     }
 
-    return sum;
+    return 10 * particle.size() - sum;
 }
 
 template <typename T>
@@ -145,7 +158,8 @@ double rosenbrocksValley(std::vector< T > particle)
     double sum(0.);
 
     for (int i = 0; i < particle.size()-1; i++) {
-        sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(particle[i] - 1,2));
+        // sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(particle[i] - 1,2));
+        sum += ( 100 - pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
     }
 
     return sum;
