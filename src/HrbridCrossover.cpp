@@ -41,7 +41,7 @@ void runFuntions(galgo::ConfigInfo<_TYPE>& config) {
 
     myvector.clear();
     for (int z = 0; z < 2; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));
-    runGA(config, GeneralizedRastriginObjective<galgo::_TYPE>::Objective, "GeneralizedRastriginObjective");
+    runGA(config, RastrigrinObjective<galgo::_TYPE>::Objective, "RastrigrinObjective");
     
     myvector.clear();
     for (int z = 0; z < 2; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));
@@ -56,7 +56,7 @@ void runFuntions(galgo::ConfigInfo<_TYPE>& config) {
     runGA(config, HansenObjective<galgo::_TYPE>::Objective, "HansenObjective");
     
     myvector.clear();
-    for (int z = 0; z < 2; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)0, (galgo::_TYPE)PI }));
+    for (int z = 0; z < 10; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)0, (galgo::_TYPE)PI }));
     runGA(config, MichalewiczObjective<galgo::_TYPE>::Objective, "MichalewiczObjective");
 }
 

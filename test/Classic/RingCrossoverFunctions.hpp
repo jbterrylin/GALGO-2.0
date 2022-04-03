@@ -9,7 +9,7 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     // override some defaults
     config.mutinfo._sigma = 1.0;
     config.mutinfo._sigma_lowest = 0.01;
-    config.mutinfo._ratio_boundary = 0.10;
+    config.mutinfo._ratio_boundary = 0.25;
 
     config.covrate = 0.8;  // 0.0 if no cros-over
     config.mutrate = 0.01;
@@ -17,7 +17,7 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
 
     config.elitpop = 0;
     config.tntsize = 4;
-    config.Selection = StochasticUniformSelection; // TNT; //RWS
+    config.Selection = SUS; // TNT; //RWS
     config.CrossOver = RingCrossover; //P1XO
     config.isMultiCrossover = false;
     config.mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_mutation; //MutationSPM

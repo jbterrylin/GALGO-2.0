@@ -19,7 +19,7 @@ void RingCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& 
     }
 
     // choosing randomly a position for cross-over
-    int pos = galgo::uniform<int>(0, chr[0]->size());
+    int pos = galgo::uniform<int>(0, (*x[idx1]).chr.size());
 
     auto reverseBits = [](std::string bits) 
     { 
@@ -187,7 +187,7 @@ void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>&
     //     matPool.push_back(*x[i]);
     // }
 
-    double p1 = 0.9;
+    double p1 = 0.9, p2=0.9;
     std::vector<int> selectedGenes;
     for(int i=0; i<(*x[0]).nbgene(); i++) {
         if(galgo::proba(galgo::rng) <= p1) {
@@ -200,22 +200,42 @@ void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>&
     for(int chri=0; chri<chr.size(); chri=chri+2) {
         for(int genei=0; genei<(*x[0]).nbgene(); genei++) {
             // if -1 means no need to change
-            if(selectedGenes[genei] == -1) {
+            if(selectedGenes[genei] == -1 || (selectedGenes[genei] != -1 && galgo::proba(galgo::rng) > p2)) {
+                // std::cout << "chr[chri]->chr" << std::endl;
+                // std::cout << x[chri]->chr << std::endl;
+                // std::cout << chr[chri]->chr << std::endl;
                 chr[chri]->initGene(genei, x[chri]->get_value(genei));
+                // std::cout << chr[chri]->chr << std::endl;
+                // std::cout << "------------" << std::endl;
                 chr[chri+1]->initGene(genei, x[chri+1]->get_value(genei));
             } else {
                 int nGeneBit = x[0]->size() / x[0]->nbgene();
                 int pos = galgo::uniform<int>(0, nGeneBit);
 
+                // std::cout << "chr[chri]->chr" << std::endl;
+                // std::cout << "nGeneBit" << nGeneBit << "pos" << pos << std::endl;
+                // std::cout << x[chri]->chr << std::endl;
+                // std::cout << chr[chri]->chr << std::endl;
+
                 std::string geneBits1 = x[chri]->chr.substr(genei* x[0]->size()/x[0]->nbgene(), nGeneBit);
                 std::string geneBits2 = x[chri+1]->chr.substr(genei* x[0]->size()/x[0]->nbgene(), nGeneBit);
+
+                // std::cout << "geneBits1" << geneBits1 << std::endl;
+                // std::cout << "geneBits2" << geneBits2 << std::endl;
 
                 auto genes1temp = geneBits1.substr(pos, nGeneBit);
                 geneBits1 = geneBits1.substr(0, pos) + geneBits2.substr(pos, nGeneBit);
                 geneBits2 = geneBits2.substr(0, pos) + genes1temp;
 
+                // std::cout << "geneBits1" << geneBits1 << std::endl;
+                // std::cout << "geneBits2" << geneBits2 << std::endl;
+
                 chr[chri]->chr += geneBits1;
                 chr[chri+1]->chr += geneBits2;
+
+                // std::cout << "chr[chri]->chr" << chr[chri]->chr << std::endl;
+                // std::cout << "chr[chri+1]->chr" << chr[chri+1]->chr << std::endl;
+                // std::cout << "------------" << std::endl;
             }
         }
         transmit_sigma<T>(chr[0]->recombination_ratio(), *x[chri], *x[chri], chr[chri], chr[chri+1]);
