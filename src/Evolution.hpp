@@ -585,8 +585,8 @@ void SPM(galgo::CHR<T>& chr)
       // generating a random probability
       if (galgo::proba(galgo::rng) <= mutrate)
       {
-         // flipping ith bit
-         chr->flipBit(i);  
+        // flipping ith bit
+        chr->flipBit(i);  
       }     
    }
 }

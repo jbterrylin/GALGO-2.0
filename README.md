@@ -1,4 +1,3 @@
-https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/heapchk?redirectedfrom=MSDN&view=msvc-170
 New features added:
 - Support integral types for genetical algorithm(GA) parameters (not just float, double)
 - Support passing of initial parameters as runtime vectors

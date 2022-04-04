@@ -7,7 +7,6 @@
 #ifndef GALGO_H
 #define GALGO_H
 
-// #include <WINDOWS.H>      
 #include <stdio.h>
 #include <math.h>
 #include <malloc.h>
@@ -91,11 +90,11 @@ namespace galgo {
 
     /*-------------------------------------------------------------------------------------------------*/
 
-// #ifdef _OPENMP 
-// #include <omp.h>
-// // getting maximum number of threads available
-//     static const int MAX_THREADS = omp_get_max_threads();
-// #endif
+#ifdef _OPENMP 
+#include <omp.h>
+// getting maximum number of threads available
+    static const int MAX_THREADS = omp_get_max_threads();
+#endif
 
     /*-------------------------------------------------------------------------------------------------*/
 

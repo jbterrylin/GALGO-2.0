@@ -9,11 +9,11 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     // override some defaults
     config.mutinfo._sigma = 1.0;
     config.mutinfo._sigma_lowest = 0.01;
-    config.mutinfo._ratio_boundary = 0.25;
+    config.mutinfo._ratio_boundary = 0.5;
 
     config.covrate = 0.8;  // 0.0 if no cros-over
     config.mutrate = 0.01;
-    config.recombination_ratio = 0.5;
+    config.recombination_ratio = 0.8;
 
     config.elitpop = 0;
     config.tntsize = 4;

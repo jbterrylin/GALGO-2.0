@@ -11,7 +11,7 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._sigma_lowest = 0.01;
     config.mutinfo._ratio_boundary = 1;
 
-    config.covrate = 0.9;  // 0.0 if no cros-over
+    config.covrate = 1;  // 0.0 if no cros-over
     config.mutrate = 0.7 / galgo::HDGA_NBIT;
     config.recombination_ratio = 0.50;
 

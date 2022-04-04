@@ -69,16 +69,16 @@ double rotatedHyperEllipsoid(std::vector< T > particle)
         double inner (0.);
         for (int j = 0; j <= i; j++) {
             //original:
-            inner += particle[j];
+            // inner += particle[j];
 
             // Other papper:
-            // inner += pow(particle[j],2);
+            inner += pow(particle[j],2);
         }
         //original:
-        sum += pow(inner,2);
+        // sum += pow(inner,2);
 
         // Other papper:    
-        // sum += inner;
+        sum += inner;
     }
     
     return sum;
@@ -105,28 +105,19 @@ double normalizedSchwefel(std::vector< T > particle)
 {
     double sum(0.);
 
-    // // original:
+    // original:
     // for (int i = 0; i < particle.size(); i++) {
     //     sum += ( -(particle[i]) * sin(sqrt(fabs(particle[i]))) );
     // }
 
     // return sum;
-    // Corrected (- should go outside):
-
-    for (int i = 0; i < particle.size(); i++) {
-        sum += ( (particle[i]) * sin(sqrt(fabs(particle[i]))) );
-    }
-
-    return -sum;
 
     // Other papper:
-    // for (int i = 0; i < particle.size(); i++) {
-    //     sum += ( particle[i] * sin(pow(fabs(particle[i]),0.5)) );
-    // }
+    for (int i = 0; i < particle.size(); i++) {
+        sum += ( -(particle[i]) * sin(sqrt(fabs(particle[i]))) );
+    }
 
-    // return 418.9829 * particle.size() - sum;
-    
-
+    return sum/particle.size();
 }
 
 template <typename T>
@@ -183,7 +174,7 @@ double rosenbrocksValley(std::vector< T > particle)
         // sum += ( 100 - pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
 
         // corrected:
-        sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(particle[i] - 1,2));
+        sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
     }
 
     return sum;
@@ -210,76 +201,59 @@ public:
 double *OShift,*M,*y,*z,*x_bound;
 int ini_flag=0,n_flag,func_flag,*SS;
 
-void checknode() {
-    int  heapstatus;
-
-    // Check heap status
-    heapstatus = _heapchk();
-    switch( heapstatus )
-    {
-        case _HEAPOK:
-            printf(" OK - heap is fine\n" );
-            break;
-        case _HEAPEMPTY:
-            printf(" OK - heap is empty\n" );
-            break;
-        case _HEAPBADBEGIN:
-            printf( "ERROR - bad start of heap\n" );
-            break;
-        case _HEAPBADNODE:
-            printf( "ERROR - bad node in heap\n" );
-            break;
-    }
-}
-
 template <typename T>
 double cec17_entrance(std::vector< T > genes, int fun_num)
 {
     int i,j,k,n,m,func_num=fun_num;
 	double *f,*x;
-	FILE *fpt;
-	char FileName[30];
+	// FILE *fpt;
+	// char FileName[30];
 	m=1;
 	n=genes.size();
 	x=(double *)malloc(m*n*sizeof(double));
 	f=(double *)malloc(sizeof(double)  *  m);
-    z=(double *)malloc(sizeof(double)  *  n);
-    for (i = 0; i < n; i++) z[i] = (double)genes[i];
-
-    sprintf(FileName, "input_data/shift_data_%d.txt", func_num);
-    fpt = fopen(FileName,"r");
-    if (fpt==NULL)
-    {
-        printf("\n Error: Cannot open input file for reading \n");
-    }
-
+	// for (i = 0; i < 30; i++)
+	// {
+    // func_num=i+1;
+    // sprintf(FileName, "input_data/shift_data_%d.txt", func_num);
+    // fpt = fopen(FileName,"r");
+    // if (fpt==NULL)
+    // {
+    //     printf("\n Error: Cannot open input file for reading \n");
+    // }
+    
     if (x==NULL)
         printf("\nError: there is insufficient memory available!\n");
 
     for(k=0;k<n;k++)
     {
-            fscanf(fpt,"%lf",&x[k]);
-            /*printf("%Lf\n",x[k]);*/
+        x[k]=genes[k];
+        // fscanf(fpt,"%Lf",&x[k]);
+        /*printf("%Lf\n",x[k]);*/
     }
-    fclose(fpt);
+
+    // fclose(fpt);
 
     // for (j = 0; j < n; j++)
     // {
-    //     std::cout << 1*n+j << std::endl;
     //     x[1*n+j]=0.0;
-    //	    printf("%f\n",x[1*n+j]);
+    //     /*printf("%Lf\n",x[1*n+j]);*/
     // }
-
-    cec17_test_func(x, f, n,m,func_num);
-
-
-    auto ans = f[0];
-
-	free(x);
-	free(f);
-    free(z);
     
-    return ans;
+    
+    // for (k = 0; k < 1; k++)
+    // {
+    cec17_test_func(x, f, n,m,func_num);
+        // for (j = 0; j < 2; j++)
+        // {
+        //     printf(" f%d(x[%d]) = %lf,",func_num,j+1,f[j]);
+        // }
+        // printf("\n");
+    // }
+	
+	// }
+    
+    return f[0];
 }
 
 template <typename T>
@@ -388,6 +362,7 @@ template <typename T>
 double zakharov(std::vector< T > particle) 
 {
     double sum1(0.),sum2(0.),sum(0.);
+    // particle = {1,2,3,4,5,6,7,8,9,10};
 
     for (int i=0; i<particle.size(); i++)
 	{
@@ -397,6 +372,7 @@ double zakharov(std::vector< T > particle)
 	}
 
 	sum = sum1 + pow(sum2,2) + pow(sum2,4);
+    // std:: cout << sum << std::endl;
 
     return sum;
 }
@@ -420,7 +396,8 @@ public:
 template <typename T>
 double dixonPrice(std::vector< T > particle) 
 {
-    double sum(0.);
+    double sum = 0;
+    // particle = {1,2,3};
 
     double x1 = particle[0];
     double term1 = pow((x1-1),2);
@@ -434,6 +411,8 @@ double dixonPrice(std::vector< T > particle)
     }
 
     sum = term1 + sum;
+
+    // std::cout << sum << std::endl;
 
     return sum;
 }

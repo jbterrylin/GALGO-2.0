@@ -1,6 +1,3 @@
 /build/
 /paper/
-*.csv
 *.exe
-*.jpg
-Calculate-checkpoint.ipynb

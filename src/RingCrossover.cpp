@@ -72,14 +72,19 @@ int main()
         set_config<galgo::_TYPE>(config);      // Override some defaults
         set_RingCrossover<galgo::_TYPE>(config);
         runFuntions(config, 30);
+        
         set_SinglePointCrossover<galgo::_TYPE>(config);
         runFuntions(config, 30);
+
         set_TwoPointCrossover<galgo::_TYPE>(config);
         runFuntions(config, 30);
+
         set_HeuristicCrossover<galgo::_TYPE>(config);
         runFuntions(config, 30);
+
         set_IntermediateCrossover<galgo::_TYPE>(config);
         runFuntions(config, 30);
+
         set_ArithmeticCrossover<galgo::_TYPE>(config);
         runFuntions(config, 30);
     }

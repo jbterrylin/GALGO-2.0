@@ -18,9 +18,12 @@ void RingCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& 
         while (idx1 == idx2) { idx2 = galgo::uniform<int>(0, x.matsize()); } // find not unique parents
     }
 
+    // std::cout << "(*x[idx1]).chr" << (*x[idx1]).chr << std::endl;
+    // std::cout << "(*x[idx2]).chr" << (*x[idx2]).chr << std::endl;
+
     // choosing randomly a position for cross-over
     int pos = galgo::uniform<int>(0, (*x[idx1]).chr.size());
-
+    // std::cout << "pos" << pos << std::endl;
     auto reverseBits = [](std::string bits) 
     { 
         int n = bits.length();
@@ -37,12 +40,15 @@ void RingCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& 
 
     chr[1]->chr = (*x[idx1]).chr.substr(pos + 1) + reverseBits((*x[idx2]).chr.substr((*x[idx1]).size() - pos - 1));
 
-    double r = chr[0]->recombination_ratio();
-    const galgo::Chromosome<T>& chrmat1 = *x[idx1];
-    const galgo::Chromosome<T>& chrmat2 = *x[idx2];
+    // std::cout << "chr[0]->chr" << chr[0]->chr << std::endl;
+    // std::cout << "chr[1]->chr" << chr[1]->chr << std::endl;
+
+    // double r = chr[0]->recombination_ratio();
+    // const galgo::Chromosome<T>& chrmat1 = *x[idx1];
+    // const galgo::Chromosome<T>& chrmat2 = *x[idx2];
 
     // Transmit sigma
-    transmit_sigma<T>(r, chrmat1, chrmat2, chr[0], chr[1]);
+    transmit_sigma<T>(chr[0]->recombination_ratio(), *x[idx1], *x[idx2], chr[0], chr[1]);
 }
 
 template <typename T>
@@ -117,7 +123,9 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
 {
     // Algorithm 1(Crossover)
     std::vector< galgo::Chromosome<T> >  popc;
-    for(int i=0; i< chr.size(); i++) {
+
+    for(int i=0; i < 2 * ( 0.7 *( chr.size()/2 ) ); i++) {
+    // for(int i=0; i< chr.size(); i++) {
         popc.push_back( galgo::Chromosome<T>( *chr[i] ) );
     }
 
@@ -143,25 +151,46 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
 
     // mutate
     std::vector< galgo::Chromosome<T> >  popm;
-    double mutrate = chr[0]->mutrate();
-    if (mutrate != 0.0) {
-        for(int i=0; i<x.popsize(); i++) {
-            // select mutate chromosome
-            if(galgo::proba(galgo::rng) <= mutrate) {
-                popm.push_back( galgo::Chromosome<T>( *x(i) ) );
-                // select genes to mutate
-                for (int n = 0; n < chr[0]->nbgene(); n++) {
-                    if(galgo::proba(galgo::rng) <= 0.1){
-                        // get genes from current pop to subsitute
-                        int targetChromo = galgo::uniform<int>(0, x.popsize());
-                        popm.back().initGene(n, (T)( x(targetChromo)->get_value(n) ));
+    for(int i=0; i < 0.3 *chr.size(); i++) {
+        int target = galgo::uniform<int>(0, x.popsize());
+        popm.push_back( galgo::Chromosome<T>( *x(target) ) );
+    }
+
+    if (chr[0]->mutrate() != 0.0) {
+        for(int popm_i=0; popm_i < popm.size(); popm_i++) {
+            double mutrate = popm[popm_i].mutrate();
+            const std::vector<T>& lowerBound = popm[popm_i].lowerBound();
+            const std::vector<T>& upperBound = popm[popm_i].upperBound();
+
+            std::normal_distribution<double> distribution01(0.0, 1.0);
+
+            // int i  = galgo::uniform<int>(0, popm[popm_i].nbgene());
+            // looping on number of genes
+            for (int i = 0; i < popm[popm_i].nbgene(); ++i)
+            {
+                // generating a random probability
+                if (galgo::proba(galgo::rng) <= mutrate)
+                {
+                    T value = popm[popm_i].get_value(i);
+                    double sigma = popm[popm_i].get_sigma(i);
+
+                    if (sigma < 0.00000000001) // never copied from parent
+                    {
+                        sigma = ((double)(upperBound[i] - lowerBound[i])) * popm[popm_i].mutinfo()._ratio_boundary;
+                        if (sigma < popm[popm_i].mutinfo()._sigma_lowest)
+                            sigma = popm[popm_i].mutinfo()._sigma_lowest;
+                        popm[popm_i].sigma_update(i, sigma);
                     }
-                    // popm.push_back( galgo::Chromosome<T>( *x(i) ) );
+
+                    std::normal_distribution<double> distribution((double)value, sigma);
+                    double norm = distribution(galgo::rng);
+                    T new_value = (T)(std::min(std::max((T)norm, lowerBound[i]), upperBound[i])) + value;
+                    popm[popm_i].initGene(i, new_value);
                 }
             }
         }
     }
-    // join
+
     std::vector< galgo::Chromosome<T> > pop = popc;
     pop.insert(pop.end(), popm.begin(), popm.end());
     for(int i=0; i<x.popsize(); i++) {
@@ -178,7 +207,6 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
     }
 }
 
-// todo
 template <typename T>
 void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<T> >& chr)
 {
@@ -238,7 +266,7 @@ void HighDimensionalGeneticAlgorithmToolboxCrossover(const galgo::Population<T>&
                 // std::cout << "------------" << std::endl;
             }
         }
-        transmit_sigma<T>(chr[0]->recombination_ratio(), *x[chri], *x[chri], chr[chri], chr[chri+1]);
+        transmit_sigma<T>(chr[0]->recombination_ratio(), *x[chri], *x[chri+1], chr[chri], chr[chri+1]);
     }
 }
 

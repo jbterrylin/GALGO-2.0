@@ -224,9 +224,9 @@ template <typename T>
 void Population<T>::recombination()
 {
    // creating a new population by cross-over
-   #ifdef _OPENMP 
-   #pragma omp parallel for num_threads(MAX_THREADS)
-   #endif
+   // #ifdef _OPENMP 
+   // #pragma omp parallel for num_threads(MAX_THREADS)
+   // #endif
 
     //std::cout << "Gen(" << ptr->nogen << ") " << "Mating population after selection before recombination:"  << std::endl;
     //const galgo::Population<T>& x = *this;
@@ -252,10 +252,10 @@ void Population<T>::recombination()
       ptr->CrossOver(*this, newpops);
 
       for (int i = ptr->elitpop; i < nbrcrov; i++) {
-         // ptr->Mutation(newpop[i]);   
+         ptr->Mutation(newpop[i]);   
 
-         // if (ptr->FixedValue != nullptr)
-         //    ptr->FixedValue(*this, i);
+         if (ptr->FixedValue != nullptr)
+            ptr->FixedValue(*this, i);
 
          // evaluating new chromosomes
          newpop[i]->evaluate();
@@ -270,21 +270,18 @@ void Population<T>::recombination()
 
          // crossing-over mating population to create 2 new chromosomes
          std::vector< galgo::CHR<T> > newpops { newpop[i], newpop[i+1] };
-         
-         
          // crossing-over mating population to create 2 new chromosomes
          ptr->CrossOver(*this, newpops);
          // ptr->CrossOver(*this, newpop[i], newpop[i+1]);
-
          // mutating new chromosomes
-         // ptr->Mutation(newpop[i]);   
-         // ptr->Mutation(newpop[i+1]);   
-
-         // if (ptr->FixedValue != nullptr)
-         // {
-         //    ptr->FixedValue(*this, i);
-         //    ptr->FixedValue(*this, i + 1);
-         // }
+         ptr->Mutation(newpop[i]);   
+         ptr->Mutation(newpop[i+1]); 
+         // std::cout << std::endl << "3" << newpop[i]->chr << std::endl;
+         if (ptr->FixedValue != nullptr)
+         {
+            ptr->FixedValue(*this, i);
+            ptr->FixedValue(*this, i + 1);
+         }
 
          // evaluating new chromosomes
          newpop[i]->evaluate();

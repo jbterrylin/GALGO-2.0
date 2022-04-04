@@ -29,7 +29,7 @@ void runGA(galgo::ConfigInfo<_TYPE> config, FuncKT<T> Objective, std::string ben
         my_ga.resultToCsv = resultToCsv;
         my_ga.csvFileName += "-" + std::to_string(dimension) + "+" + benchmarkName;
         my_ga.times = i;
-        my_ga.genstep = config.nbgen;
+        my_ga.genstep = dimension;
         my_ga.run();
     }
 }
@@ -63,7 +63,6 @@ void runFuntions(galgo::ConfigInfo<_TYPE>& config, int dimension) {
     myvector.clear();
     for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-100, (galgo::_TYPE)100 }));    
     runGA(config, ShiftedandRotatedSchwefelObjective<galgo::_TYPE>::Objective, "ShiftedandRotatedSchwefelObjective", dimension);
-    
 }
 
 int main()
@@ -75,7 +74,7 @@ int main()
         galgo::ConfigInfo<galgo::_TYPE> config;        // A new instance of config get initial defaults
         set_config<galgo::_TYPE>(config);      // Override some defaults
         // std::vector<int> dimension = {30, 50, 100};
-        std::vector<int> dimension = {50};
+        std::vector<int> dimension = {30, 50};
         for(int i=0; i< dimension.size(); i++) {
             set_CollectiveCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
@@ -84,11 +83,6 @@ int main()
             set_TwoPointCrossover<galgo::_TYPE>(config);
             runFuntions(config, dimension[i]);
         }
-    
-        free(y);
-        free(M);
-        free(OShift);
-        free(x_bound);
     }
 #endif
 

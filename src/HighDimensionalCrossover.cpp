@@ -16,12 +16,13 @@ std::vector<galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT >> HDGAvector;
 template <typename Z>  using FuncKT = std::vector<double>(*)(const std::vector<Z>&);
 
 template <typename _TYPE, typename T>
-void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string benchmarkName) {
+void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string benchmarkName, int dimension) {
     bool resultToCsv = true;
     std::cout << std::endl;
     std::cout << config.csvFileName << "->" << benchmarkName << std::endl;
 
     config.Objective = Objective;
+    config.mutrate = 0.7 / (galgo::HDGA_NBIT * dimension);
 
     for(int i=0; i < 100; i++) {
         galgo::GeneticAlgorithm<galgo::_TYPE> my_ga(config, HDGAvector);
@@ -36,19 +37,19 @@ template <typename _TYPE>
 void runFuntions(galgo::ConfigInfo<_TYPE>& config) {
     HDGAvector.clear();
     for (int z = 0; z < 2; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-10, (galgo::_TYPE)10 }));    
-    runGA(config, ShubertObjective<galgo::_TYPE>::Objective, "ShubertObjective");
+    runGA(config, ShubertObjective<galgo::_TYPE>::Objective, "ShubertObjective", 2);
 
     HDGAvector.clear();
     for (int z = 0; z < 10; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));    
-    runGA(config, SphereObjective<galgo::_TYPE>::Objective, "SphereObjective");
+    runGA(config, SphereObjective<galgo::_TYPE>::Objective, "SphereObjective", 10);
 
     HDGAvector.clear();
     for (int z = 0; z < 10; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-5, (galgo::_TYPE)10 }));    
-    runGA(config, ZakharovObjective<galgo::_TYPE>::Objective, "ZakharovObjective");
+    runGA(config, ZakharovObjective<galgo::_TYPE>::Objective, "ZakharovObjective", 10);
 
     HDGAvector.clear();
     for (int z = 0; z < 10; z++) HDGAvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::HDGA_NBIT > ({ (galgo::_TYPE)-10, (galgo::_TYPE)10 }));    
-    runGA(config, DixonPriceObjective<galgo::_TYPE>::Objective, "DixonPriceObjective");
+    runGA(config, DixonPriceObjective<galgo::_TYPE>::Objective, "DixonPriceObjective", 10);
 }
 
 int main()

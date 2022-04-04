@@ -92,8 +92,8 @@ namespace galgo {
             _sigma_iteration[k]++;
             _sigma[k] = new_sigma;
         }
-
-        std::string chr;
+        
+        std::string chr;                          // string of bits representing chromosome
 
     private:
         std::vector<T> param;                     // estimated parameter(s)
@@ -108,7 +108,7 @@ namespace galgo {
         double fitness;                         // chromosome fitness, objective function(s) result that can be modified (adapted to constraint(s), set to positive values, etc...)
 
     private:
-        double total;                           // total sum of objective function(s) result
+        double total = 0;                           // total sum of objective function(s) result
         int chrsize;                            // chromosome size (in number of bits)
         int numgen;                             // numero of generation
     };

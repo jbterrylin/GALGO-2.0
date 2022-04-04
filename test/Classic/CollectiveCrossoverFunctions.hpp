@@ -12,7 +12,7 @@ void set_config(galgo::ConfigInfo<_TYPE>& config)
     config.mutinfo._ratio_boundary = 1;
 
     config.covrate = 1;  // 0.0 if no cros-over
-    config.mutrate = 0.3;
+    config.mutrate = 0.1;
     config.recombination_ratio = 0.50;
 
     config.elitpop = 0;
@@ -36,7 +36,6 @@ void set_CollectiveCrossover(galgo::ConfigInfo<_TYPE>& config)
     config.CrossOver = CollectiveCrossover; //P1XO
     config.isMultiCrossover = true;
     config.mutinfo._type = galgo::MutationType::MutationNoMutation;
-    config.mutrate = 0.3;
 }
 
 template <typename _TYPE>
@@ -48,7 +47,6 @@ void set_SinglePointCrossover(galgo::ConfigInfo<_TYPE>& config)
     config.CrossOver = P1XO; //P1XO
     config.isMultiCrossover = false;
     config.mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_mutation;
-    config.mutrate = 0.1;
 }
 
 template <typename _TYPE>
@@ -60,7 +58,6 @@ void set_TwoPointCrossover(galgo::ConfigInfo<_TYPE>& config)
     config.CrossOver = P2XO; //P1XO
     config.isMultiCrossover = false;
     config.mutinfo._type = galgo::MutationType::MutationGAM_sigma_adapting_per_mutation;
-    config.mutrate = 0.1;
 }
 
 #endif
