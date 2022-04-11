@@ -129,8 +129,7 @@ void CollectiveCrossover(const galgo::Population<T>& x, std::vector< galgo::CHR<
         popc.push_back( galgo::Chromosome<T>( *chr[i] ) );
     }
 
-    int matingPoolSize = 0;
-    for (int n = 1; n <= x.popsize(); n++) matingPoolSize += n;
+    int matingPoolSize = (x.popsize() * (x.popsize()+1)) /2;
 
     for(int popi=0; popi<popc.size(); popi++) {
         for (int i = 0; i < chr[0]->nbgene(); i++) {

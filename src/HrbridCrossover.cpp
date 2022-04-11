@@ -68,8 +68,8 @@ int main()
         // CONFIG
         galgo::ConfigInfo<galgo::_TYPE> config;        // A new instance of config get initial defaults
         set_config<galgo::_TYPE>(config);      // Override some defaults
-        // set_HybridCrossover<galgo::_TYPE>(config);
-        // runFuntions(config);
+        set_HybridCrossover<galgo::_TYPE>(config);
+        runFuntions(config);
         set_SinglePointCrossover<galgo::_TYPE>(config);
         runFuntions(config);
         set_TwoPointCrossover<galgo::_TYPE>(config);

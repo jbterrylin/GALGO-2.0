@@ -69,16 +69,16 @@ double rotatedHyperEllipsoid(std::vector< T > particle)
         double inner (0.);
         for (int j = 0; j <= i; j++) {
             //original:
-            // inner += particle[j];
+            inner += particle[j];
 
             // Other papper:
-            inner += pow(particle[j],2);
+            // inner += pow(particle[j],2);
         }
         //original:
-        // sum += pow(inner,2);
+        sum += pow(inner,2);
 
         // Other papper:    
-        sum += inner;
+        // sum += inner;
     }
     
     return sum;
@@ -101,7 +101,81 @@ public:
 };
 
 template <typename T>
+double rotatedHyperEllipsoidCorrected(std::vector< T > particle) 
+{
+    double sum(0.);
+
+    for (int i = 0; i < particle.size(); i++) {
+        double inner (0.);
+        for (int j = 0; j <= i; j++) {
+            //original:
+            // inner += particle[j];
+
+            // Other papper:
+            inner += pow(particle[j],2);
+        }
+        //original:
+        // sum += pow(inner,2);
+
+        // Other papper:    
+        sum += inner;
+    }
+    
+    return sum;
+}
+
+template <typename T>
+class RotatedHyperEllipsoidObjectiveCorrected
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) {
+            xd[i] = (double)x[i];
+        }
+
+        double obj = -rotatedHyperEllipsoidCorrected<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
 double normalizedSchwefel(std::vector< T > particle) 
+{
+    double sum(0.);
+
+    // original:
+    for (int i = 0; i < particle.size(); i++) {
+        sum += ( -(particle[i]) * sin(sqrt(fabs(particle[i]))) );
+    }
+
+    return sum;
+
+    // Other papper:
+    // for (int i = 0; i < particle.size(); i++) {
+    //     sum += ( -(particle[i]) * sin(sqrt(fabs(particle[i]))) );
+    // }
+
+    // return sum/particle.size();
+}
+
+template <typename T>
+class NormalizedSchwefelObjective
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+
+        double obj = -normalizedSchwefel<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+double normalizedSchwefelCorrected(std::vector< T > particle) 
 {
     double sum(0.);
 
@@ -121,7 +195,7 @@ double normalizedSchwefel(std::vector< T > particle)
 }
 
 template <typename T>
-class NormalizedSchwefelObjective
+class NormalizedSchwefelObjectiveCorrected
 {
 public:
     static std::vector<double> Objective(const std::vector<T>& x)
@@ -129,7 +203,7 @@ public:
         std::vector<double> xd(x.size());
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
 
-        double obj = -normalizedSchwefel<double>(xd);
+        double obj = -normalizedSchwefelCorrected<double>(xd);
         return { obj };
     }
 };
@@ -144,10 +218,10 @@ double generalizedRastrigin(std::vector< T > particle)
     }
 
     // original:
-    // return 10 * particle.size() - sum;
+    return 10 * particle.size() - sum;
 
     // corrected
-    return 10 * particle.size() + sum;
+    // return 10 * particle.size() + sum;
 }
 
 template <typename T>
@@ -165,16 +239,46 @@ public:
 };
 
 template <typename T>
+double generalizedRastriginCorrected(std::vector< T > particle) 
+{
+    double sum(0.);
+
+    for (int i = 0; i < particle.size(); i++) {
+        sum += ( pow(particle[i],2) - 10 * cos(2 * PI * particle[i]) );
+    }
+
+    // original:
+    // return 10 * particle.size() - sum;
+
+    // corrected
+    return 10 * particle.size() + sum;
+}
+
+template <typename T>
+class GeneralizedRastriginObjectiveCorrected
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+
+        double obj = -generalizedRastriginCorrected<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
 double rosenbrocksValley(std::vector< T > particle) 
 {
     double sum(0.);
 
     for (int i = 0; i < particle.size()-1; i++) {
         // original:
-        // sum += ( 100 - pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
+        sum += ( 100 - pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
 
         // corrected:
-        sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
+        // sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
     }
 
     return sum;
@@ -190,6 +294,36 @@ public:
         for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
     
         double obj = -rosenbrocksValley<double>(xd);
+        return { obj };
+    }
+};
+
+template <typename T>
+double rosenbrocksValleyCorrected(std::vector< T > particle) 
+{
+    double sum(0.);
+
+    for (int i = 0; i < particle.size()-1; i++) {
+        // original:
+        // sum += ( 100 - pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
+
+        // corrected:
+        sum += ( 100 * pow(particle[i+1] - pow(particle[i],2),2) + pow(1 - particle[i],2));
+    }
+
+    return sum;
+}
+
+template <typename T>
+class RosenbrocksValleyObjectiveCorrected
+{
+public:
+    static std::vector<double> Objective(const std::vector<T>& x)
+    {
+        std::vector<double> xd(x.size());
+        for (size_t i = 0; i < x.size(); i++) xd[i] = (double)x[i];
+    
+        double obj = -rosenbrocksValleyCorrected<double>(xd);
         return { obj };
     }
 };
@@ -252,8 +386,11 @@ double cec17_entrance(std::vector< T > genes, int fun_num)
     // }
 	
 	// }
+    double answer = f[0];
+    free(x);
+    free(f);
     
-    return f[0];
+    return answer;
 }
 
 template <typename T>

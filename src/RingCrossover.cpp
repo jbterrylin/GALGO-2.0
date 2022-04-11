@@ -33,7 +33,38 @@ void runGA(galgo::ConfigInfo<_TYPE>& config, FuncKT<T> Objective, std::string be
 }
 
 template <typename _TYPE>
-void runFuntions(galgo::ConfigInfo<_TYPE>& config, int dimension) {
+void runFuntionsCorrected(galgo::ConfigInfo<_TYPE>& config, int dimension) {
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));    
+    runGA(config, SphereObjective<galgo::_TYPE>::Objective, "SphereObjective");
+
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));    
+    runGA(config, AxisParallelHyperEllipsoidObjective<galgo::_TYPE>::Objective, "AxisParallelHyperEllipsoidObjective");
+
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-65.536, (galgo::_TYPE)65.536 }));    
+    runGA(config, RotatedHyperEllipsoidObjectiveCorrected<galgo::_TYPE>::Objective, "RotatedHyperEllipsoidObjective");
+
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-500, (galgo::_TYPE)500 }));    
+    runGA(config, NormalizedSchwefelObjectiveCorrected<galgo::_TYPE>::Objective, "NormalizedSchwefelObjective");
+
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));    
+    runGA(config, GeneralizedRastriginObjectiveCorrected<galgo::_TYPE>::Objective, "GeneralizedRastriginObjective");
+
+    myvector.clear();
+    for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-2.048, (galgo::_TYPE)2.048 }));    
+    runGA(config, RosenbrocksValleyObjectiveCorrected<galgo::_TYPE>::Objective, "RosenbrocksValleyObjective");
+}
+
+template <typename _TYPE>
+void runFuntions(galgo::ConfigInfo<_TYPE>& config, int dimension, bool corrected) {
+    if(corrected == true) {
+        runFuntionsCorrected(config, dimension);
+        return;
+    }
     myvector.clear();
     for (int z = 0; z < dimension; z++) myvector.push_back(galgo::Parameter<galgo::_TYPE, galgo::NBIT > ({ (galgo::_TYPE)-5.12, (galgo::_TYPE)5.12 }));    
     runGA(config, SphereObjective<galgo::_TYPE>::Objective, "SphereObjective");
@@ -59,11 +90,14 @@ void runFuntions(galgo::ConfigInfo<_TYPE>& config, int dimension) {
     runGA(config, RosenbrocksValleyObjective<galgo::_TYPE>::Objective, "RosenbrocksValleyObjective");
 }
 
+
+
 int main()
 {
 #ifdef TEST_INIT_POP
     // Test init initial population
     {
+        bool corrected = true;
         if(galgo::NBIT != 15) {
             std::cout << "bit length for one genes is not same with experiment requirement." << std::endl;
         }
@@ -71,22 +105,22 @@ int main()
         galgo::ConfigInfo<galgo::_TYPE> config;        // A new instance of config get initial defaults
         set_config<galgo::_TYPE>(config);      // Override some defaults
         set_RingCrossover<galgo::_TYPE>(config);
-        runFuntions(config, 30);
+        runFuntions(config, 30, corrected);
         
         set_SinglePointCrossover<galgo::_TYPE>(config);
-        runFuntions(config, 30);
+        runFuntions(config, 30, corrected);
 
         set_TwoPointCrossover<galgo::_TYPE>(config);
-        runFuntions(config, 30);
+        runFuntions(config, 30, corrected);
 
         set_HeuristicCrossover<galgo::_TYPE>(config);
-        runFuntions(config, 30);
+        runFuntions(config, 30, corrected);
 
         set_IntermediateCrossover<galgo::_TYPE>(config);
-        runFuntions(config, 30);
+        runFuntions(config, 30, corrected);
 
         set_ArithmeticCrossover<galgo::_TYPE>(config);
-        runFuntions(config, 30);
+        runFuntions(config, 30, corrected);
     }
 #endif
 
